@@ -7,9 +7,9 @@ redirect_from:
   - /about.html
 ---
 
-Matra
+Mantra
 ------
-The indescriminate access to safe, reliable, sustainable, and affordable energy is not a preference, it is a requirement. My research and career are dedicated toward using my skills as an engineer to make that a reality.
+Indiscriminate access to safe, reliable, sustainable, and affordable energy is not a preference; it is a requirement. My research and career are dedicated to using my skills as an engineer to make that a reality.
 
 Research
 ======
