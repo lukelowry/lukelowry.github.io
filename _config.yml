@@ -227,7 +227,7 @@ collections:
   resources:
     output: true
     permalink: /:collection/:path/
-  portfolio:
+  gallery:
     output: true
     permalink: /:collection/:path/
 
