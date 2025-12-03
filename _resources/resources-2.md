@@ -1,6 +1,6 @@
 ---
 title: "Laplacian Library"
-excerpt: "A repository of sparsely stored networks <br/><img src='/images/500x300.png'>"
+excerpt: "A repository of sparsely stored networks <br/><img src='/images/USA_Laplacian.png'>"
 collection: resources
 ---
 
