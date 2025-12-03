@@ -17,6 +17,10 @@ About my Power System Stability Research
 Graph Signal Processing
 ======
 
+
+![A Spectral Graph Wavelet over Synthetic USA Case](/images/USA_Wavelet.png)
+
+
 Information about GSP in my Research
 
 Outreach
