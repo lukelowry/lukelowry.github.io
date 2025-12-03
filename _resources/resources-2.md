@@ -5,22 +5,34 @@ collection: resources
 ---
 
 The following graph laplacians are provided and documented for reusability.
+They are stored in CSC data structure using the `.npz` file format.
+
+Needs to be validated further for the larger cases.
 
 Length Based Laplacians
 ------
 
-  * ACTIVg2000 (DOWNLOAD LINK)
-  * Synthetic Cases
+  * [Hawaii 37 Bus](/_data/laplace_library/DELAY/HAWAII_LENGTH.npz)
+  * [WECC 240 Bus](/_data/laplace_library/DELAY/WECC_LENGTH.npz)
+  * [Texas 2000 Bus](/_data/laplace_library/DELAY/TEXAS_LENGTH.npz)
+  * [Eastern 78k Bus](/_data/laplace_library/DELAY/EASTWEST_LENGTH.npz)
+  * [USA 82k Bus](/_data/laplace_library/DELAY/USA_LENGTH.npz)
 
 Delay Based Laplacians
 ------
 
-  * ACTIVg2000 (DOWNLOAD LINK)
-  * Synthetic Cases
+  * [Hawaii 37 Bus](/_data/laplace_library/DELAY/HAWAII_DELAY.npz)
+  * [WECC 240 Bus](/_data/laplace_library/DELAY/WECC_DELAY.npz)
+  * [Texas 2000 Bus](/_data/laplace_library/DELAY/TEXAS_DELAY.npz)
+  * [Eastern 78k Bus](/_data/laplace_library/DELAY/EASTWEST_DELAY.npz)
+  * [USA 82k Bus](/_data/laplace_library/DELAY/USA_DELAY.npz)
 
   
 Admittance Based Laplacians
 ------
 
-  * ACTIVg2000 (DOWNLOAD LINK)
-  * Synthetic Cases
+  * [Hawaii 37 Bus](/_data/laplace_library/DELAY/HAWAII_IMPEDANCE.npz)
+  * [WECC 240 Bus](/_data/laplace_library/DELAY/WECC_IMPEDANCE..npz)
+  * [Texas 2000 Bus](/_data/laplace_library/DELAY/TEXAS_IMPEDANCE..npz)
+  * [Eastern 78k Bus](/_data/laplace_library/DELAY/EASTWEST_IMPEDANCE..npz)
+  * [USA 82k Bus](/_data/laplace_library/DELAY/USA_IMPEDANCE..npz)
