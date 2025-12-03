@@ -1,6 +1,6 @@
 ---
 title: "Laplacian Library"
-excerpt: "A repository of sparsely stored networks <br/><img src='/images/USA_Laplacian.png'>"
+excerpt: "A repository of CSC Formatted Graph Laplacians <br/><img src='/images/USA_Laplacian.png'>"
 collection: resources
 ---
 
