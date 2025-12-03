@@ -4,4 +4,23 @@ excerpt: "A repository of CSC Formatted Graph Laplacians <br/><img src='/images/
 collection: resources
 ---
 
-This is an item in your portfolio. It can be have images or nice text. If you name the file .md, it will be parsed as markdown. If you name the file .html, it will be parsed as HTML. 
+The following graph laplacians are provided and documented for reusability.
+
+Length Based Laplacians
+------
+
+  * ACTIVg2000 (DOWNLOAD LINK)
+  * Synthetic Cases
+
+Delay Based Laplacians
+------
+
+  * ACTIVg2000 (DOWNLOAD LINK)
+  * Synthetic Cases
+
+  
+Admittance Based Laplacians
+------
+
+  * ACTIVg2000 (DOWNLOAD LINK)
+  * Synthetic Cases

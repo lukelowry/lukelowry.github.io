@@ -9,7 +9,7 @@ redirect_from:
 
 Matra
 ------
-The indescriminate access to safe, reliable, sustainable, and affordable energy is not a preference, it is a requirement. My research and career are dedicated toward using my skills as an engineer to make it true.
+The indescriminate access to safe, reliable, sustainable, and affordable energy is not a preference, it is a requirement. My research and career are dedicated toward using my skills as an engineer to make that a reality.
 
 Research
 ======
@@ -33,8 +33,3 @@ Engineering Education
 ------
 
 There is a deficit of modern educational tools used by instructors in electrical engineering. Modern animation tools and software can be used to illuminate the student experience, reach broader audiences, and bring clarity to age-old analysis.
-
-Research Interests
-======
-
-Information about serving and educating the community about safe, sustainable, and reliable power.
