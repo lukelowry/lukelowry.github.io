@@ -1,11 +1,11 @@
 ---
-title: "Paper Title Number 1"
+title: "Voltage Stability in Plausible Non-Uniform Geomagnetic Disturbances"
 collection: publications
 category: manuscripts
 permalink: /publication/2009-10-01-paper-title-number-1
-excerpt: 'This paper is about the number 1. The number 2 is left for future work.'
-date: 2009-10-01
-venue: 'Journal 1'
+excerpt: 'Early work on Geemagnetic Disturbances and their impact on voltage stability.'
+date: 2025-10-01
+venue: 'IEEE Transactions on Power Systems'
 slidesurl: 'https://academicpages.github.io/files/slides1.pdf'
 paperurl: 'https://academicpages.github.io/files/paper1.pdf'
 bibtexurl: 'https://academicpages.github.io/files/bibtex1.bib'
