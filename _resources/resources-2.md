@@ -1,10 +1,6 @@
 ---
 title: "Laplacian Library"
-excerpt: 'A repository of CSC Formatted Graph Laplacians <br/>
- <div style="width:100%; max-width:300px; aspect-ratio:4/3; overflow:hidden;">
-    <img src="/images/USA_Laplacian.png"
-         style="width:100%; height:100%; object-fit:cover;">
-  </div>'
+excerpt: "A repository of CSC Formatted Graph Laplacians <br/><img src='/images/USA_Laplacian.png'>"
 collection: resources
 ---
 

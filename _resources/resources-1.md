@@ -1,10 +1,7 @@
 ---
 title: "Sparse Graph Convolution"
 excerpt: 'A python module designed to optimally implement GSP operations for sparse power systems<br/>
-  <div style="width:100%; max-width:300px; aspect-ratio:4/3; overflow:hidden;">
-    <img src="/images/USA_Wavelet.png"
-         style="width:100%; height:100%; object-fit:cover;">
-  </div>'
+   <br/><img src='/images/USA_Wavelet.png'>"
 collection: resources
 ---
 

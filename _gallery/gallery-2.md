@@ -1,6 +1,6 @@
 ---
-title: "Modal Analysis"
-excerpt: "The extracted mode shapes using a spectral graph filter <br/><img src='/images/gallery/ModeShapes.png'>"
+title: "Kernel Fitting"
+excerpt: "The VF-derived GSP performance of a kernel function <br/><img src='/images/gallery/KernelApprox.png'>"
 collection: gallery
 ---
 
