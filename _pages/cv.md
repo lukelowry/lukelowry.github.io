@@ -40,17 +40,6 @@ Work experience
   * Designed and implemented control systems for numerous applications including natural gas sites, boiler systems, and production facilities. Primarily completed with Allen Bradley PLC hardware.
   * Mastered AutoCAD for the design of control panels that were manufactured in-house. Developed an automated AutoCAD program in LISP to synthesize to accelerate manufacturing.
 
-  
-
-
-Soft Skills
-======
-* Oration
-* Skill 2
-  * Sub-skill 2.1
-  * Sub-skill 2.2
-  * Sub-skill 2.3
-* Oration
 
 Publications
 ======
@@ -67,16 +56,15 @@ Talks
 * Seminar TAMU (first)
 * Seminar TAMU (second)
   
-Teaching
+<!-- Teaching
 ======
   <ul>{% for post in site.teaching reversed %}
     {% include archive-single-cv.html %}
-  {% endfor %}</ul>
+  {% endfor %}</ul> -->
   
 Service and leadership
 ======
-* Senator - Graduate and Professional Student Government 
-  * Fall 2025 - Present
+* Senator - Graduate and Professional Student Government  *(Fall 2025 - Present)*
   *	Draft legislation that upholds university values and improves the Aggie experience.
   * Vote and represent the Department of Electrical Engineering on University policies and procedures.
 
