@@ -7,15 +7,15 @@ redirect_from:
   - /about.html
 ---
 
-This site serves as a hub for my publications, open-source tools, and 
-portfolio of my work during graduate school.
-
 Matra
 ------
 The indescriminate access to safe, reliable, sustainable, and affordable energy is not a preference, it is a requirement. My research and career are dedicated toward using my skills as an engineer to make it true.
 
-Research Interests
+Research
 ======
+
+This site serves as a hub for my publications, open-source tools, and 
+portfolio of my work.
 
 Large Power System Stability
 ------
