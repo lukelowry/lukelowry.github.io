@@ -1,6 +1,6 @@
 ---
 title: "Sparse Graph Convolution"
-excerpt: "A python module designed to optimally implement GSP operations for sparse power systems<br/><img src='/images/500x300.png'>"
+excerpt: "A python module designed to optimally implement GSP operations for sparse power systems<br/><img src='/images/USA_Wavelet.png'>"
 collection: portfolio
 ---
 
