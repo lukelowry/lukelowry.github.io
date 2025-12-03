@@ -22,12 +22,11 @@ Vertex Domain Features
 
 Length Based Laplacians
 ------
-
-  * [Hawaii 37 Bus](/_data/laplace_library/DELAY/HAWAII_LENGTH.npz)
-  * [WECC 240 Bus](/_data/laplace_library/DELAY/WECC_LENGTH.npz)
-  * [Texas 2000 Bus](/_data/laplace_library/DELAY/TEXAS_LENGTH.npz)
-  * [Eastern 78k Bus](/_data/laplace_library/DELAY/EASTWEST_LENGTH.npz)
-  * [USA 82k Bus](/_data/laplace_library/DELAY/USA_LENGTH.npz)
+  * <a href="/_data/laplace_library/DELAY/HAWAII_LENGTH.npz" download>Hawaii</a>
+  * <a href="/_data/laplace_library/DELAY/WECC_LENGTH.npz" download>WECC</a>
+  * <a href="/_data/laplace_library/DELAY/TEXAS_LENGTH.npz" download>Texas</a>
+  * <a href="/_data/laplace_library/DELAY/EASTWEST_LENGTH.npz" download>Eastern Inter.</a>
+  * <a href="/_data/laplace_library/DELAY/USA_LENGTH.npz" download>USA</a>
 
 Delay Based Laplacians
 ------
