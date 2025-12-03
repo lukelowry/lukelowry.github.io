@@ -1,7 +1,7 @@
 ---
 title: "Voltage Stability in Plausible Non-Uniform Geomagnetic Disturbances"
 collection: publications
-permalink: /publication/2025-01-01-Voltage-Stability-in-Plausible-Non-Uniform-Geomagnetic-Disturbances
+permalink: /publications/2025-01-01-Voltage-Stability-in-Plausible-Non-Uniform-Geomagnetic-Disturbances
 date: 2025-01-01
 venue: 'IEEE Transactions on Power Systems'
 citation: ' Luke Lowery,  Adam Birchfield, &quot;Voltage Stability in Plausible Non-Uniform Geomagnetic Disturbances.&quot; IEEE Transactions on Power Systems, 2025.'
