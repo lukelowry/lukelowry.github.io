@@ -1,13 +1,13 @@
 ---
 permalink: /
-title: "About My Research"
+title: "Overview"
 author_profile: true
 redirect_from: 
   - /about/
   - /about.html
 ---
 
-Some information about my research
+This site serves as a hub for my publications, open-source tools, and portfolio of my work during graduate school.
 
 Power System Stability
 ======
