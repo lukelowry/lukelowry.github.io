@@ -9,7 +9,7 @@ redirect_from:
 
 Mantra
 ------
-Indiscriminate access to safe, reliable, sustainable, and affordable energy is not a preference; it is a requirement. My research and career are dedicated to using my skills as an engineer to make that a reality.
+Indiscriminate access to secure, sustainable, and affordable energy is not a privledge; it is a right. My research and career are dedicated to making this a reality through the advancment of electrical power systems.
 
 Research
 ======

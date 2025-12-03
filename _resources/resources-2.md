@@ -9,6 +9,17 @@ They are stored in CSC data structure using the `.npz` file format.
 
 Needs to be validated further for the larger cases.
 
+Vertex Domain Features
+------
+
+| Synthetic Case   | Verticies   | Features            |
+| --------         | ------      | ------------------- | 
+| Hawaii           | 37          | [Download]()        |
+| WECC             | 240         | [Download]()        | 
+| Texas            | 2000        | [Download]()        | 
+| Eastern Inter.   | 78000       | [Download]()        | 
+| USA              | 82000       | [Download]()        | 
+
 Length Based Laplacians
 ------
 
