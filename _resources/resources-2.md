@@ -22,11 +22,11 @@ Vertex Domain Features
 
 Length Based Laplacians
 ------
-  * <a href="../_data/laplace_library/DELAY/HAWAII_LENGTH.npz" download>Hawaii</a>
-  * <a href="../_data/laplace_library/DELAY/WECC_LENGTH.npz" download>WECC</a>
-  * <a href="../_data/laplace_library/DELAY/TEXAS_LENGTH.npz" download>Texas</a>
-  * <a href="../_data/laplace_library/DELAY/EASTWEST_LENGTH.npz" download>Eastern Inter.</a>
-  * <a href="../_data/laplace_library/DELAY/USA_LENGTH.npz" download>USA</a>
+  * <a class ='btn' href="../_data/laplace_library/DELAY/HAWAII_LENGTH.npz" download>Hawaii</a>
+  * <a class ='btn' href="../_data/laplace_library/DELAY/WECC_LENGTH.npz" download>WECC</a>
+  * <a class ='btn' href="../_data/laplace_library/DELAY/TEXAS_LENGTH.npz" download>Texas</a>
+  * <a class ='btn' href="../_data/laplace_library/DELAY/EASTWEST_LENGTH.npz" download>Eastern Inter.</a>
+  * <a class ='btn' href="../_data/laplace_library/DELAY/USA_LENGTH.npz" download>USA</a>
 
 Delay Based Laplacians
 ------
