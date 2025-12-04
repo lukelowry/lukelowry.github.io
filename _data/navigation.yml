@@ -14,8 +14,8 @@ main:
   - title: "Resources"
     url: /resources/
 
-#  - title: "Gallery"
-#    url: /gallery/
+  - title: "Gallery"
+    url: /gallery/
     
  # - title: "CV"
  #   url: /cv/
