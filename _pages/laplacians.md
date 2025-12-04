@@ -1,4 +1,5 @@
 ---
+layout: single
 title: "Laplacian Library"
 permalink: /resources/laplacians/
 author_profile: true
