@@ -18,8 +18,7 @@ Work experience
 ======
 
 * Research Assistant, Texas A&M University
-  * 01/10/2022 - Present
-  * Department of Electrical and Computer Engineering
+  * January 2023 - Present
   * Develops Phasor & EMT models to accelerate the integration of renewables in modern transmission systems.
   * Performs novel research on the impact of Geomagnetic Disturbance’s on the nations electric grid.
   * Applies modern mathematics to solve open problems in energy and power research.
