@@ -11,5 +11,7 @@ author_profile: true
 
 ### Power Flow Convergence
 
+## Electric Fields
 
+<img src='/images/SpinningEigenFieldHighFreq(SlowCrop).gif'>
 
