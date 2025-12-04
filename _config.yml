@@ -224,7 +224,7 @@ collections:
     permalink: /:collection/:path/
   resources:
     output: true
-    permalink: /:collection/:path/
+    permalink: /resources/:path/
   gallery:
     output: true
     permalink: /:collection/:path/
