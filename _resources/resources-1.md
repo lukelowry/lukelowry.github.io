@@ -32,7 +32,7 @@ $$
 $$
 
 
-This filter meets the admissibility criterion of a scaling kernel \eqref{eq:scaling-admiss} which is used in the SGWT \cite{sgwt-hammond}.
+This filter meets the admissibility criterion of a scaling kernel.
 
 High-Pass Spectral Graph Filters
 ------
@@ -44,23 +44,16 @@ $$
 $$
 
 
-We define the high-pass admissibility criterion \eqref{eq:sgwt-admiss} similarly to the constraints of the scaling functions 
-
-$$
-\mu(0)=0 \qquad\text{and}\quad \lim _{x\to\infty} \mu(x)=1  \label{eq:sgwt-admiss} \tag{3}
-$$
-
-
 Band-Pass Spectral Graph Filters
 ------
 
-A convenient closed-form wavelet generating kernel \eqref{eq:design-sgwt-kernel} was found to be a useful kernel as an alternative to the vector-fitting procedure if a particular filter does not need to be designed. Experiments have shown that \eqref{eq:design-sgwt-kernel} is sufficient for FOSL application.
+A convenient closed-form wavelet generating kernel \eqref{eq:band-pass} was found to be a useful kernel as an alternative to the vector-fitting procedure if a particular filter does not need to be designed. Experiments have shown that \eqref{eq:band-pass} is sufficient for FOSL application.
 
 $$
 \Psi(\mathbf{\Lambda}) = \dfrac{4\mathbf{\Lambda}}{(\mathbf{\Lambda}+I)^2}  \label{eq:band-pass} 
 $$
 
-This filter qualifies as a wavelet generating kernel for the SGWT, since $\Psi(0)=0$ and the admissibility condition is satisfied. The admissibility constant of this band-pass filter is  $C_f=8/3$.
+This filter qualifies as a wavelet generating kernel for the SGWT, since \(\Psi(0)=0\) and the admissibility condition is satisfied. The admissibility constant of this band-pass filter is  \(C_f=8/3\).
 
 $$
 \Psi(0)=0  \qquad\text{and}\quad \int_0^{\infty}\dfrac{\Psi^2(x)}{x}\mathrm{d}x <\infty
