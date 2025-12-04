@@ -1,5 +1,4 @@
 ---
-layout: archive
 title: "sgwt - Python Module"
 excerpt: "A power systems oriented Python module for the SGWT & sparse graph convolutions<br/><img src='/images/USA_Wavelet.png'>"
 collection: resources
@@ -26,7 +25,10 @@ Low-Pass Spectral Graph Filters
 The proposed low-pass filter \eqref{eq:lowpass} is \textit{refinable}, as it is a self-similar rational function. The refinability of \eqref{eq:lowpass} makes it useful for signal smoothing across a range of spatial scales.
 
 $$
+\begin{equation}
+\label{eq:lowpass}
 \phi(\mathbf{\Lambda}) = \dfrac{I}{\mathbf{\Lambda}+I}
+\end{equation}
 $$
 
 
