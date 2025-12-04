@@ -2,6 +2,7 @@
 title: "Laplacian Library"
 excerpt: "A repository of CSC Formatted Graph Laplacians <br/><img src='/images/USA_Laplacian.png'>"
 collection: resources
+permalink: /resource/
 ---
 
 The following graph laplacians are provided and documented for reusability.
