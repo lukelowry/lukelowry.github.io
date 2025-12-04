@@ -1,10 +1,8 @@
 ---
 layout: single
 title: "Laplacian Library"
-permalink: /resources/laplacians/
+permalink: /laplacians/
 author_profile: true
-redirect_from:
-  - /resources/resources-1
 ---
 
 The following graph laplacians are provided and documented for reusability.
