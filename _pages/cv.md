@@ -25,8 +25,8 @@ Work experience
   * Applies modern mathematics to solve open problems in energy and power research.
 
 
-* High Voltage Intern, SpaceX
-  * Jan 2022 - Aug 2023
+* High Voltage Intern, SpaceX, 2022-2023
+  * Two Summers and One Co-Op
   * Designed a site-wide SCADA system to monitor and automate the site microgrid using Ignition as the front end.
   * Switchgear & transformer installation, design, and coordination for mission-critical loads (5kV & 35kV)
   * Responsible for differential and over-current protection on critical feeder lines to production and launch-pad.
