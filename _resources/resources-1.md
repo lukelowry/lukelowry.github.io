@@ -9,7 +9,7 @@ The GitHub repository for the `sgwt` package is available [here](https://github.
 
 I will soon upload a preprint for a TPEC paper that details the math used in the package.
 
-Vector Fitting Functions
+Kernel Fitted Functions
 ------
 
 The table will eventually contain the poles and residues of various popular filters.
@@ -40,14 +40,14 @@ High-Pass Spectral Graph Filters
 The proposed high-pass filter \eqref{eq:highpass} acts as a container for variations over the graph below a given spatial scale.
 
 $$
-\mu(\mathbf{\Lambda}) = \dfrac{\mathbf{\Lambda}}{\mathbf{\Lambda}+I}  \label{eq:highpass}
+\mu(\mathbf{\Lambda}) = \dfrac{\mathbf{\Lambda}}{\mathbf{\Lambda}+I}  \label{eq:highpass}  \tag{2}
 $$
 
 
 We define the high-pass admissibility criterion \eqref{eq:sgwt-admiss} similarly to the constraints of the scaling functions 
 
 $$
-\mu(0)=0 \qquad\text{and}\quad \lim _{x\to\infty} \mu(x)=1  \label{eq:sgwt-admiss}
+\mu(0)=0 \qquad\text{and}\quad \lim _{x\to\infty} \mu(x)=1  \label{eq:sgwt-admiss} \tag{3}
 $$
 
 
@@ -57,7 +57,7 @@ Band-Pass Spectral Graph Filters
 A convenient closed-form wavelet generating kernel \eqref{eq:design-sgwt-kernel} was found to be a useful kernel as an alternative to the vector-fitting procedure if a particular filter does not need to be designed. Experiments have shown that \eqref{eq:design-sgwt-kernel} is sufficient for FOSL application.
 
 $$
-\Psi(\mathbf{\Lambda}) = \dfrac{4\mathbf{\Lambda}}{(\mathbf{\Lambda}+I)^2}  \label{eq:band-[ass]}
+\Psi(\mathbf{\Lambda}) = \dfrac{4\mathbf{\Lambda}}{(\mathbf{\Lambda}+I)^2}  \label{eq:band-pass} 
 $$
 
 This filter qualifies as a wavelet generating kernel for the SGWT, since $\Psi(0)=0$ and the admissibility condition is satisfied. The admissibility constant of this band-pass filter is  $C_f=8/3$.
