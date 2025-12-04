@@ -31,8 +31,6 @@ $$
 
 This filter meets the admissibility criterion of a scaling kernel \eqref{eq:scaling-admiss} which is used in the SGWT \cite{sgwt-hammond}.
 
-The voltage magnitude (scalar potential) must take this form (blue trace in Fig. \ref{fig:filters} and Fig. \ref{fig:log-filters}). This low-pass filter will be used to study the distribution of voltage magnitude in large systems.
-
 High-Pass Spectral Graph Filters
 ------
 
@@ -50,8 +48,6 @@ $$
 $$
 
 
-A steady-state injected network current takes the form of a high-pass filter (red trace in Fig. \ref{fig:filters} and Fig. \ref{fig:log-filters}). This observation allows us to use the high-pass filters to study the current flows in the transmission network.
-
 Band-Pass Spectral Graph Filters
 ------
 
@@ -61,11 +57,10 @@ $$
 \Psi(\mathbf{\Lambda}) = \dfrac{4\mathbf{\Lambda}}{(\mathbf{\Lambda}+I)^2}  \label{eq:band-[ass]}
 $$
 
-This filter qualifies as a wavelet generating kernel for the SGWT, since $\Psi(0)=0$ and the admissibility condition is satisfied. The admissibility constant $C_f=8/3$ of this band-pass filter is detailed in Appendix \ref{app:admiss}.
+This filter qualifies as a wavelet generating kernel for the SGWT, since $\Psi(0)=0$ and the admissibility condition is satisfied. The admissibility constant of this band-pass filter is  $C_f=8/3$.
 
 $$
 \Psi(0)=0  \qquad\text{and}\quad \int_0^{\infty}\dfrac{\Psi^2(x)}{x}\mathrm{d}x <\infty
 $$
 
- Notice that the injected/emitted power from the network must take this form (gray trace in Fig. \ref{fig:filters} and Fig. \ref{fig:log-filters}). This observation prompts the use of band-pass filters to study the transmission of power in the graph spectral domain.
 
