@@ -9,9 +9,9 @@ author_profile: true
 
 ## Animations
 
-### Power Flow Convergence
+Animations of GIC and Power Flow Work
 
-## Electric Fields
+### Electric Fields
 
 <iframe 
   width="854" height="480" 
