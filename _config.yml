@@ -224,7 +224,7 @@ collections:
     permalink: /:collection/:path/
   resources:
     output: true
-    permalink: /resources/:path/
+    permalink: /:collection/:path/
   gallery:
     output: true
     permalink: /:collection/:path/
@@ -270,7 +270,7 @@ defaults:
       comments: true
   # _resources
   - scope:
-      path: "resources"
+      path: ""
       type: resources
     values:
       layout: single
