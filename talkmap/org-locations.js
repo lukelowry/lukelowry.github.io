@@ -1,11 +1,11 @@
 var addressPoints = [
   [
-    "Seminar title on GMD2<br />Texas A&M University; College Station, Texas",
+    "Modern Methods in Electromagnetic Transient Simulations<br />Texas A&M University; College Station, Texas",
     30.6183939,
     -96.3455991
   ],
   [
-    "Seminar title on GMD<br />Texas A&M University; College Station, Texas",
+    "Voltage Stability in Non-Uniform Geomagnetic Disturbances<br />Texas A&M University; College Station, Texas",
     30.6183939,
     -96.3455991
   ]
