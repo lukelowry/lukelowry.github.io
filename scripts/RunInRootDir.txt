@@ -1,0 +1,1 @@
+python scripts/cv_markdown_to_json.py --input "_pages/cv.md" --output "_data/cv.json" --config "_config.yml"

@@ -18,14 +18,16 @@ Education
 Work experience
 ======
 
-* **Texas A&M University**: Research Assistant *(Jan 2022 - Present)*
+* **Texas A&M University**: Research Assistant 
+  * 2022 - Present
   * Department of Electrical and Computer Engineering
   * Develops Phasor & EMT models to accelerate the integration of renewables in modern transmission systems.
   * Performs novel research on the impact of Geomagnetic Disturbance’s on the nations electric grid.
   * Applies modern mathematics to solve open problems in energy and power research.
 
 
-* **SpaceX**: High Voltage Intern *(Jan 2022 - Aug 2023)*
+* **SpaceX**: High Voltage Intern
+  * Jan 2022 - Aug 2023
   * Designed a site-wide SCADA system to monitor and automate the site microgrid using Ignition as the front end.
   * Switchgear & transformer installation, design, and coordination for mission-critical loads (5kV & 35kV)
   * Responsible for differential and over-current protection on critical feeder lines to production and launch-pad.
