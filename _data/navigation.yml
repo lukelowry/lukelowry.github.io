@@ -14,9 +14,6 @@ main:
   - title: "Resources"
     url: /resources/
 
-  - title: "Graphs"
-    url: /laplacians/
-
   - title: "Gallery"
     url: /gallery/
     
