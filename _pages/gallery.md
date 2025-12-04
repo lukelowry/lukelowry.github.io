@@ -13,7 +13,7 @@ Animations of GIC and Power Flow Work
 
 ### Electric Fields
 
-<div id="player" width="854" height="480" ></div>
+<div id="player"></div>
 <script>
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
