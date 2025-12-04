@@ -1,8 +1,8 @@
 ---
+layout: default
 title: "sgwt - Python Module"
 excerpt: "A power systems oriented Python module for the SGWT & sparse graph convolutions<br/><img src='/images/USA_Wavelet.png'>"
 collection: resources
-permalink: /resources/resources-1
 ---
 
 
