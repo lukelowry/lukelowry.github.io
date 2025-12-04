@@ -395,7 +395,7 @@ def create_cv_json(md_file, config_file, repo_root, output_file):
     # Add teaching
     #cv_json["teaching"] = parse_teaching(os.path.join(repo_root, "_teaching"))
 
-    cv_json['awards'] =   [
+    cv_json["awards"] =   [
         {
         "name": "ECEN Department Poster Award",
         "event": "Texas A&M University",
@@ -409,9 +409,9 @@ def create_cv_json(md_file, config_file, repo_root, output_file):
         "date": "2024-03-01",
         "location": "College Station, Texas",
         "description": ""
-        }
+        },
         {
-        "name": "Thomas Powell ’62 Fellowship",
+        "name": "Thomas Powell 1962 Fellowship",
         "event": "Texas A&M University",
         "date": "2024-03-01",
         "location": "College Station, Texas",
