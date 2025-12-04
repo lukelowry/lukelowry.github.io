@@ -400,21 +400,18 @@ def create_cv_json(md_file, config_file, repo_root, output_file):
         "name": "ECEN Department Poster Award",
         "event": "Texas A&M University",
         "date": "2025-11-01",
-        "location": "College Station, Texas",
         "description": "2nd Place"
         },
         {
         "name": "Michael Powell Graduate Fellowship",
         "event": "Texas A&M University",
         "date": "2024-03-01",
-        "location": "College Station, Texas",
         "description": ""
         },
         {
         "name": "Thomas Powell 1962 Fellowship",
         "event": "Texas A&M University",
         "date": "2024-03-01",
-        "location": "College Station, Texas",
         "description": ""
         }
     ]
