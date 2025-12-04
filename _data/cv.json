@@ -8,7 +8,7 @@
     "location": {
       "address": "",
       "postalCode": "",
-      "city": "College Station",
+      "city": "College Station, TX",
       "countryCode": "US",
       "region": ""
     },
@@ -35,12 +35,11 @@
       "company": "Texas A&M University",
       "position": "Research Assistant",
       "website": "",
-      "startDate": "2022",
+      "startDate": "2023",
       "endDate": "Present",
       "summary": "",
       "highlights": [
-        "01/10/2022 - Present",
-        "Department of Electrical and Computer Engineering",
+        "January 2023 - Present",
         "Develops Phasor & EMT models to accelerate the integration of renewables in modern transmission systems.",
         "Performs novel research on the impact of Geomagnetic Disturbance\u2019s on the nations electric grid.",
         "Applies modern mathematics to solve open problems in energy and power research."
@@ -137,6 +136,20 @@
     },
     {
       "name": "Modern Methods in Electromagnetic Transient Simulations",
+      "event": "Texas A&M University",
+      "date": "2024-03-01",
+      "location": "College Station, Texas",
+      "description": ""
+    },
+    {
+      "name": "Graduate Speaker - ECEN Fellowship Banquet",
+      "event": "Texas A&M University",
+      "date": "2024-03-01",
+      "location": "College Station, Texas",
+      "description": ""
+    },
+    {
+      "name": "Graduate Speaker ECEN Townhall",
       "event": "Texas A&M University",
       "date": "2024-03-01",
       "location": "College Station, Texas",
