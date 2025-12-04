@@ -11,22 +11,21 @@ redirect_from:
 
 Education
 ======
-* Ph.D in Electrical Engineering, Texas A&M University, 2027 (expected)
-  * Advisor: Dr. Adam Birchfield
-* B.S. in Electrical Engineering, Texas A&M University 2023
+* Ph.D in Electrical Engineering, Texas A&M University, 2027
+* B.S. in Electrical Engineering, Texas A&M University, 2023, GPA: 4.0
 
 Work experience
 ======
 
-* **Texas A&M University**: Research Assistant 
-  * 2022 - Present
+* Research Assistant, Texas A&M University
+  * 01/10/2022 - Present
   * Department of Electrical and Computer Engineering
   * Develops Phasor & EMT models to accelerate the integration of renewables in modern transmission systems.
   * Performs novel research on the impact of Geomagnetic Disturbance’s on the nations electric grid.
   * Applies modern mathematics to solve open problems in energy and power research.
 
 
-* **SpaceX**: High Voltage Intern
+* High Voltage Intern, SpaceX
   * Jan 2022 - Aug 2023
   * Designed a site-wide SCADA system to monitor and automate the site microgrid using Ignition as the front end.
   * Switchgear & transformer installation, design, and coordination for mission-critical loads (5kV & 35kV)
@@ -38,7 +37,8 @@ Work experience
   * Automated various power distribution tasks such as load-shedding, interactive fuel-consumption projector, and predicative site-load calculator that is still utilized during launch operations.
   * Coordinated with other SpaceX production and launch sites to create a standardized SCADA system. Performed transient analysis of synchronization anomalies to discover coordination errors. 
   
-* **ICS Texas**: Controls System Intern *(Summer 2020 & 2021)*
+* Controls System Intern, ICS Texas
+  * Summer 2020 - 2021
   * Designed and implemented control systems for numerous applications including natural gas sites, boiler systems, and production facilities. Primarily completed with Allen Bradley PLC hardware.
   * Mastered AutoCAD for the design of control panels that were manufactured in-house. Developed an automated AutoCAD program in LISP to synthesize to accelerate manufacturing.
 
