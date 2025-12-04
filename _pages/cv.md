@@ -24,9 +24,8 @@ Work experience
   * Performs novel research on the impact of Geomagnetic Disturbance’s on the nations electric grid.
   * Applies modern mathematics to solve open problems in energy and power research.
 
-
-* High Voltage Intern, SpaceX, 2022-2023
-  * Two Summers and One Co-Op
+* High Voltage Intern, SpaceX
+  * Two Summers and One Co-Op, 2022-2023
   * Designed a site-wide SCADA system to monitor and automate the site microgrid using Ignition as the front end.
   * Switchgear & transformer installation, design, and coordination for mission-critical loads (5kV & 35kV)
   * Responsible for differential and over-current protection on critical feeder lines to production and launch-pad.
@@ -38,7 +37,7 @@ Work experience
   * Coordinated with other SpaceX production and launch sites to create a standardized SCADA system. Performed transient analysis of synchronization anomalies to discover coordination errors. 
   
 * Controls System Intern, ICS Texas
-  * Summer 2020 - 2021
+  * Two Summers 2020 - 2021
   * Designed and implemented control systems for numerous applications including natural gas sites, boiler systems, and production facilities. Primarily completed with Allen Bradley PLC hardware.
   * Mastered AutoCAD for the design of control panels that were manufactured in-house. Developed an automated AutoCAD program in LISP to synthesize to accelerate manufacturing.
 
