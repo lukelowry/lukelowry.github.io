@@ -394,6 +394,30 @@ def create_cv_json(md_file, config_file, repo_root, output_file):
     
     # Add teaching
     #cv_json["teaching"] = parse_teaching(os.path.join(repo_root, "_teaching"))
+
+    cv_json['awards'] =   [
+        {
+        "name": "ECEN Department Poster Award",
+        "event": "Texas A&M University",
+        "date": "2025-11-01",
+        "location": "College Station, Texas",
+        "description": "2nd Place"
+        },
+        {
+        "name": "Michael Powell Graduate Fellowship",
+        "event": "Texas A&M University",
+        "date": "2024-03-01",
+        "location": "College Station, Texas",
+        "description": ""
+        }
+        {
+        "name": "Thomas Powell ’62 Fellowship",
+        "event": "Texas A&M University",
+        "date": "2024-03-01",
+        "location": "College Station, Texas",
+        "description": ""
+        }
+    ]
     
     # Add portfolio
     cv_json["portfolio"] = parse_portfolio(os.path.join(repo_root, "_portfolio"))
@@ -427,3 +451,22 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+"""
+NOTE Must manually add awards
+"presentations": [
+    {
+      "name": "Voltage Stability in Non-Uniform Geomagnetic Disturbances",
+      "event": "Texas A&M University",
+      "date": "2024-03-01",
+      "location": "College Station, Texas",
+      "description": ""
+    },
+    {
+      "name": "Modern Methods in Electromagnetic Transient Simulations",
+      "event": "Texas A&M University",
+      "date": "2024-03-01",
+      "location": "College Station, Texas",
+      "description": ""
+    },
+"""

@@ -126,6 +126,29 @@
       "summary": ""
     }
   ],
+  "Awards & Fellowships": [
+    {
+      "name": "ECEN Department Poster Award",
+      "event": "Texas A&M University",
+      "date": "2025-11-01",
+      "location": "College Station, Texas",
+      "description": "2nd Place"
+    },
+    {
+      "name": "Michael Powell Graduate Fellowship",
+      "event": "Texas A&M University",
+      "date": "2024-03-01",
+      "location": "College Station, Texas",
+      "description": ""
+    }
+    {
+      "name": "Thomas Powell ’62 Fellowship",
+      "event": "Texas A&M University",
+      "date": "2024-03-01",
+      "location": "College Station, Texas",
+      "description": ""
+    }
+  ],
   "presentations": [
     {
       "name": "Voltage Stability in Non-Uniform Geomagnetic Disturbances",
