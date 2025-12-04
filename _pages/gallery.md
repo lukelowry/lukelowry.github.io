@@ -13,4 +13,9 @@ author_profile: true
 
 ## Electric Fields
 
-<div style="width:100%;height:0;padding-bottom:30%;position:relative;"><iframe src="https://giphy.com/embed/hPjWCSDIuKL5jhLARW" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div><p><a href="https://giphy.com/gifs/hPjWCSDIuKL5jhLARW" title='Rotating Electric Field over Synthetic GIC Electric Grid Case'>via GIPHY</a></p>
+<iframe width="560" height="315" 
+  src="https://www.youtube.com/embed/-QHlN1fslkw?playlist=-QHlN1fslkw&loop=1&controls=1&rel=0" 
+  frameborder="0" 
+  allow="autoplay; encrypted-media; picture-in-picture" 
+  allowfullscreen>
+</iframe>
