@@ -27,11 +27,11 @@ Various signals that exist over the corresponding graphs such as:
 
 Length Based Laplacians
 ------
-  * <a class ='btn' href="../_data/laplace_library/DELAY/HAWAII_LENGTH.npz" download>Hawaii</a>
-  * <a class ='btn' href="../_data/laplace_library/DELAY/WECC_LENGTH.npz" download>WECC</a>
-  * <a class ='btn' href="../_data/laplace_library/DELAY/TEXAS_LENGTH.npz" download>Texas</a>
-  * <a class ='btn' href="../_data/laplace_library/DELAY/EASTWEST_LENGTH.npz" download>Eastern Inter.</a>
-  * <a class ='btn' href="../_data/laplace_library/DELAY/USA_LENGTH.npz" download>USA</a>
+  * <a class ='btn' href="../_data/laplace_library/DELAY/HAWAII_LENGTH.npz" download>Download</a>Hawaii
+  * <a class ='btn' href="../_data/laplace_library/DELAY/WECC_LENGTH.npz" download>Download</a>WECC
+  * <a class ='btn' href="../_data/laplace_library/DELAY/TEXAS_LENGTH.npz" download>Download</a>Texas
+  * <a class ='btn' href="../_data/laplace_library/DELAY/EASTWEST_LENGTH.npz" download>Download</a>Eastern Inter.
+  * <a class ='btn' href="../_data/laplace_library/DELAY/USA_LENGTH.npz" download>Download</a>USA
 
 Delay Based Laplacians
 ------
