@@ -24,9 +24,12 @@ Low-Pass Spectral Graph Filters
 
 The proposed low-pass filter \eqref{eq:lowpass} is *refinable*, as it is a self-similar rational function. The refinability of \eqref{eq:lowpass} makes it useful for signal smoothing across a range of spatial scales.
 
-$$
-\phi(\mathbf{\Lambda}) = \dfrac{I}{\mathbf{\Lambda}+I} \label{eq:lowpass}
-$$
+{% raw %}
+\begin{equation}
+\label{eq:lowpass}
+\phi(\mathbf{\Lambda}) = \dfrac{I}{\mathbf{\Lambda}+I}
+\end{equation}
+{% endraw %}
 
 
 This filter meets the admissibility criterion of a scaling kernel \eqref{eq:scaling-admiss} which is used in the SGWT \cite{sgwt-hammond}.
