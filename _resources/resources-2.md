@@ -1,4 +1,5 @@
 ---
+layout: archive
 title: "Laplacian Library"
 excerpt: "A repository of CSC Formatted Graph Laplacians <br/><img src='/images/USA_Laplacian.png'>"
 collection: resources
