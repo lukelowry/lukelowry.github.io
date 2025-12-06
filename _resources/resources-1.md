@@ -31,7 +31,7 @@ The table will eventually contain the poles and residues of various popular filt
 Low-Pass Spectral Graph Filter
 ------
 
-The proposed low-pass filter \eqref{eq:lowpass} is *refinable*, as it is a self-similar rational function. The refinability of \eqref{eq:lowpass} makes it useful for signal smoothing across a range of spatial scales. {eq:band-pass}
+The low-pass filter \eqref{eq:lowpass} is *refinable*, as it is a self-similar rational function. The refinability of \eqref{eq:lowpass} makes it useful for signal smoothing across a range of spatial scales.
 
 $$
 
@@ -52,13 +52,13 @@ $$
 Band-Pass Spectral Graph Filter
 ------
 
-A convenient closed-form wavelet generating kernel \eqref{eq:band-pass} was found to be a useful kernel as an alternative to the vector-fitting procedure if a particular filter does not need to be designed. Experiments have shown that \eqref{eq:band-pass} is sufficient for FOSL application.
+A convenient closed-form wavelet generating kernel \eqref{eq:band-pass} was found to be a useful kernel as an alternative to the vector-fitting procedure if a particular filter does not need to be designed. 
 
 $$
 \Psi(\mathbf{\Lambda}) = \dfrac{4\mathbf{\Lambda}}{(\mathbf{\Lambda}+I)^2}  \label{eq:band-pass} \tag{4} 
 $$
 
-This filter qualifies as a wavelet generating kernel for the SGWT, since \(\Psi(0)=0\) and the admissibility condition is satisfied. The admissibility constant of this band-pass filter is  \(C_f=8/3\).
+This filter qualifies as a wavelet generating kernel for the SGWT, since \\(\Psi(0)=0\\) and the admissibility condition is satisfied. The admissibility constant of this band-pass filter is  \\(C_f=8/3\\).
 
 $$
 \Psi(0)=0  \qquad\text{and}\quad \int_0^{\infty}\dfrac{\Psi^2(x)}{x}\mathrm{d}x <\infty
