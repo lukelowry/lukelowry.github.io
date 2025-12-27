@@ -28,12 +28,8 @@ latest_posts:
 ---
 
 Mantra
---------
+------------
 Indiscriminate access to secure, sustainable, and affordable energy is not a privilege; it is a right. My research and career are dedicated to making this a reality through the advancement of electrical power systems.
-
-
-This site serves as a hub for my publications, open-source tools, and 
-portfolio of my work.
 
 Large Power System Stability
 ------
