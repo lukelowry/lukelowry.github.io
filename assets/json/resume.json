@@ -123,11 +123,8 @@
   "interests": [],
   "references": [],
   "leadership": [
-      {
-      "institution": "Texas A&M University",
-      "position": "Senator",
-      "startDate": "2025-06",
-      "endDate": "",
+    {
+      "name": "Senator",
       "summary": "Graduate and Professional Student Government"
     }
   ],
