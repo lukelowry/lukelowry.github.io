@@ -183,12 +183,13 @@
     }
   ],
   "projects": [
-  {
-    "name": "Blackout USA",
-    "summary": "An educational tool for all backgrounds to understand the challenges of operating the electric grid.",
-    "highlights": ["Economic Dispatch", "Education"],
-    "startDate": "2025-12-01",
-    "endDate": "2026-02-01",
-    "url": "https://people.tamu.edu/~wyattluke.lowery/blackoutusa/"
-  }
+    {
+      "name": "Blackout USA",
+      "summary": "An educational tool for all backgrounds to understand the challenges of operating the electric grid.",
+      "highlights": ["Economic Dispatch", "Education"],
+      "startDate": "2025-12-01",
+      "endDate": "2026-02-01",
+      "url": "https://people.tamu.edu/~wyattluke.lowery/blackoutusa/"
+    }
+  ]
 }
