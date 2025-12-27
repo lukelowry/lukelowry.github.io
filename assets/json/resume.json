@@ -145,6 +145,13 @@
   ],
   "publications": [
     {
+      "name": "Using Spectral Graph Wavelets to Analyze Large Power System Oscillation Modes",
+      "publisher": "59th Hawaii International Conference on System Sciences (HICSS)",
+      "releaseDate": "2025-12",
+      "website": "",
+      "summary": ""
+    },
+    {
       "name": "Voltage Stability Interface Limits in Non-Uniform Geomagnetic Disturbances",
       "publisher": "In the proceedings of 2024 56th North American Power Symposium (NAPS)",
       "releaseDate": "2024-01-01",

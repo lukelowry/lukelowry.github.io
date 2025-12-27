@@ -43,4 +43,3 @@ engineering education
 ------
 
 There is a deficit of modern educational tools used by instructors in electrical engineering. Modern animation tools and software can be used to illuminate the student experience, reach broader audiences, and bring clarity to age-old analysis.
-\Scholar, or just disable all of them.
