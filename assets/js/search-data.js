@@ -18,7 +18,7 @@ ninja.data = [{
           },
         },{id: "nav-projects",
           title: "projects",
-          description: "A growing collection of your cool projects.",
+          description: "Completed and ongoing academic projects",
           section: "Navigation",
           handler: () => {
             window.location.href = "/projects/";
@@ -419,8 +419,8 @@ ninja.data = [{
           description: "",
           section: "Books",handler: () => {
               window.location.href = "/books/the_godfather/";
-            },},{id: "news-a-simple-inline-announcement",
-          title: 'A simple inline announcement.',
+            },},{id: "news-nominated",
+          title: 'Nominated',
           description: "",
           section: "News",},{id: "news-a-long-announcement-with-details",
           title: 'A long announcement with details',
