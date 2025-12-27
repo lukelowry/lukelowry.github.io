@@ -433,6 +433,11 @@ ninja.data = [{
           description: "A repository of CSC Formatted Graph Laplacians",
           section: "Projects",handler: () => {
               window.location.href = "/projects/2_project/";
+            },},{id: "projects-gridkit",
+          title: 'GridKit',
+          description: "Contributions to GridKit",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/3_project/";
             },},{id: "projects-blackout-usa",
           title: 'Blackout USA',
           description: "An educational tool for all backgrounds to understand the challenges of operating the electric grid.",
