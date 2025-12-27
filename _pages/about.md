@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='#'>Texas A&M University</a>. Address. Contacts. Motto. Etc.
+subtitle: <a href='#'>Texas A&M University</a>, College Station, TX
 
 profile:
   align: right
@@ -28,7 +28,7 @@ latest_posts:
 ---
 
 Mantra
-------
+--------
 Indiscriminate access to secure, sustainable, and affordable energy is not a privilege; it is a right. My research and career are dedicated to making this a reality through the advancement of electrical power systems.
 
 
