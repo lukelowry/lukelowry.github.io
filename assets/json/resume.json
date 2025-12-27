@@ -74,7 +74,7 @@
 
     {
       "name": "SpaceX",
-      "position": "Control Systems Internship",
+      "position": "Control Systems Intern",
       "website": "",
       "startDate": "2022-05",
       "endDate": "2022-08",
@@ -86,7 +86,7 @@
     },
     {
       "name": "ICS Texas",
-      "position": "Controls System Intern",
+      "position": "Control Systems Intern II",
       "website": "",
       "startDate": "2021-05",
       "endDate": "2021-08",
@@ -97,7 +97,7 @@
     }, 
     {
       "name": "ICS Texas",
-      "position": "Controls System Intern",
+      "position": "Control Systems Intern I",
       "website": "",
       "startDate": "2020-05",
       "endDate": "2020-08",
@@ -234,7 +234,6 @@
     {
       "name": "Blackout USA",
       "summary": "An educational tool for all backgrounds to understand the challenges of operating the electric grid.",
-      "highlights": ["Economic Dispatch", "Education"],
       "startDate": "2025-12-01",
       "endDate": "2026-02-01",
       "url": "https://people.tamu.edu/~wyattluke.lowery/blackoutusa/"
