@@ -164,21 +164,21 @@
       "summary": "Nomination for Best Paper in Category of Electric Energy Systems"
     },
     {
-      "name": "ECEN Department Poster Award",
-      "event": "Texas A&M University",
+      "title": "ECEN Department Poster Award",
       "date": "2025-11-01",
-      "description": "2nd Place"
+      "event": "Texas A&M University",
+      "description": "2nd Place in Department Poster Event"
     },
     {
-      "name": "Michael Powell Graduate Fellowship",
-      "event": "Texas A&M University",
+      "title": "Michael Powell Graduate Fellowship",
       "date": "2024-03-01",
+      "event": "Texas A&M University",
       "description": ""
     },
     {
-      "name": "Thomas Powell 1962 Fellowship",
-      "event": "Texas A&M University",
+      "title": "Thomas Powell 1962 Fellowship",
       "date": "2024-03-01",
+      "event": "Texas A&M University",
       "description": ""
     }
   ],
