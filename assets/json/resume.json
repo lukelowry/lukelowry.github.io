@@ -166,14 +166,15 @@
       "description": ""
     },
     {
-      "name": "Graduate Speaker - ECEN Fellowship Banquet",
-      "event": "Texas A&M University",
+      "name": "ECEN Fellowship Banquet",
+      "position": "Graduate Speaker",
       "date": "2024-03-01",
       "location": "College Station, Texas",
       "description": ""
     },
     {
-      "name": "Graduate Speaker ECEN Townhall",
+      "name": "ECEN Townhall",
+      "position": "Graduate Speaker",
       "event": "Texas A&M University",
       "date": "2024-03-01",
       "location": "College Station, Texas",
