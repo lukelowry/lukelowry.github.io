@@ -123,8 +123,11 @@
   "references": [],
   "leadership": [
     {
-      "name": "Senator",
-      "summary": "Graduate and Professional Student Government"
+      "name": "Graduate and Professional Student Government",
+      "position": "Senator",
+      "startDate": "2025-05",
+      "endDate": "",
+      "summary": "Draft legislation that upholds university values and improves the Aggie experience. Vote and represent the Department of Electrical Engineering on University policies and procedures."
     }
   ],
   "publications": [
