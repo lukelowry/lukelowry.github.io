@@ -32,7 +32,7 @@
   },
   "work": [
     {
-      "company": "Texas A&M University",
+      "name": "Texas A&M University",
       "position": "Research Assistant",
       "website": "",
       "startDate": "2023",
@@ -45,7 +45,7 @@
       ]
     },
     {
-      "company": "SpaceX",
+      "name": "SpaceX",
       "position": "High Voltage Intern",
       "website": "",
       "startDate": "2022",
@@ -61,7 +61,7 @@
       ]
     },
     {
-      "company": "SpaceX",
+      "name": "SpaceX",
       "position": "Power Systems Co-Op",
       "website": "",
       "startDate": "2022",
@@ -74,7 +74,7 @@
     },
 
     {
-      "company": "SpaceX",
+      "name": "SpaceX",
       "position": "Control Systems Internship",
       "website": "",
       "startDate": "2022",
@@ -86,7 +86,7 @@
       ]
     },
     {
-      "company": "ICS Texas",
+      "name": "ICS Texas",
       "position": "Controls System Intern",
       "website": "",
       "startDate": "2020",
