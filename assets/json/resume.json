@@ -68,8 +68,8 @@
       "endDate": "2023",
       "summary": "",
       "highlights": [
-         "Introduced solar panel expansion to decrease diesel use, turning Starbase into a 50% green energy site.",
-        "Designed a site-wide SCADA system to monitor and automate the site microgrid using Ignition as the front end.",
+        "Introduced solar panel expansion to decrease diesel use, turning Starbase into a 50% green energy site.",
+        "Designed a site-wide SCADA system to monitor and automate the site microgrid using Ignition as the front end."
       ]
     },
 
@@ -81,9 +81,8 @@
       "endDate": "2023",
       "summary": "",
       "highlights": [
-        "Automated various power distribution tasks such as load-shedding, interactive fuel-consumption projector, and predicative site-load calculator that is still utilized during launch operations.",
-        "Deployed numerous PLCs, control panels, and sensors to increase grid visibility and control using Allen Bradley, Siemens, and SEL hardware. Communication protocols used: MQTT, DNP, Modbus, Profinet, GOOSE.",
-       
+        "Automated various power distribution tasks such as load-shedding, interactive fuel-consumption projector, and predictive site-load calculator that is still utilized during launch operations.",
+        "Deployed numerous PLCs, control panels, and sensors to increase grid visibility and control using Allen Bradley, Siemens, and SEL hardware. Communication protocols used: MQTT, DNP, Modbus, Profinet, GOOSE."
       ]
     },
     {
