@@ -120,9 +120,17 @@
     }
   ],
   "skills": [],
-  "languages": [],
   "interests": [],
   "references": [],
+  "leadership": [
+      {
+      "institution": "Texas A&M University",
+      "position": "Senator",
+      "startDate": "2025-06",
+      "endDate": "",
+      "summary": "Graduate and Professional Student Government"
+    }
+  ],
   "publications": [
     {
       "name": "Voltage Stability Interface Limits in Non-Uniform Geomagnetic Disturbances",

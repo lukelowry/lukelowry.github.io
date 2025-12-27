@@ -5,77 +5,53 @@ description: a project with a background image and giscus comments
 img: assets/img/3.jpg
 importance: 2
 category: work
-giscus_comments: true
+giscus_comments: false
 ---
 
-Every project has a beautiful feature showcase page.
-It's easy to include images in a flexible 3-column grid format.
-Make your photos 1/3, 2/3, or full width.
+The following graph laplacians are provided and documented for reusability.
+They are stored in CSC data structure using the `.npz` file format.
 
-To give your project a background in the portfolio page, just add the img tag to the front matter like so:
+Needs to be validated further for the larger cases.
 
-    ---
-    layout: page
-    title: project
-    description: a project with a background image
-    img: /assets/img/12.jpg
-    ---
+Vertex Domain Features
+------
 
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/1.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/3.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    Caption photos easily. On the left, a road goes through a tunnel. Middle, leaves artistically fall in a hipster photoshoot. Right, in another hipster photoshoot, a lumberjack grasps a handful of pine needles.
-</div>
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    This image can also have a caption. It's like magic.
-</div>
+Various signals that exist over the corresponding graphs such as:
+  * Longitude
+  * Latitude
 
-You can also put regular text between your rows of images.
-Say you wanted to write a little bit about your project before you posted the rest of the images.
-You describe how you toiled, sweated, _bled_ for your project, and then... you reveal its glory in the next row of images.
+| Synthetic Case   | Verticies   | Vertex Features     |
+| --------         | ------      | ------------------- | 
+| Hawaii           | 37          | [Download]          | 
+| WECC             | 240         | [Download]()        | 
+| Texas            | 2000        | [Download]()        | 
+| Eastern Inter.   | 78000       | [Download]()        | 
+| USA              | 82000       | [Download]()        | 
 
-<div class="row justify-content-sm-center">
-    <div class="col-sm-8 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/6.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm-4 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/11.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    You can also have artistically styled 2/3 + 1/3 images, like these.
-</div>
 
-The code is simple.
-Just wrap your images with `<div class="col-sm">` and place them inside `<div class="row">` (read more about the <a href="https://getbootstrap.com/docs/4.4/layout/grid/">Bootstrap Grid</a> system).
-To make images responsive, add `img-fluid` class to each; for rounded corners and shadows use `rounded` and `z-depth-1` classes.
-Here's the code for the last row of images above:
+Length Based Laplacians
+------
+  * [Hawaii 37 Bus](/_data/laplace_library/DELAY/HAWAII_LENGTH.npz)
+  * [WECC 240 Bus](/_data/laplace_library/DELAY/WECC_LENGTH.npz)
+  * [Texas 2000 Bus](/_data/laplace_library/DELAY/TEXAS_LENGTH.npz)
+  * [Eastern 78k Bus](/_data/laplace_library/DELAY/EASTWEST_LENGTH.npz)
+  * [USA 82k Bus](/_data/laplace_library/DELAY/USA_LENGTH.npz)
 
-{% raw %}
+Delay Based Laplacians
+------
 
-```html
-<div class="row justify-content-sm-center">
-  <div class="col-sm-8 mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/6.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-  </div>
-  <div class="col-sm-4 mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/11.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-  </div>
-</div>
-```
+  * [Hawaii 37 Bus](/_data/laplace_library/DELAY/HAWAII_DELAY.npz)
+  * [WECC 240 Bus](/_data/laplace_library/DELAY/WECC_DELAY.npz)
+  * [Texas 2000 Bus](/_data/laplace_library/DELAY/TEXAS_DELAY.npz)
+  * [Eastern 78k Bus](/_data/laplace_library/DELAY/EASTWEST_DELAY.npz)
+  * [USA 82k Bus](/_data/laplace_library/DELAY/USA_DELAY.npz)
 
-{% endraw %}
+  
+Admittance Based Laplacians
+------
+
+  * [Hawaii 37 Bus](/_data/laplace_library/DELAY/HAWAII_IMPEDANCE.npz)
+  * [WECC 240 Bus](/_data/laplace_library/DELAY/WECC_IMPEDANCE..npz)
+  * [Texas 2000 Bus](/_data/laplace_library/DELAY/TEXAS_IMPEDANCE..npz)
+  * [Eastern 78k Bus](/_data/laplace_library/DELAY/EASTWEST_IMPEDANCE..npz)
+  * [USA 82k Bus](/_data/laplace_library/DELAY/USA_IMPEDANCE..npz)
