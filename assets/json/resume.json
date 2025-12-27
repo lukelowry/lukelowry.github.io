@@ -35,7 +35,7 @@
       "name": "Texas A&M University",
       "position": "Research Assistant",
       "website": "",
-      "startDate": "2023",
+      "startDate": "2024",
       "endDate": "Present",
       "summary": "",
       "highlights": [
@@ -88,12 +88,21 @@
       "name": "ICS Texas",
       "position": "Controls System Intern",
       "website": "",
-      "startDate": "2020",
-      "endDate": "2021",
+      "startDate": "2021-05",
+      "endDate": "2021-08",
       "summary": "",
       "highlights": [
-        "Two Summers 2020 - 2021",
-        "Designed and implemented control systems for numerous applications including natural gas sites, boiler systems, and production facilities. Primarily completed with Allen Bradley PLC hardware.",
+        "Designed and implemented control systems for numerous applications including natural gas sites, boiler systems, and production facilities. Primarily completed with Allen Bradley PLC hardware."
+      ]
+    }, 
+    {
+      "name": "ICS Texas",
+      "position": "Controls System Intern",
+      "website": "",
+      "startDate": "2020-05",
+      "endDate": "2020-08",
+      "summary": "",
+      "highlights": [
         "Mastered AutoCAD for the design of control panels that were manufactured in-house. Developed an automated AutoCAD program in LISP to synthesize to accelerate manufacturing."
       ]
     }
@@ -127,7 +136,11 @@
       "position": "Senator",
       "startDate": "2025-05",
       "endDate": "",
-      "summary": "Draft legislation that upholds university values and improves the Aggie experience. Vote and represent the Department of Electrical Engineering on University policies and procedures."
+      "summary": "Student Senator for the ECEN Graduate Department",
+      "highlights": [
+        "Draft legislation that upholds university values and improves the Aggie experience.",
+        "Vote and represent the Department of Electrical Engineering on University policies and procedures."
+      ]
     }
   ],
   "publications": [
@@ -156,14 +169,14 @@
   "presentations": [
     {
       "name": "Voltage Stability in Non-Uniform Geomagnetic Disturbances",
-      "event": "Texas A&M University",
+      "position": "Speaker",
       "date": "2024-03-01",
       "location": "College Station, Texas",
       "description": ""
     },
     {
       "name": "Modern Methods in Electromagnetic Transient Simulations",
-      "event": "Texas A&M University",
+      "position": "Speaker",
       "date": "2024-03-01",
       "location": "College Station, Texas",
       "description": ""
