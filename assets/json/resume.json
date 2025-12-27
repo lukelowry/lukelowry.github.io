@@ -93,7 +93,7 @@
       "institution": "Texas A&M University",
       "location": "College Station, TX",
       "area": "Electrical Engineering",
-      "studyType": "BS",
+      "studyType": "Bachelor of Science",
       "startDate": "2019",
       "endDate": "2023",
       "courses": []
@@ -166,20 +166,20 @@
     {
       "title": "ECEN Department Poster Award",
       "date": "2025-11-01",
-      "event": "Texas A&M University",
-      "description": "2nd Place in Department Poster Event"
+      "awarder": "Texas A&M University",
+      "summary": "2nd Place in Department Poster Event"
     },
     {
       "title": "Michael Powell Graduate Fellowship",
       "date": "2024-03-01",
-      "event": "Texas A&M University",
-      "description": ""
+      "awarder": "Texas A&M University",
+      "summary": ""
     },
     {
       "title": "Thomas Powell 1962 Fellowship",
       "date": "2024-03-01",
-      "event": "Texas A&M University",
-      "description": ""
+      "awarder": "Texas A&M University",
+      "summary": ""
     }
   ],
   "projects": [
