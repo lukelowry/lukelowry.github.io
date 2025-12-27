@@ -1,8 +1,8 @@
 ---
 layout: page
-title: project 2
-description: a project with a background image and giscus comments
-img: assets/img/3.jpg
+title: Laplacian Library
+description: A repository of CSC Formatted Graph Laplacians 
+img: assets/img/USA_Laplacians.jpg
 importance: 2
 category: work
 giscus_comments: false
