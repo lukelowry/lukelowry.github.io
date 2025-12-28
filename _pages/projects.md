@@ -4,8 +4,8 @@ title: projects
 permalink: /projects/
 description: Completed and ongoing academic projects 
 nav: true
-nav_order: 3
-display_categories: [work, outreach, template]
+nav_order: 2
+display_categories: [work, outreach]
 horizontal: false
 ---
 
