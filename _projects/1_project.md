@@ -6,7 +6,6 @@ img: /assets/img/USA_Wavelet.png
 importance: 1
 category: work
 bibliography: 1_project.bib
-related_publications: true
 ---
 
 Available on [PyPI](https://pypi.org/project/sgwt/) and GitHub  [here](https://github.com/lukelowry/sparse-sgwt), the `sgwt` package is free to use to accelerate your research.
