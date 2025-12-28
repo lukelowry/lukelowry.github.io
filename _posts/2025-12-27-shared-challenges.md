@@ -4,8 +4,7 @@ title: Taming Dynamic Graphs
 description: The shared challenges of Power Systems and an emerging field
 date: 2025-12-27
 tags: gsp
-citation: true
-featured: true
+featured: false
 
 authors:
   - name: Luke Lowery
