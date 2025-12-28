@@ -41,7 +41,7 @@ ninja.data = [{
         
           title: "How Power Systems Expose the Limitations of GSP",
         
-        description: "An argument for how graph signal processing is currently insufficient to handle power systems and why you should care.",
+        description: "An argument for how graph signal processing is analytically insufficient for power systems.",
         section: "Posts",
         handler: () => {
           
