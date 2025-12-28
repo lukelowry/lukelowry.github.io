@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='https://engineering.tamu.edu/electrical/index.html'>Texas A&M University</a> of College Station, TX
+subtitle: <a href='https://engineering.tamu.edu/electrical/index.html' target="_blank" rel="noopener noreferrer">Texas A&M University<span class="sr-only">(opens in a new tab/external site)</span></a> of College Station, TX
 
 profile:
   align: right
