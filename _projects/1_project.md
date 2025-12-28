@@ -5,6 +5,7 @@ description: A power systems oriented Python module for the SGWT & sparse graph 
 img: /assets/img/USA_Wavelet.png
 importance: 1
 category: work
+bibliography: 1_project.bib
 related_publications: true
 ---
 
