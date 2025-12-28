@@ -1,7 +1,7 @@
 ---
 layout: distill
-title: Limitations of Applied Graph Signal Processing
-description: Why GSP is currently insufficient for power systems and how thats about to change.
+title: Taming Dynamic Graphs
+description: The shared challenges of Power Systems and an emerging field
 date: 2025-12-27
 tags: gsp
 citation: true
