@@ -22,7 +22,7 @@ Various signals that exist over the corresponding graphs such as:
 
 | Synthetic Case   | Verticies   | Vertex Features     |
 | --------         | ------      | ------------------- | 
-| Hawaii           | 37          | [Download]          | 
+| Hawaii           | 37          | [Download]()        | 
 | WECC             | 240         | [Download]()        | 
 | Texas            | 2000        | [Download]()        | 
 | Eastern Inter.   | 78000       | [Download]()        | 
