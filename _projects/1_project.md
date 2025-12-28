@@ -8,15 +8,9 @@ category: work
 related_publications: true
 ---
 
-Every project has a beautiful feature showcase page.
-It's easy to include images in a flexible 3-column grid format.
-Make your photos 1/3, 2/3, or full width.
-
-
-
 The GitHub repository for the `sgwt` package is available [here](https://github.com/lukelowry/sparse-sgwt).
 
-I will soon upload a preprint for a TPEC paper that details the math used in the package.
+This work is derived in <d-cite key="lowery26sgwt"></d-cite> and in an upcoming conference paper.
 
 Kernel Fitted Functions
 ------
