@@ -37,7 +37,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/cv/";
           },
-        },{id: "post-a-post-that-can-be-cited",
+        },{id: "post-how-power-systems-expose-the-limitations-of-gsp",
+        
+          title: "How Power Systems Expose the Limitations of GSP",
+        
+        description: "An argument for how graph signal processing is currently insufficient to handle power systems and why you should care.",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/post-uno/";
+          
+        },
+      },{id: "post-a-post-that-can-be-cited",
         
           title: "a post that can be cited",
         
@@ -57,17 +68,6 @@ ninja.data = [{
         handler: () => {
           
             window.location.href = "/blog/2024/pseudocode/";
-          
-        },
-      },{id: "post-how-power-systems-expose-the-limitations-of-gsp",
-        
-          title: "How Power Systems Expose the Limitations of GSP",
-        
-        description: "An argument for how graph signal processing is currently insufficient to handle power systems and why you should care.",
-        section: "Posts",
-        handler: () => {
-          
-            window.location.href = "/blog/2021/post-uno/";
           
         },
       },{id: "books-the-godfather",
@@ -96,11 +96,6 @@ ninja.data = [{
           description: "A repository of CSC Formatted Graph Laplacians",
           section: "Projects",handler: () => {
               window.location.href = "/projects/2_project/";
-            },},{id: "projects-gridkit",
-          title: 'GridKit',
-          description: "Contributions to GridKit",
-          section: "Projects",handler: () => {
-              window.location.href = "/projects/3_project/";
             },},{id: "projects-blackout-usa",
           title: 'Blackout USA',
           description: "An educational tool for all backgrounds to understand the challenges of operating the electric grid.",
