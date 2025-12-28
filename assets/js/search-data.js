@@ -81,11 +81,11 @@ ninja.data = [{
             window.open("https://medium.com/@al-folio/displaying-external-posts-on-your-al-folio-blog-b60a1d241a0a?source=rss-17feae71c3c4------2", "_blank");
           
         },
-      },{id: "post-a-distill-style-blog-post",
+      },{id: "post-how-power-systems-expose-the-limitations-of-gsp",
         
-          title: "a distill-style blog post",
+          title: "How Power Systems Expose the Limitations of GSP",
         
-        description: "an example of a distill-style blog post and main elements",
+        description: "An argument for how graph signal processing is currently insufficient to handle power systems and why you should care.",
         section: "Posts",
         handler: () => {
           
