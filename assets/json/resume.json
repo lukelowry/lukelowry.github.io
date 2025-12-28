@@ -55,18 +55,18 @@
         "Switchgear & transformer installation, design, and coordination for mission-critical loads (5kV & 35kV)",
         "Responsible for differential and over-current protection on critical feeder lines to production and launch-pad.",
         "Designed & implemented 500 kW feeder and building distribution to a new production building in 4 weeks.",
-        "Co-designed the microgrid controller functionality with Tesla Engineers. Functionality allowed our Mega-Packs (smart battery storage) to create seamless transitions from the Utility to isolated island operation.",
-        "Coordinated with other SpaceX production and launch sites to create a standardized SCADA system. Performed transient analysis of synchronization anomalies to discover coordination errors."
+        "Co-designed the microgrid controller functionality with Tesla Engineers. Functionality allowed our Mega-Packs (smart battery storage) to create seamless transitions from the Utility to isolated island operation."
       ]
     },
     {
       "name": "SpaceX",
-      "position": "Power Systems Co-Op",
+      "position": "Power Systems Cooperative Education",
       "website": "",
       "startDate": "2022-08",
       "endDate": "2023-01",
       "summary": "",
       "highlights": [
+        "Coordinated with other SpaceX production and launch sites to create a standardized SCADA system. Performed transient analysis of synchronization anomalies to discover coordination errors.",
         "Introduced solar panel expansion to decrease diesel use, turning Starbase into a 50% green energy site.",
         "Designed a site-wide SCADA system to monitor and automate the site microgrid using Ignition as the front end."
       ]
@@ -74,7 +74,7 @@
 
     {
       "name": "SpaceX",
-      "position": "Control Systems Intern",
+      "position": "SCADA Intern",
       "website": "",
       "startDate": "2022-05",
       "endDate": "2022-08",
