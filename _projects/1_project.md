@@ -8,7 +8,7 @@ category: work
 related_publications: true
 ---
 
-The GitHub repository for the `sgwt` package is available [here](https://github.com/lukelowry/sparse-sgwt).
+Available on [PyPI](https://pypi.org/project/sgwt/) and GitHub  [here](https://github.com/lukelowry/sparse-sgwt), the `sgwt` package is free to use to accelerate your research.
 
 This work is derived in <d-cite key="lowery26sgwt"></d-cite> and in an upcoming conference paper.
 
@@ -33,6 +33,8 @@ The table will eventually contain the poles and residues of various popular filt
 | Modified Morlet     | 14       | [Download](/files/VF_FUNCS/MODIFIED_MORLET.json)        |
 | Shannon Wavelet     | 50      | [Download](/files/VF_FUNCS/SHANNON.json)        |
 
+
+
 Low-Pass Spectral Graph Filter
 ------
 
@@ -46,7 +48,7 @@ $$
 High-Pass Spectral Graph Filter
 ------
 
-The proposed high-pass filter \eqref{eq:highpass} acts as a container for variations over the graph below a given spatial scale.
+The high-pass filter \eqref{eq:highpass} acts as a container for variations over the graph below a given spatial scale.
 
 $$
 \mu(\mathbf{\Lambda}) = \dfrac{\mathbf{\Lambda}}{\mathbf{\Lambda}+I}  \label{eq:highpass}  \tag{3}
@@ -62,7 +64,7 @@ $$
 \Psi(\mathbf{\Lambda}) = \dfrac{4\mathbf{\Lambda}}{(\mathbf{\Lambda}+I)^2}  \label{eq:band-pass} \tag{4} 
 $$
 
-This filter qualifies as a wavelet generating kernel for the SGWT, since \\(\Psi(0)=0\\) and the admissibility condition is satisfied. The admissibility constant of this band-pass filter is  \\(C_f=8/3\\).
+This filter qualifies as a wavelet generating kernel for the SGWT, since \\(\Psi(0)=0\\) and the admissibility condition is satisfied. The admissibility constant of this band-pass filter is  \\(C_{\Psi}=8/3\\).
 
 $$
 \Psi(0)=0  \qquad\text{and}\quad \int_0^{\infty}\dfrac{\Psi^2(x)}{x}\mathrm{d}x <\infty
