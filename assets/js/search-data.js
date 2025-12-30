@@ -93,6 +93,11 @@ ninja.data = [{
           description: "a project with a background image",
           section: "Projects",handler: () => {
               window.location.href = "/projects/5_project/";
+            },},{id: "projects-spectralgraphwavelet-jl",
+          title: 'SpectralGraphWavelet.jl',
+          description: "A Julia package for Online GSP Convolutions over Dynamic Graphs",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/6_project/";
             },},{
         id: 'social-cv',
         title: 'CV',
