@@ -1,6 +1,6 @@
 ---
 layout: page
-title: ESA Extensions
+title: ESA++
 description: A fork of Easy Sim Auto to accelerate power system research
 img: assets/img/GWB.png
 importance: 3

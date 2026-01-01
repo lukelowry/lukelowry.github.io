@@ -9,7 +9,7 @@ giscus_comments: false
 ---
 
 The following graph laplacians are provided and documented for reusability.
-They are stored in CSC data structure using the `.npz` file format.
+They are stored in CSC data structure using the `.mat` file format.
 
 Needs to be validated further for the larger cases.
 
@@ -55,3 +55,5 @@ Admittance Based Laplacians
   * [Texas 2000 Bus](/assets/laplacian_library/DELAY/TEXAS_IMPEDANCE..npz)
   * [Eastern 78k Bus](/assets/laplacian_library/DELAY/EASTWEST_IMPEDANCE..npz)
   * [USA 82k Bus](/assets/laplacian_library/DELAY/USA_IMPEDANCE..npz)
+
+  If links are broken please reach me at `lukel@tamu.edu` or access them directly in the [sgwt module](https://github.com/lukelowry/sgwt/tree/main/sgwt/library)
