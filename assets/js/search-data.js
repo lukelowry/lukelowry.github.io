@@ -78,8 +78,8 @@ ninja.data = [{
           description: "A repository of CSC Formatted Graph Laplacians",
           section: "Projects",handler: () => {
               window.location.href = "/projects/2_project/";
-            },},{id: "projects-esa-extensions",
-          title: 'ESA Extensions',
+            },},{id: "projects-esa",
+          title: 'ESA++',
           description: "A fork of Easy Sim Auto to accelerate power system research",
           section: "Projects",handler: () => {
               window.location.href = "/projects/3_project/";
