@@ -9,7 +9,7 @@ bibliography: 1_project.bib
 related_publications: true
 ---
 
-Available on [PyPI](https://pypi.org/project/sgwt/) and GitHub  [here](https://github.com/lukelowry/sparse-sgwt), the `sgwt` package is free to use to accelerate your research.
+Available on [PyPI](https://pypi.org/project/sgwt/) and GitHub  [here](https://github.com/lukelowry/sgwt), the `sgwt` package is free to use to accelerate your research.
 
 This work is derived in <d-cite key="lowery26sgwt"></d-cite> and in an upcoming conference paper.
 
