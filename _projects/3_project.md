@@ -8,14 +8,9 @@ category: work
 giscus_comments: false
 ---
 
-Over my graduate education, the <a href="https://github.com/lukelowry/GridWorkBenchESA">ESA Fork</a> I developed to use `numpy` style indexing to access PowerWorld parameters through Sim Auto.
+ESA++ is an open-source Python  package for power system automation, providing a high-performance "syntax-sugar" fork of Easy SimAuto (ESA).
 
-### Example
+It streamlines interaction with PowerWorld's Simulator Automation Server (SimAuto) by transforming complex COM calls into intuitive scripts.
+- Source code on [GitHub](https://github.com/lukelowry/ESApp)
 
-As a brief showcase, you can easily retireve all fields of `Bus` objects using the following notation,
-
-```python
-data = wb[Bus,:]
-```
-
-Please see the repository for full documentation.
+The library is free to use to accelerate your research.
