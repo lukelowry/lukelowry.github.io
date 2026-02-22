@@ -68,6 +68,14 @@
 {% endif %}
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url | bust_css_cache }}">
 <link rel="canonical" href="{{ page.url | replace:'index.html','' | absolute_url }}">
+{% assign hreflangs = site.data.hreflangs %}
+{% if hreflangs %}
+  {% for entry in hreflangs %}
+    <link rel="alternate" href="{{ entry.url | absolute_url }}" hreflang="{{ entry.lang }}">
+  {% endfor %}
+{% else %}
+  <link rel="alternate" href="{{ page.url | replace:'index.html','' | absolute_url }}" hreflang="{{ site.lang }}">
+{% endif %}
 
 {% if site.enable_darkmode %}
   <!-- Dark Mode -->
