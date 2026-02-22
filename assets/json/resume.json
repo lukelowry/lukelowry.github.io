@@ -145,6 +145,13 @@
   ],
   "publications": [
     {
+      "name": "Spectral Graph Filters for Large Power Systems",
+      "publisher": "In the proceedings of 2026 IEEE Texas Power and Energy Conference (TPEC)",
+      "releaseDate": "2026-02",
+      "website": "",
+      "summary": ""
+    },
+    {
       "name": "Using Spectral Graph Wavelets to Analyze Large Power System Oscillation Modes",
       "publisher": "59th Hawaii International Conference on System Sciences (HICSS)",
       "releaseDate": "2025-12",
