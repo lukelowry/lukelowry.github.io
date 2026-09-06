@@ -1,6 +1,32 @@
 {
   "devDependencies": {
     "@shopify/prettier-plugin-liquid": "1.4.0",
-    "prettier": "3.1.1"
+    "axe-core": "4.13.0",
+    "esbuild": "0.28.2",
+    "playwright": "1.63.0",
+    "prettier": "3.1.1",
+    "purgecss": "8.0.0"
+  },
+  "dependencies": {
+    "@latkit/embed": "0.8.0",
+    "@latkit/network": "0.9.0"
+  },
+  "private": true,
+  "scripts": {
+    "assets:grids": "python tools/export-grids.py",
+    "preview": "docker compose -f compose.local.yml up --build -d",
+    "preview:stop": "docker compose -f compose.local.yml down",
+    "check:grids": "node tools/check-grids.mjs",
+    "build:css": "node tools/build-css.mjs",
+    "assets:cv": "node tools/print-cv.mjs",
+    "check:site": "node tools/check-site.mjs",
+    "check:browser": "node tools/check-browser.mjs",
+    "publications:review": "python tools/publications.py",
+    "format:check": "prettier \"tools/*.mjs\" \"assets/js/**/*.mjs\" \"assets/js/*.js\" \".github/*.yml\" \".github/workflows/*.yml\" \"package.json\" --check \"_includes/**/*.liquid\" \"_layouts/**/*.liquid\" \"assets/css/site.css\" \"assets/css/grids.css\"",
+    "build:js": "node tools/build-js.mjs",
+    "prepreview": "npm run build:js"
+  },
+  "engines": {
+    "node": ">=24 <25"
   }
 }

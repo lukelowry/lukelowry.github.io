@@ -1,49 +1,35 @@
-# based on https://distresssignal.org/busting-css-cache-with-jekyll-md5-hash
-# https://gist.github.com/BryanSchuetz/2ee8c115096d7dd98f294362f6a667db
+require 'digest'
+
 module Jekyll
   module CacheBust
-    class CacheDigester
-      require 'digest/md5'
-      require 'pathname'
+    def bust_file_cache(url)
+      site = @context.registers[:site]
+      relative = url.to_s.split('?').first.match(%r{(?:^|/)(assets/.*)$})&.captures&.first
+      return url unless relative
 
-      attr_accessor :file_name, :directory
+      path = File.expand_path(relative, site.source)
+      return url unless path.start_with?(File.expand_path('assets', site.source) + File::SEPARATOR)
 
-      def initialize(file_name:, directory: nil)
-        self.file_name = file_name
-        self.directory = directory
-      end
-
-      def digest!
-        [file_name, '?', Digest::MD5.hexdigest(file_contents)].join
-      end
-
-      private
-
-      def directory_files_content
-        target_path = File.join(directory, '**', '*')
-        Dir[target_path].map{|f| File.read(f) unless File.directory?(f) }.join
-      end
-
-      def file_content
-        local_file_name = file_name.slice((file_name.index('assets/')..-1))
-        File.read(local_file_name)
-      end
-
-      def file_contents
-        is_directory? ? file_content : directory_files_content
-      end
-
-      def is_directory?
-        directory.nil?
-      end
+      versioned_asset(url, Digest::SHA256.file(path).hexdigest)
     end
 
-    def bust_file_cache(file_name)
-      CacheDigester.new(file_name: file_name, directory: nil).digest!
+    def bust_css_cache(url)
+      site = @context.registers[:site]
+      digest = Digest::SHA256.new
+      # main.scss contains the Liquid max-width setting; include it and its input.
+      digest << site.config['max_width'].to_s
+      paths = [File.join(site.source, 'assets/css/main.scss')]
+      paths.concat(Dir.glob(File.join(site.source, '_sass/**/*.scss')).sort)
+      paths.each do |path|
+        digest << path.delete_prefix(site.source) << "\0" << File.binread(path)
+      end
+      versioned_asset(url, digest.hexdigest)
     end
 
-    def bust_css_cache(file_name)
-      CacheDigester.new(file_name: file_name, directory: 'assets/_sass').digest!
+    private
+
+    def versioned_asset(url, digest)
+      "#{url}#{url.include?('?') ? '&' : '?'}#{digest[0, 16]}"
     end
   end
 end

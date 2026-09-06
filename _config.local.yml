@@ -1,0 +1,5 @@
+url: http://localhost:4180
+enable_google_analytics: false
+enable_google_verification: false
+livereload: true
+noindex: true

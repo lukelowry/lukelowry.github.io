@@ -11,11 +11,16 @@ layout: default
 <div class="post">
   <header class="post-header">
     <h1 class="post-title">{{ page.title }}</h1>
-    <p class="post-description">{{ page.description }}</p>
+    {% if page.description != blank %}
+      <p class="post-description">{{ page.description }}</p>
+    {% endif %}
   </header>
 
   <article>
     {{ content }}
+    {% if page.grid_showcase %}
+      {% include grid-showcase.liquid %}
+    {% endif %}
   </article>
 
   {% if page.related_publications %}
@@ -23,9 +28,5 @@ layout: default
     <div class="publications">
       {% bibliography --cited_in_order %}
     </div>
-  {% endif %}
-
-  {% if site.giscus and page.giscus_comments %}
-    {% include giscus.liquid %}
   {% endif %}
 </div>

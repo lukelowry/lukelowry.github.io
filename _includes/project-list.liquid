@@ -1,0 +1,16 @@
+{% assign sorted_projects = include.projects | sort: 'importance' %}
+<div class="projects">
+  {% if site.enable_project_categories and include.categories %}
+    {% for category in include.categories %}
+      {% assign category_projects = sorted_projects | where: 'category', category %}
+      {% if category_projects.size > 0 %}
+        <section aria-labelledby="{{ category | slugify }}">
+          <h2 class="category" id="{{ category | slugify }}">{{ category | escape }}</h2>
+          {% include project-grid.liquid projects=category_projects horizontal=include.horizontal %}
+        </section>
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    {% include project-grid.liquid projects=sorted_projects horizontal=include.horizontal %}
+  {% endif %}
+</div>

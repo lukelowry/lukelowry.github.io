@@ -6,9 +6,19 @@ _site
 .DS_store
 .ruby-version
 .tweet-cache
-Gemfile.lock
 assets/libs/
 node_modules/
-vendor
+/vendor/
 .idea
 .venv
+
+# Local previews, audit artifacts, and source models (published exports are in assets/grids).
+output/
+.playwright-mcp/
+.playwright-cli/
+__pycache__/
+*.py[cod]
+assets/json/*.case.json
+
+# npm dependency bundles produced by build:js.
+assets/generated/

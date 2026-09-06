@@ -1,3 +1,2 @@
-nbconvert
-pyyaml
-scholarly
+-r tools/requirements-grids.txt
+-r tools/requirements-publications.txt

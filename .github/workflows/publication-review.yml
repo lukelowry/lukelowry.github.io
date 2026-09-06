@@ -1,0 +1,41 @@
+name: Review publication records
+on:
+  schedule:
+    - cron: "23 9 * * 2"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      [
+        "tools/publications.py",
+        "tools/test-publications.py",
+        "tools/requirements-publications.txt",
+        "_bibliography/papers.bib",
+        "_data/socials.yml",
+        ".github/workflows/publication-review.yml",
+      ]
+permissions:
+  contents: read
+concurrency:
+  group: publication-review
+  cancel-in-progress: false
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: tools/requirements-publications.txt
+      - run: python -m pip install -r tools/requirements-publications.txt
+      - run: python tools/test-publications.py
+      - run: python tools/publications.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: publication-review
+          path: output/publications/
+          retention-days: 30
+      - run: cat output/publications/review.md >> "$GITHUB_STEP_SUMMARY"

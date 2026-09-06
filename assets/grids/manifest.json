@@ -1,0 +1,45 @@
+{
+  "USA": {
+    "vertices": 82000,
+    "edges": 104121,
+    "visibleEdges": 83457,
+    "visibleVertices": 69835,
+    "visibleVoltageLevels": [
+      69.0,
+      100.0,
+      115.0,
+      138.0,
+      161.0,
+      230.0,
+      345.0,
+      500.0,
+      765.0
+    ],
+    "unknownVoltageVertices": 0,
+    "polylinePoints": 0,
+    "sourceBytes": 76036911,
+    "jsonBytes": 3415808,
+    "gzipBytes": 1123560,
+    "sourceSha256": "e7b9ff947d27d827e0b17bf72bdb01376ccdad715f06d4ff9c041158f00f9f2a"
+  },
+  "EuropeA": {
+    "vertices": 8807,
+    "edges": 12252,
+    "visibleEdges": 11168,
+    "visibleVertices": 8725,
+    "visibleVoltageLevels": [
+      132.0,
+      220.0,
+      300.0,
+      380.0,
+      500.0,
+      750.0
+    ],
+    "unknownVoltageVertices": 82,
+    "polylinePoints": 14111,
+    "sourceBytes": 10306432,
+    "jsonBytes": 600301,
+    "gzipBytes": 276912,
+    "sourceSha256": "6f5d29e883e311a6a6e3809d49b9022a4814cec2941c1eedc8da001d67e366e7"
+  }
+}

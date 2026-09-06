@@ -1,0 +1,12 @@
+services:
+  website:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    ports:
+      - "127.0.0.1:4180:8080"
+      - "127.0.0.1:35729:35729"
+    volumes:
+      - .:/srv/site
+    environment:
+      JEKYLL_ENV: production

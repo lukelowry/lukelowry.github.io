@@ -1,0 +1,7 @@
+FROM ruby:3.3.5-slim
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential git nodejs imagemagick pkg-config libffi-dev && rm -rf /var/lib/apt/lists/*
+WORKDIR /srv/site
+COPY Gemfile Gemfile.lock ./
+RUN gem install bundler -v 2.7.2 --no-document && bundle install
+EXPOSE 8080 35729
+CMD ["bundle", "exec", "jekyll", "serve", "--host", "0.0.0.0", "--port", "8080", "--config", "_config.yml,_config.local.yml", "--livereload", "--force_polling"]

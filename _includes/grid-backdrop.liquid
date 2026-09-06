@@ -1,0 +1,65 @@
+{% assign grid_cases = 'USA,EuropeA' | split: ',' %}
+{% for grid_case in grid_cases %}
+  {% assign grid_label = grid_case %}
+  {% if grid_case == 'EuropeA' %}{% assign grid_label = 'Europe' %}{% endif %}
+  <div class="grid-backdrop-track" data-case="{{ grid_case }}" aria-hidden="true" inert>
+    <div
+      class="grid-backdrop"
+      data-grid-backdrop
+      data-case="{{ grid_case }}"
+      data-assets="{{ '/assets/grids/' | relative_url }}"
+      data-runtime="{{ '/assets/generated/latkit.js' | relative_url | bust_file_cache }}"
+    >
+      <div class="grid-backdrop-poster">
+        {% assign poster_light = grid_case | prepend: '/assets/grids/' | append: '-layers-light.webp' %}
+        {% assign poster_dark = grid_case | prepend: '/assets/grids/' | append: '-layers-dark.webp' %}
+        <img
+          class="grid-poster grid-poster-light"
+          src="{{ poster_light | relative_url | bust_file_cache }}"
+          alt=""
+          width="1600"
+          height="820"
+          loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+          decoding="async"
+        >
+        <img
+          class="grid-poster grid-poster-dark"
+          src="{{ poster_dark | relative_url | bust_file_cache }}"
+          alt=""
+          width="1600"
+          height="820"
+          loading="lazy"
+          decoding="async"
+        >
+      </div>
+      <latkit-network
+        projection="tilt"
+        interaction="none"
+        keyboard="false"
+        focus-enabled="true"
+        tabindex="-1"
+        aria-label="{{ grid_label }} network"
+        vertex-color="kv"
+        edge-color="branch_kv"
+        vertex-visible="visible_vertices"
+        edge-visible="visible_edges"
+        vertex-height="voltage_height"
+        vertex-height-domain="0 1"
+        daylight="false"
+        earth-axis="false"
+        borders="false"
+        poles="false"
+        motion="auto"
+      ></latkit-network>
+    </div>
+  </div>
+  <div class="grid-backdrop-caption" data-grid-caption="{{ grid_case }}" role="region" aria-label="{{ grid_label }} network information" hidden>
+    <div class="grid-backdrop-label">
+      <span class="grid-backdrop-readout">{{ grid_label }} &middot; Hover or select a bus or branch.</span>
+      <button type="button" data-grid-clear aria-label="Clear {{ grid_label }} selection" hidden>Clear</button>
+    </div>
+    <p class="grid-backdrop-help" hidden>Left/Right: select a bus. Up/Down: select a branch. Escape: clear. Tab: leave.</p>
+    <span class="sr-only" role="status" aria-atomic="true"></span>
+  </div>
+{% endfor %}
+<script type="module" src="{{ '/assets/js/grids/index.mjs' | relative_url | bust_file_cache }}"></script>
