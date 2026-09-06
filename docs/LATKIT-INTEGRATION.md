@@ -2,7 +2,7 @@
 
 `@latkit/embed` 0.8.0 and `@latkit/network` 0.9.0 are exact npm dependencies;
 `package-lock.json` pins the full dependency graph. `npm run build:js` bundles registration,
-`parseNetwork`, and the native `spotlight` preset into ignored `assets/generated/latkit.js`,
+`parseNetwork` into ignored `assets/generated/latkit.js`,
 with license notices and version metadata. Preview and CI build it before Jekyll.
 No Latkit implementation is maintained in this repository or fetched at browser runtime from a CDN.
 
@@ -12,6 +12,9 @@ No Latkit implementation is maintained in this repository or fetched at browser 
 
 - `home.mjs`: lazy loading, named fields, native paint readiness, lighting, and section reveals.
 - `inspection.mjs`: pinned readout, accessible exposed bus/branch browsing, and touch cancellation.
+- `electricity.mjs` / `pulse.mjs`: a custom native fragment shade, pointer wake, and visible-graph pulses.
+- `vertex-ripple.mjs`: native vertex radii, local pressure, sweep waves, and connected rebound.
+- `effect-preference.mjs`: shared site-level motion choice, persisted in local storage.
 - `framing.mjs`: north-up, oversized USA/Europe compositions (2.10/2.15 zoom).
 - `data.mjs` / `voltage.mjs`: cached input, native parsing, bus IDs, visibility, and voltage colors.
 - `wave.mjs` / `signal.mjs`: the separate Projects animation and its controls.
@@ -22,9 +25,32 @@ A 120 ms settled adjustment restores our custom subset fit and asymmetric alignm
 and at most two corrections. Whole-topology fit padding cannot express these oversized compositions.
 The western USA and eastern Europe intentionally extend offscreen; visible coastline checks protect Maine and Florida.
 
-Pointer lighting changes native shade uniforms, without per-bus processing or channel uploads.
-A 220 px soft light follows mouse/pen input with a 90 ms easing constant and settles to idle.
-Reduced motion disables it. Touch retains native tap selection and page gestures.
+The custom `Shade` uses Latkit's existing render loop and its 64-float uniform block. A 190 px
+light follows mouse/pen input with 70 ms easing; fast movement leaves a 680 ms wake on the wires.
+The network itself responds through `vertexSize`: a 115 px pressure field enlarges nearby buses
+by up to 65%; fast sweeps emit bounded, 900 ms expanding size waves. A slight contraction follows
+the crest. There is no cursor overlay. Visual pointer tracking extends
+across page content without changing native picking. After a
+680 ms dwell near an exposed bus, one pulse branches through visible connections. Selecting a
+bus or branch (including by keyboard or touch) launches a stronger pulse. These are illustrative
+hop-distance signals, not electrical simulations.
+
+`pulse.mjs` builds visible adjacency once, then computes at most 18 hops when a pulse starts.
+It uploads `vertexShade` and `edgeShade` once each per pulse. The GPU advances the light from
+those fixed distances; vertex radii follow the same hop front with a small rebound. All size
+contributions are clamped to 0.85-1.85 times the resting radius. The source voltage colors,
+positions, heights, edge widths, camera pose, and selection remain independent.
+
+`vertex-ripple.mjs` caches native projected positions in spatial buckets after each settled fit.
+Only nearby buckets are visited for pointer waves; the reusable full size buffer is uploaded through
+`vertexSize` when it changes. Matching `sizeRange` and channel domains preserve a radius of exactly
+1 at rest. Cancellation or complete decay clears the channel. Native picking follows these same
+radii. No extra animation loop is installed; size changes share the shade tick.
+The light, wake, and pulse settle to idle. Scroll, blur, resize, and page hiding cancel animation;
+system reduced motion disables the shade and size animation by default. The caption explains this and offers
+"Enable effects". An explicit site choice enables the network effects, persists across reloads,
+and can be reset with "Use system setting". It does not change OS or browser preferences. Local
+preview links support `?effects=on`, `off`, or `system`. Touch retains native tap selection and page gestures.
 Offscreen and hidden-tab scenes pause. Shade failure leaves the basic network usable;
 missing WebGPU or a failed scene leaves its static poster.
 
@@ -41,12 +67,18 @@ These are verified against network 0.9.0; remove them when upstream behavior cov
 - `painted` is per attachment, not per data revision. Await `ready`, attachment, and paint, then allow
   the configured fields and final composition two frame opportunities before hiding the poster.
 - Native shader CSS coordinates use one minimum backing/CSS ratio for both axes. Quantized asymmetric
-  resize can shift the light slightly. Fix this in Latkit; do not copy its shader into this website.
+  resize can shift the light slightly. That coordinate conversion remains owned by Latkit.
 
 ## Verification
 
 Run the README checks. Browser coverage includes coastline geometry, hover/selection/cycling,
 keyboard access, touch scrolling/cancellation, resize retention, themes, reduced motion, and fallback.
+Browser checks require real vertex-size channel changes, restored radii, idle rendering, no cursor
+overlay, and visible network shader output, including explicit
+opt-in while the browser still reports reduced motion. This covers the actual Windows/Chrome
+configuration that disabled the initial implementation despite ordinary motion-enabled tests passing.
+Grid checks also cover pulse forks, cycles, hidden connections, disconnected components, dwell
+rearming, wake decay, local pressure, outward waves, size bounds, rebound, cancellation, and return to idle.
 Target 16.7 ms frames on a 60 Hz display; performance is hardware-dependent. A physical touch-device
 and screen-reader review remains appropriate before publishing.
 

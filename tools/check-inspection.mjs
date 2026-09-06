@@ -42,11 +42,14 @@ export async function checkInspection(page, name) {
       longEdges.push({ index, length: (coords[a * 2] - coords[b * 2]) ** 2 + (coords[a * 2 + 1] - coords[b * 2 + 1]) ** 2 });
     }
     longEdges.sort((a, b) => b.length - a.length);
-    for (const { index } of longEdges.slice(0, 300)) {
+    // Use the largest supported radii when finding a branch, so its target stays
+    // selectable throughout both pressure and graph pulses (native pick radius is 4px).
+    element.network.setChannel("vertexSize", new Float32Array(model.topology.vertexCount).fill(1.85), [0.85, 1.85]);
+    for (const { index } of longEdges.slice(0, 500)) {
       const a = element.network.locate({ kind: "vertex", index: edges[index * 2] });
       const b = element.network.locate({ kind: "vertex", index: edges[index * 2 + 1] });
       if (!a || !b) continue;
-      for (const t of [0.5, 0.25, 0.75]) {
+      for (const t of Array.from({ length: 17 }, (_, i) => (i + 2) / 20)) {
         const p = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
         if (!exposed(p)) continue;
         const hits = element.network.hitTest(...p);
@@ -58,6 +61,7 @@ export async function checkInspection(page, name) {
       }
       if (points.edge) break;
     }
+    element.network.setChannel("vertexSize", null);
     for (const p of [
       [rect.left + rect.width * 0.3, 140],
       [rect.left + rect.width * 0.5, innerHeight - 200],
@@ -137,7 +141,12 @@ export async function checkInspection(page, name) {
   await page.keyboard.press("Enter");
   assert.match(await readout.innerText(), /Hover or select/);
   await page.keyboard.press("Tab");
-  assert.equal(await page.evaluate(() => document.activeElement.tagName), "A", "Tab must leave the network");
+  assert.equal(
+    await caption.getByRole("button", { name: "Pause effects", exact: true }).evaluate((button) => button === document.activeElement),
+    true
+  );
+  await page.keyboard.press("Tab");
+  assert.equal(await page.evaluate(() => document.activeElement.tagName), "A", "Tab must leave the network after its effects control");
 
   await move(points.vertex);
   await page.mouse.down();
@@ -148,6 +157,7 @@ export async function checkInspection(page, name) {
   const label = await caption.boundingBox();
   assert.ok(label.y >= 80 && label.y + label.height <= (await page.viewportSize()).height, "Label must fit the viewport");
 
+  await checkPulse(page, root, points.vertex);
   const scroll = await page.evaluate(() => scrollY);
   await move(points.empty);
   await page.mouse.wheel(0, name === "USA" ? 80 : -80);
@@ -235,14 +245,14 @@ async function checkLighting(page, root, edge) {
       [90, 30],
     ]) {
       const p = [edge.x + dx, edge.y + dy];
-      if (document.elementFromPoint(...p) === element && !element.network.hitTest(...p, 22).length) return { x: p[0], y: p[1] };
+      if (document.elementFromPoint(...p) === element && !element.network.hitTest(...p, 32).length) return { x: p[0], y: p[1] };
     }
     return null;
   }, edge);
   assert.ok(point, "Lighting needs an exposed blank target near a branch");
   const clip = { x: Math.max(0, Math.floor(edge.x - 75)), y: Math.max(80, Math.floor(edge.y - 75)), width: 150, height: 150 };
   await page.mouse.move(700, 30);
-  await page.waitForTimeout(900);
+  await page.waitForTimeout(1600);
   const before = await page.screenshot();
   await root.evaluate((root) => {
     const network = root.querySelector("latkit-network").network;
@@ -250,7 +260,8 @@ async function checkLighting(page, root, edge) {
       setChannel = network.setChannel;
     window.__lightingCheck = {
       frames: [],
-      channels: 0,
+      channels: [],
+      largest: 1,
       restore() {
         GPUQueue.prototype.submit = submit;
         network.setChannel = setChannel;
@@ -262,26 +273,49 @@ async function checkLighting(page, root, edge) {
       return submit.apply(this, args);
     };
     network.setChannel = function (...args) {
-      window.__lightingCheck.channels++;
+      window.__lightingCheck.channels.push(args[0]);
+      if (args[0] === "vertexSize" && args[1]) {
+        window.__lightingCheck.largest = Math.max(
+          window.__lightingCheck.largest,
+          args[1].reduce((max, value) => Math.max(max, value), 1)
+        );
+      }
       return setChannel.apply(this, args);
     };
   });
   try {
+    await page.mouse.move(point.x - 50, point.y + 30);
+    await page.waitForTimeout(90);
     await page.mouse.move(point.x, point.y);
-    await page.waitForTimeout(900);
+    await page.waitForTimeout(90);
+    assert.ok(await page.evaluate(() => window.__lightingCheck.largest > 1.15), "Pointer movement must change native vertex radii");
+    assert.equal(await root.locator(".grid-electric-trace").count(), 0, "The network has no separate cursor overlay");
+    await page.waitForTimeout(1600);
     const lit = await page.screenshot();
-    assert.notDeepEqual(lit, before, "Native spotlight must visibly recolor nearby network geometry");
+    const visibleChange = await pixelDifference(page, lit, before, clip);
+    assert.ok(
+      visibleChange.maximum >= 12 && visibleChange.changedFraction >= 0.001,
+      `The light needs measurable local contrast: ${JSON.stringify(visibleChange)}`
+    );
     const settled = await page.evaluate(() => window.__lightingCheck.frames.length);
     await page.waitForTimeout(250);
     assert.equal(await page.evaluate(() => window.__lightingCheck.frames.length), settled, "A settled light must stop submitting frames");
     await page.mouse.move(700, 30);
-    await page.waitForTimeout(900);
+    await page.waitForTimeout(1600);
     const after = await page.screenshot();
     await assertSamePixels(page, after, before, clip, "Leaving blank space must restore the unlit network");
     const departed = await page.evaluate(() => window.__lightingCheck.frames.length);
     await page.waitForTimeout(250);
     assert.equal(await page.evaluate(() => window.__lightingCheck.frames.length), departed, "Leave fade must settle back to idle");
-    assert.equal(await page.evaluate(() => window.__lightingCheck.channels), 0, "Lighting must not upload data channels");
+    assert.ok(
+      await page.evaluate(() => window.__lightingCheck.channels.length > 0 && window.__lightingCheck.channels.every((name) => name === "vertexSize")),
+      "Pointer movement changes only the native size channel"
+    );
+    assert.equal(
+      await root.evaluate((root) => root.querySelector("latkit-network").network.getChannelDomain("vertexSize")),
+      null,
+      "Leaving restores native radii"
+    );
     const layout = await page.evaluate(() => [scrollY, document.body.scrollHeight]);
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.waitForFunction(
@@ -302,12 +336,12 @@ async function checkLighting(page, root, edge) {
     await page.emulateMedia({ reducedMotion: "no-preference" });
   }
   console.log(
-    `${await root.getAttribute("data-case")}: native spotlight output, idle, blank-space leave, zero channel writes, and reduced motion passed.`
+    `${await root.getAttribute("data-case")}: electrical light output, idle, blank-space leave, native radius changes, and reduced motion passed.`
   );
 }
 
-async function assertSamePixels(page, actual, expected, clip, message) {
-  const difference = await page.evaluate(
+async function pixelDifference(page, actual, expected, clip) {
+  return page.evaluate(
     async ({ images, clip }) => {
       const pixels = await Promise.all(
         images.map(async (url) => {
@@ -332,6 +366,91 @@ async function assertSamePixels(page, actual, expected, clip, message) {
     },
     { images: [actual, expected].map((buffer) => `data:image/png;base64,${buffer.toString("base64")}`), clip }
   );
+}
+
+async function assertSamePixels(page, actual, expected, clip, message) {
+  const difference = await pixelDifference(page, actual, expected, clip);
   // GPU color quantization can differ by one unit after a new uniform submission.
   assert.ok(difference.maximum <= 2 && difference.changedFraction < 0.005, `${message}: ${JSON.stringify(difference)}`);
+}
+
+async function checkPulse(page, root, point) {
+  await page.mouse.move(700, 30);
+  await page.waitForTimeout(1600);
+  await root.evaluate(async (root) => {
+    const { loadGrid } = await import("/assets/js/grids/data.mjs");
+    const model = await loadGrid(root);
+    const network = root.querySelector("latkit-network").network;
+    const original = network.setChannel;
+    window.__pulseCheck = {
+      uploads: [],
+      sizes: [],
+      restore: () => {
+        network.setChannel = original;
+      },
+    };
+    network.setChannel = function (name, values, ...rest) {
+      if (name === "vertexSize") {
+        window.__pulseCheck.sizes.push(values ? values.reduce((max, value) => Math.max(max, value), 1) : 1);
+        return original.call(this, name, values, ...rest);
+      }
+      const mask = name === "vertexShade" ? model.visibleVertices : model.visibleEdges;
+      window.__pulseCheck.uploads.push({
+        name,
+        reached: values.reduce((n, value) => n + Number(value >= 0), 0),
+        valid: values.every((value, i) => Number.isFinite(value) && (mask[i] || value < 0)),
+      });
+      return original.call(this, name, values, ...rest);
+    };
+  });
+  try {
+    await page.mouse.move(point.x, point.y);
+    await page.waitForFunction(() => window.__pulseCheck.uploads.length === 2);
+    await page.waitForTimeout(150);
+    assert.ok(await page.evaluate(() => window.__pulseCheck.sizes.some((size) => size > 1.7)), "A connected pulse must enlarge actual vertices");
+    const pulsing = await page.screenshot();
+    await page.waitForTimeout(2900);
+    const settled = await page.screenshot();
+    const clip = {
+      x: Math.max(0, Math.floor(point.x - 100)),
+      y: Math.max(80, Math.floor(point.y - 100)),
+      width: Math.min(200, (await page.viewportSize()).width - Math.max(0, Math.floor(point.x - 100))),
+      height: 200,
+    };
+    const changed = await pixelDifference(page, pulsing, settled, clip);
+    assert.ok(changed.maximum >= 8, `A dwell pulse must change network pixels: ${JSON.stringify(changed)}`);
+    const uploads = await page.evaluate(() => window.__pulseCheck.uploads);
+    assert.deepEqual(
+      uploads.map((u) => u.name),
+      ["vertexShade", "edgeShade"],
+      "One dwell binds only two shade channels, once"
+    );
+    assert.ok(
+      uploads.every((u) => u.valid && u.reached > 0),
+      "Pulses reach visible connections only"
+    );
+    await page.mouse.click(point.x, point.y);
+    await page.waitForFunction(() => window.__pulseCheck.uploads.length === 4);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.waitForFunction(
+      (name) => document.querySelector(`[data-grid-backdrop][data-case="${name}"]`).dataset.lighting === "off",
+      await root.getAttribute("data-case")
+    );
+    await page.mouse.click(point.x, point.y);
+    await page.waitForTimeout(800);
+    assert.equal(await page.evaluate(() => window.__pulseCheck.uploads.length), 4, "Reduced motion suppresses selection pulses too");
+    await root.locator("canvas").press("Escape");
+  } finally {
+    await page.evaluate(() => {
+      window.__pulseCheck.restore();
+      delete window.__pulseCheck;
+    });
+    await page.mouse.move(700, 30);
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.waitForFunction(
+      (name) => document.querySelector(`[data-grid-backdrop][data-case="${name}"]`).dataset.lighting === "on",
+      await root.getAttribute("data-case")
+    );
+  }
+  console.log(`${await root.getAttribute("data-case")}: visible dwell pulse, one-time field uploads, selection pulse, and reduced motion passed.`);
 }

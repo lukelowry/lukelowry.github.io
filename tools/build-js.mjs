@@ -8,7 +8,7 @@ await mkdir(output, { recursive: true });
 const result = await build({
   absWorkingDir: root,
   stdin: {
-    contents: 'import "@latkit/embed/register"; export { parseNetwork } from "@latkit/embed"; export { spotlight } from "@latkit/network/shades";',
+    contents: 'import "@latkit/embed/register"; export { parseNetwork } from "@latkit/embed";',
     resolveDir: root,
     sourcefile: "latkit-entry.js",
   },

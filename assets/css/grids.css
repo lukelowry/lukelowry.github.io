@@ -483,6 +483,17 @@ html[data-theme="dark"] .grid-poster-dark {
   background: var(--global-code-bg-color);
   cursor: pointer;
 }
+.grid-backdrop-play-hint {
+  display: none;
+  margin: 0.45rem 0 0;
+  font-size: 0.75rem;
+  color: var(--global-text-color);
+}
+@media (hover: hover) and (pointer: fine) {
+  .grid-backdrop-play-hint {
+    display: block;
+  }
+}
 .grid-backdrop-help {
   margin: 0.3rem 0 0;
   padding: 0.3rem 0.6rem;
@@ -528,4 +539,18 @@ html[data-theme="dark"] .grid-poster-dark {
 }
 .home-publications h2 a {
   color: inherit;
+}
+
+.grid-backdrop-effects {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.65rem;
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+}
+.grid-backdrop-effects button {
+  pointer-events: auto;
+  padding-inline: 0.65rem;
 }

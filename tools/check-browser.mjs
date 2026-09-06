@@ -1,3 +1,4 @@
+import { checkEffectPreference } from "./check-effect-preference.mjs";
 import assert from "node:assert/strict";
 import { chromium } from "playwright";
 import { readdir } from "node:fs/promises";
@@ -434,6 +435,7 @@ try {
     assert.equal(await page.locator('[data-action="play"]').innerText(), "Play", "Reduced motion must start paused");
     console.log("Verified live WebGPU bus selection, keyboard exit, zoom, reset, and reduced motion.");
   }
+  await checkEffectPreference(browser, site.url);
   await checkTouchInspection(browser, site.url);
   const unavailable = await browser.newContext({ viewport: { width: 390, height: 844 }, colorScheme: "dark" });
   await unavailable.addInitScript(() => Object.defineProperty(navigator, "gpu", { value: undefined, configurable: true }));

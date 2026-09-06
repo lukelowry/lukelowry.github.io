@@ -1,17 +1,21 @@
 import { voltageRGB } from "./voltage.mjs";
-import { loadGrid, loadRuntime, isDark, surfaceColor, whenAttached, whenPainted } from "./data.mjs";
+import { loadGrid, isDark, surfaceColor, whenAttached, whenPainted } from "./data.mjs";
 import { RESTING_VIEW, sceneView, voltageHeights, framingBounds, framingVertices, projectedBounds } from "./framing.mjs";
 import { mountInspection } from "./inspection.mjs";
+import { mountElectricity } from "./electricity.mjs";
+import { VERTEX_SIZE_RANGE } from "./vertex-ripple.mjs";
+import { mountEffectPreference } from "./effect-preference.mjs";
 
 const nextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve));
 
-export function mountBackdrop(root) {
+export function mountBackdrop(root, effects) {
   const element = root.querySelector("latkit-network");
   const name = root.dataset.case;
+  const playHint = document.querySelector(`[data-grid-caption="${name}"] .grid-backdrop-play-hint`);
   const view = sceneView(name);
-  const inspection = mountInspection(root);
-  const motion = matchMedia("(prefers-reduced-motion: reduce)");
-  let current, activation, bounds, outline, spotlight;
+  const electricity = mountElectricity(root);
+  const inspection = mountInspection(root, { onSelect: (item) => electricity.select(item) });
+  let current, activation, bounds, outline;
   let shadeRevision = 0;
   let configured = false,
     ready = false,
@@ -38,23 +42,23 @@ export function mountBackdrop(root) {
   async function lighting() {
     if (!configured) return;
     const version = ++shadeRevision;
+    const enabled = effects.enabled;
     try {
-      // Native shade updates one small uniform in Latkit's existing render loop.
-      // Each scene owns its stateful preset; voltage channels remain unchanged.
-      await element.network.setShade(
-        motion.matches
-          ? null
-          : spotlight({
-              radiusPx: 220,
-              strength: 0.45,
-              color: isDark() ? [0.82, 0.88, 1, 1] : [0.2, 0.38, 0.68, 1],
-              followMs: 90,
-            })
-      );
-      if (version === shadeRevision) root.dataset.lighting = motion.matches ? "off" : "on";
+      playHint.hidden = true;
+      electricity.enable(false);
+      electricity.theme(isDark());
+      await element.network.setShade(enabled ? electricity.shade : null);
+      if (version === shadeRevision) {
+        electricity.enable(enabled);
+        playHint.hidden = !enabled;
+        root.dataset.lighting = enabled ? "on" : "off";
+      }
     } catch {
       // Shade compilation must not take away the usable network or its readout.
-      if (version === shadeRevision) root.dataset.lighting = "unavailable";
+      if (version === shadeRevision) {
+        electricity.enable(false);
+        root.dataset.lighting = "unavailable";
+      }
     }
   }
 
@@ -95,6 +99,7 @@ export function mountBackdrop(root) {
         await nextFrame();
       }
       if (version === revision) {
+        electricity.reframe();
         root.dataset.ready = "";
         root.dataset.loaded = name;
         ready = true;
@@ -122,6 +127,7 @@ export function mountBackdrop(root) {
     clearTimeout(resizeTimer);
     root.removeAttribute("data-ready");
     inspection.setReady(false);
+    electricity.enable(false);
     if (current) element.network.detach();
   }
 
@@ -129,7 +135,6 @@ export function mountBackdrop(root) {
     if (activation) return activation;
     activation = (async () => {
       current = await loadGrid(root);
-      ({ spotlight } = await loadRuntime(root));
       bounds = framingBounds(current);
       outline = framingVertices(current);
       const domain = `0 ${Math.max(...current.levels)}`;
@@ -142,6 +147,7 @@ export function mountBackdrop(root) {
         poles: false,
         heightScale: RESTING_VIEW.heightScale,
         heightRange: [0, 1],
+        sizeRange: VERTEX_SIZE_RANGE,
         vertexScale: name === "EuropeA" ? 0.68 : 0.53,
         edgeScale: name === "EuropeA" ? 0.48 : 0.34,
       });
@@ -159,6 +165,7 @@ export function mountBackdrop(root) {
       await element.ready;
       await whenAttached(element);
       configured = true;
+      electricity.attach(current);
       await lighting();
       inspection.attach(current);
       root.dataset.voltageLevels = current.levels.join(",");
@@ -179,7 +186,7 @@ export function mountBackdrop(root) {
     theme();
     lighting();
   });
-  motion.addEventListener("change", lighting);
+  effects.subscribe(lighting);
   element.addEventListener("error", fail);
   element.addEventListener("pipelineError", fail);
   return {
@@ -212,7 +219,8 @@ export function storyState(scroll, viewport, boundary) {
 }
 
 export function mountStory(roots) {
-  const renderers = [...roots].map((root) => ({ name: root.dataset.case, renderer: mountBackdrop(root) }));
+  const effects = mountEffectPreference();
+  const renderers = [...roots].map((root) => ({ name: root.dataset.case, renderer: mountBackdrop(root, effects) }));
   const europe = document.querySelector('[data-grid-section="EuropeA"]');
   const research = document.querySelector(".home-research");
   const motion = matchMedia("(prefers-reduced-motion: reduce)");

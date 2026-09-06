@@ -1,3 +1,4 @@
+import "./check-electricity.mjs";
 import { voltageRGB } from "../assets/js/grids/voltage.mjs";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";

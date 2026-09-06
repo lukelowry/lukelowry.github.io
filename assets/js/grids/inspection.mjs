@@ -1,6 +1,6 @@
 // Host policy: exposed bus/branch keyboard browsing and a quiet, pinned readout.
 // Native inspect owns picking, cycling, pointer input, and page-scroll gestures.
-export function mountInspection(root) {
+export function mountInspection(root, { onSelect = () => {} } = {}) {
   const element = root.querySelector("latkit-network");
   const track = root.closest(".grid-backdrop-track");
   const caption = document.querySelector(`[data-grid-caption="${root.dataset.case}"]`);
@@ -69,6 +69,7 @@ export function mountInspection(root) {
     if (item?.kind === "vertex") busCursor = item.index;
     if (item?.kind === "edge") branchCursor = item.index;
     status.textContent = item ? `${name}. ${describe(item)}. Selected.` : `${name} selection cleared.`;
+    onSelect(item);
     show();
   }
 
