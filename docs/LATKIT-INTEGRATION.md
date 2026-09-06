@@ -77,6 +77,10 @@ Browser checks require real vertex-size channel changes, restored radii, idle re
 overlay, and visible network shader output, including explicit
 opt-in while the browser still reports reduced motion. This covers the actual Windows/Chrome
 configuration that disabled the initial implementation despite ordinary motion-enabled tests passing.
+Headless Linux runners may expose `navigator.gpu` without an available adapter. In that case the
+preference check verifies the visible static poster and hidden interaction controls, and explicitly
+reports that live GPU coverage was skipped. A fallback with an available adapter still fails the
+check. Keep the Chrome run on a GPU-capable machine for shader, geometry, and motion verification.
 Grid checks also cover pulse forks, cycles, hidden connections, disconnected components, dwell
 rearming, wake decay, local pressure, outward waves, size bounds, rebound, cancellation, and return to idle.
 Target 16.7 ms frames on a 60 Hz display; performance is hardware-dependent. A physical touch-device

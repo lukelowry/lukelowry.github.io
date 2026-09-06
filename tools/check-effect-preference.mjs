@@ -7,8 +7,21 @@ export async function checkEffectPreference(browser, url) {
     await context.route("**/livereload.js*", (route) => route.fulfill({ body: "" }));
     await page.goto(url);
     const root = page.locator('[data-grid-backdrop][data-case="USA"]');
-    await page.waitForSelector('[data-grid-backdrop][data-case="USA"][data-ready][data-lighting="off"]');
+    await page.waitForSelector(
+      '[data-grid-backdrop][data-case="USA"][data-ready][data-lighting="off"], [data-grid-backdrop][data-case="USA"][data-fallback]'
+    );
     const caption = page.locator('[data-grid-caption="USA"]');
+    if ((await root.getAttribute("data-fallback")) !== null) {
+      assert.equal(
+        await page.evaluate(async () => Boolean(navigator.gpu && (await navigator.gpu.requestAdapter()))),
+        false,
+        "A browser with a WebGPU adapter must render the live network"
+      );
+      assert.equal(await root.locator(".grid-backdrop-poster").isVisible(), true, "Without an adapter the static network stays visible");
+      assert.equal(await caption.isVisible(), false, "Unavailable effects must not expose unusable controls");
+      console.log("No WebGPU adapter: verified static network fallback; live effects preference checks require a GPU-capable browser.");
+      return;
+    }
     assert.match(await caption.locator("[data-grid-effects-note]").innerText(), /system's motion setting/);
     await caption.getByRole("button", { name: "Enable effects", exact: true }).click();
     await page.waitForSelector('[data-grid-backdrop][data-case="USA"][data-lighting="on"]');
