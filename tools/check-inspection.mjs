@@ -317,7 +317,10 @@ async function checkLighting(page, root, edge) {
       "Leaving restores native radii"
     );
     const layout = await page.evaluate(() => [scrollY, document.body.scrollHeight]);
-    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page
+      .locator(`[data-grid-caption="${await root.getAttribute("data-case")}"]`)
+      .getByRole("button", { name: "Pause effects", exact: true })
+      .click();
     await page.waitForFunction(
       (name) => document.querySelector(`[data-grid-backdrop][data-case="${name}"]`).dataset.lighting === "off",
       await root.getAttribute("data-case")
@@ -325,18 +328,24 @@ async function checkLighting(page, root, edge) {
     assert.deepEqual(
       await page.evaluate(() => [scrollY, document.body.scrollHeight]),
       layout,
-      "Reduced motion must preserve the reading position and section layout"
+      "Pausing effects must preserve the reading position and section layout"
     );
     await page.mouse.move(point.x, point.y);
     await page.waitForTimeout(200);
-    await assertSamePixels(page, await page.screenshot(), before, clip, "Reduced motion must keep native voltage colors without lighting");
+    await assertSamePixels(page, await page.screenshot(), before, clip, "Pausing effects must restore native voltage colors without lighting");
   } finally {
     await page.evaluate(() => window.__lightingCheck.restore());
     await page.mouse.move(700, 30);
-    await page.emulateMedia({ reducedMotion: "no-preference" });
+    const resume = page
+      .locator(`[data-grid-caption="${await root.getAttribute("data-case")}"]`)
+      .getByRole("button", { name: "Enable effects", exact: true });
+    if (await resume.count()) {
+      await resume.click();
+      assert.equal(await page.evaluate(() => localStorage.getItem("grid-effects")), "on", "Resuming after canvas focus must work on the first click");
+    }
   }
   console.log(
-    `${await root.getAttribute("data-case")}: electrical light output, idle, blank-space leave, native radius changes, and reduced motion passed.`
+    `${await root.getAttribute("data-case")}: electrical light output, idle, blank-space leave, native radius changes, and explicit pause passed.`
   );
 }
 
@@ -431,14 +440,17 @@ async function checkPulse(page, root, point) {
     );
     await page.mouse.click(point.x, point.y);
     await page.waitForFunction(() => window.__pulseCheck.uploads.length === 4);
-    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page
+      .locator(`[data-grid-caption="${await root.getAttribute("data-case")}"]`)
+      .getByRole("button", { name: "Pause effects", exact: true })
+      .click();
     await page.waitForFunction(
       (name) => document.querySelector(`[data-grid-backdrop][data-case="${name}"]`).dataset.lighting === "off",
       await root.getAttribute("data-case")
     );
     await page.mouse.click(point.x, point.y);
     await page.waitForTimeout(800);
-    assert.equal(await page.evaluate(() => window.__pulseCheck.uploads.length), 4, "Reduced motion suppresses selection pulses too");
+    assert.equal(await page.evaluate(() => window.__pulseCheck.uploads.length), 4, "Pausing effects suppresses selection pulses too");
     await root.locator("canvas").press("Escape");
   } finally {
     await page.evaluate(() => {
@@ -446,11 +458,17 @@ async function checkPulse(page, root, point) {
       delete window.__pulseCheck;
     });
     await page.mouse.move(700, 30);
-    await page.emulateMedia({ reducedMotion: "no-preference" });
+    const resume = page
+      .locator(`[data-grid-caption="${await root.getAttribute("data-case")}"]`)
+      .getByRole("button", { name: "Enable effects", exact: true });
+    if (await resume.count()) {
+      await resume.click();
+      assert.equal(await page.evaluate(() => localStorage.getItem("grid-effects")), "on", "Resuming after canvas focus must work on the first click");
+    }
     await page.waitForFunction(
       (name) => document.querySelector(`[data-grid-backdrop][data-case="${name}"]`).dataset.lighting === "on",
       await root.getAttribute("data-case")
     );
   }
-  console.log(`${await root.getAttribute("data-case")}: visible dwell pulse, one-time field uploads, selection pulse, and reduced motion passed.`);
+  console.log(`${await root.getAttribute("data-case")}: visible dwell pulse, one-time field uploads, selection pulse, and explicit pause passed.`);
 }

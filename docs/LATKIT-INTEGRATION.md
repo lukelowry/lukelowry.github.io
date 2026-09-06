@@ -47,10 +47,11 @@ Only nearby buckets are visited for pointer waves; the reusable full size buffer
 1 at rest. Cancellation or complete decay clears the channel. Native picking follows these same
 radii. No extra animation loop is installed; size changes share the shade tick.
 The light, wake, and pulse settle to idle. Scroll, blur, resize, and page hiding cancel animation;
-system reduced motion disables the shade and size animation by default. The caption explains this and offers
-"Enable effects". An explicit site choice enables the network effects, persists across reloads,
-and can be reset with "Use system setting". It does not change OS or browser preferences. Local
-preview links support `?effects=on`, `off`, or `system`. Touch retains native tap selection and page gestures.
+the pointer-driven network effects start enabled, including when the browser requests reduced
+motion. The caption offers "Pause effects" / "Enable effects". Only a deliberate site-level pause
+disables them; the choice persists across reloads. A fresh public-site visit works without importing
+any localhost preference. Local preview links support `?effects=on`, `off`, or `default`. Touch retains
+native tap selection and page gestures.
 Offscreen and hidden-tab scenes pause. Shade failure leaves the basic network usable;
 missing WebGPU or a failed scene leaves its static poster.
 
@@ -74,8 +75,8 @@ These are verified against network 0.9.0; remove them when upstream behavior cov
 Run the README checks. Browser coverage includes coastline geometry, hover/selection/cycling,
 keyboard access, touch scrolling/cancellation, resize retention, themes, reduced motion, and fallback.
 Browser checks require real vertex-size channel changes, restored radii, idle rendering, no cursor
-overlay, and visible network shader output, including explicit
-opt-in while the browser still reports reduced motion. This covers the actual Windows/Chrome
+overlay, and visible network shader output, including a fresh origin with no saved choice
+while the browser still reports reduced motion. This covers the actual Windows/Chrome
 configuration that disabled the initial implementation despite ordinary motion-enabled tests passing.
 Headless Linux runners may expose `navigator.gpu` without an available adapter. In that case the
 preference check verifies the visible static poster and hidden interaction controls, and explicitly

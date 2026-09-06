@@ -67,10 +67,9 @@ assert.equal(host[3], 0);
 assert.equal(host[12], 0);
 console.log("Electricity checks passed: visible graph propagation, reusable fields, dwell, wake, cancellation, and idle.");
 
-assert.equal(effectsEnabled(null, true), false, "System reduced motion stays the default");
-assert.equal(effectsEnabled(null, false), true);
-assert.equal(effectsEnabled("on", true), true, "Explicitly enabling this site overrides system reduced motion");
-assert.equal(effectsEnabled("off", false), false, "An explicit pause also overrides the system");
+assert.equal(effectsEnabled(null), true, "New visitors get working effects without an opt-in");
+assert.equal(effectsEnabled("on"), true);
+assert.equal(effectsEnabled("off"), false, "A deliberate pause is remembered");
 
 // Radius waves must change real, visible vertices and restore exactly to rest.
 const sizeUploads = [];

@@ -200,11 +200,18 @@ export function mountInspection(root, { onSelect = () => {} } = {}) {
     help.hidden = !canvas.matches(":focus-visible");
     positionCaption();
   });
-  element.addEventListener("focusout", () => {
-    browsing++;
+  function leaveInspection(event) {
+    // Keep the caption still while focus moves from the canvas into its controls;
+    // hiding help on pointer-down can move a button before pointer-up arrives.
+    if (event.relatedTarget === element || caption.contains(event.relatedTarget)) return;
     help.hidden = true;
     positionCaption();
+  }
+  element.addEventListener("focusout", (event) => {
+    browsing++;
+    leaveInspection(event);
   });
+  caption.addEventListener("focusout", leaveInspection);
   clear.addEventListener("click", () => {
     canvas.focus({ preventScroll: true });
     clearHover();

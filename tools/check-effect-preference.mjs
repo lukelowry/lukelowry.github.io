@@ -8,7 +8,7 @@ export async function checkEffectPreference(browser, url) {
     await page.goto(url);
     const root = page.locator('[data-grid-backdrop][data-case="USA"]');
     await page.waitForSelector(
-      '[data-grid-backdrop][data-case="USA"][data-ready][data-lighting="off"], [data-grid-backdrop][data-case="USA"][data-fallback]'
+      '[data-grid-backdrop][data-case="USA"][data-ready][data-lighting="on"], [data-grid-backdrop][data-case="USA"][data-fallback]'
     );
     const caption = page.locator('[data-grid-caption="USA"]');
     if ((await root.getAttribute("data-fallback")) !== null) {
@@ -22,20 +22,14 @@ export async function checkEffectPreference(browser, url) {
       console.log("No WebGPU adapter: verified static network fallback; live effects preference checks require a GPU-capable browser.");
       return;
     }
-    assert.match(await caption.locator("[data-grid-effects-note]").innerText(), /system's motion setting/);
-    await caption.getByRole("button", { name: "Enable effects", exact: true }).click();
-    await page.waitForSelector('[data-grid-backdrop][data-case="USA"][data-lighting="on"]');
-    assert.equal(
-      await page.evaluate(() => matchMedia("(prefers-reduced-motion: reduce)").matches),
-      true,
-      "Site opt-in must not depend on overriding the browser's motion preference"
-    );
+    assert.equal(await page.evaluate(() => localStorage.getItem("grid-effects")), null, "Effects work on a fresh origin without a saved opt-in");
+    assert.equal(await page.evaluate(() => matchMedia("(prefers-reduced-motion: reduce)").matches), true);
     await root.evaluate((root) => {
       const network = root.querySelector("latkit-network").network;
       const original = network.setChannel;
-      window.__sizeOptIn = [];
+      window.__defaultSizes = [];
       network.setChannel = function (name, values, ...rest) {
-        if (name === "vertexSize" && values) window.__sizeOptIn.push(values.reduce((max, value) => Math.max(max, value), 1));
+        if (name === "vertexSize" && values) window.__defaultSizes.push(values.reduce((max, value) => Math.max(max, value), 1));
         return original.call(this, name, values, ...rest);
       };
     });
@@ -44,20 +38,28 @@ export async function checkEffectPreference(browser, url) {
     await page.mouse.move(320, 460);
     await page.waitForTimeout(100);
     assert.ok(
-      await page.evaluate(() => window.__sizeOptIn?.some((size) => size > 1.4)),
-      "Explicit opt-in must visibly enlarge real vertices while Chrome still reports reduced motion"
+      await page.evaluate(() => window.__defaultSizes?.some((size) => size > 1.4)),
+      "A fresh visit must visibly enlarge real vertices while Chrome still reports reduced motion"
     );
     assert.equal(await root.locator(".grid-electric-trace").count(), 0, "No separate cursor overlay remains");
     await page.reload();
     await page.waitForSelector('[data-grid-backdrop][data-case="USA"][data-ready][data-lighting="on"]');
-    assert.equal(await page.evaluate(() => localStorage.getItem("grid-effects")), "on", "The site choice survives reload");
-    await caption.getByRole("button", { name: "Use system setting", exact: true }).click();
+    assert.equal(await page.evaluate(() => localStorage.getItem("grid-effects")), null, "The enabled default needs no stored preference");
+    await caption.getByRole("button", { name: "Pause effects", exact: true }).click();
     await page.waitForSelector('[data-grid-backdrop][data-case="USA"][data-lighting="off"]');
     assert.equal(await root.evaluate((root) => root.querySelector("latkit-network").network.getChannelDomain("vertexSize")), null);
-    assert.equal(await page.evaluate(() => localStorage.getItem("grid-effects")), null);
-    console.log(
-      "System reduced motion: explicit opt-in runs shader and real vertex-size waves, persists on reload, and can return to the system setting."
-    );
+    assert.equal(await page.evaluate(() => localStorage.getItem("grid-effects")), "off");
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.reload();
+    await page.waitForSelector('[data-grid-backdrop][data-case="USA"][data-ready][data-lighting="off"]');
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    assert.equal(await root.getAttribute("data-lighting"), "off", "A system preference change must not override a deliberate pause");
+    await caption.getByRole("button", { name: "Enable effects", exact: true }).click();
+    await page.waitForSelector('[data-grid-backdrop][data-case="USA"][data-lighting="on"]');
+    await page.reload();
+    await page.waitForSelector('[data-grid-backdrop][data-case="USA"][data-ready][data-lighting="on"]');
+    assert.equal(await page.evaluate(() => localStorage.getItem("grid-effects")), "on");
+    console.log("Fresh-origin effects run with system reduced motion; explicit pause and resume survive reloads.");
   } finally {
     await context.close();
   }
