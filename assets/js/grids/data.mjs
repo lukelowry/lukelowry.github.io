@@ -1,6 +1,7 @@
 import { visibleVoltageNetwork } from "./voltage.mjs";
 
-import { preloadGrid, releaseGridPayload } from "./loading.mjs";
+import * as defaultLoader from "./loading.mjs";
+import { decodeHomePayload } from "./home-payload.mjs";
 export { loadRuntime } from "./loading.mjs";
 const models = new Map();
 
@@ -12,14 +13,19 @@ function busNumbers(slot) {
 }
 
 // Each case is fetched once per page; signal frames are still generated locally.
-export async function loadGrid(root, name = root.dataset.case || "USA") {
+export async function loadGrid(root, name = root.dataset.case || "USA", loader = defaultLoader) {
   if (!["USA", "EuropeA"].includes(name)) throw new Error("Unknown grid case");
-  const key = `${root.dataset.assets}${name}`;
+  const key = defaultLoader.gridKey(root, name);
   if (!models.has(key))
     models.set(
       key,
       (async () => {
-        const [{ parseNetwork }, json] = await preloadGrid(root, name);
+        const [{ parseNetwork }, json] = await loader.preloadGrid(root, name);
+        if (json instanceof ArrayBuffer) {
+          const model = decodeHomePayload(json);
+          loader.releaseGridPayload(root, name);
+          return model;
+        }
         const { topology, fields } = parseNetwork(json);
         const field = (id) => {
           const entry = fields?.find((value) => value.id === id);
@@ -37,7 +43,7 @@ export async function loadGrid(root, name = root.dataset.case || "USA") {
           ...layers,
           numbers: busNumbers(json.busNumbers),
         };
-        releaseGridPayload(root, name);
+        loader.releaseGridPayload(root, name);
         return model;
       })()
     );

@@ -1,4 +1,4 @@
-import { checkLoading } from "./check-loading.mjs";
+import { checkLoading, checkPayloadLoading } from "./check-loading.mjs";
 import { checkScroll } from "./check-scroll.mjs";
 import { checkSpring } from "./check-spring-browser.mjs";
 import { checkMobileGrids } from "./check-mobile-grids.mjs";
@@ -133,7 +133,7 @@ try {
   );
   assert.equal(await page.locator("[data-grid-wave]").count(), 0);
   assert.equal(
-    requests.some((url) => /EuropeA\.json/.test(url)),
+    requests.some((url) => /EuropeA\.(?:json|home\.bin)/.test(url)),
     false,
     "Europe must not download on the opening screen."
   );
@@ -266,7 +266,7 @@ try {
     assert.deepEqual(info.busDomain, [0, i ? 750 : 765]);
     assert.deepEqual(info.branchDomain, info.busDomain);
     assert.equal(info.visible, i ? 8725 : 69835);
-    assert.equal(info.bends, i ? 14111 : 0);
+    assert.equal(info.bends, i ? 13956 : 0, "Homepage retains every bend on a visible edge");
   }
   const poseOf = (root) => root.evaluate((root) => root.querySelector("latkit-network").network.getPose());
   const rest = [];
@@ -434,6 +434,7 @@ try {
     console.log("Verified live WebGPU bus selection, keyboard exit, zoom, reset, and shared motion settings.");
   }
   await checkLoading(browser, site.url);
+  await checkPayloadLoading(browser, site.url);
   await checkAppearance(browser, site.url);
   await checkEffectPreference(browser, site.url);
   await checkScroll(browser, site.url);

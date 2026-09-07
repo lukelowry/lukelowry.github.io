@@ -28,8 +28,7 @@ assert.deepEqual([...field.from({ kind: "vertex", index: 0 }, 1).vertices], [0, 
 assert.deepEqual([...field.from({ kind: "vertex", index: 6 }).vertices], [-1, -1, -1, -1, -1, -1, 0, 1]);
 
 const host = new Float32Array(64);
-let dwells = 0;
-const shade = createElectricShade(() => dwells++);
+const shade = createElectricShade();
 const frame = (timeMs) => {
   const active = shade.tick(host, { timeMs });
   assert.ok(host.every(Number.isFinite), "Every shader uniform must stay finite");
@@ -38,11 +37,11 @@ const frame = (timeMs) => {
 assert.equal(frame(0), false, "An untouched scene stays idle");
 shade.move(100, 100, 0);
 for (let time = 16; time < 2200; time += 16) frame(time);
-assert.equal(dwells, 1, "A stationary pointer produces one dwell, not repeating pulses");
+assert.equal(host[12], 0, "A stationary pointer never launches a pulse");
 assert.equal(frame(2200), false, "A settled light stops scheduling frames");
 shade.move(105, 102, 2200);
 for (let time = 2216; time < 3100; time += 16) frame(time);
-assert.equal(dwells, 1, "Small hand tremors must not rearm a dwell");
+assert.equal(host[12], 0, "Small hand tremors never launch a pulse");
 shade.move(300, 100, 3100, false);
 for (let time = 3116; time < 3300; time += 16) frame(time);
 assert.ok(
@@ -53,7 +52,7 @@ shade.leave();
 for (let time = 3300; time < 4800; time += 16) frame(time);
 assert.equal(frame(4800), false, "The wake and light stop after leaving");
 assert.equal(host[3], 0);
-assert.equal(dwells, 1, "Leaving or dragging never generates a dwell pulse");
+assert.equal(host[12], 0, "Leaving never launches a pulse");
 shade.pulse(5000, 18);
 assert.equal(frame(5100), true);
 assert.ok(host[12] > 0);
@@ -62,10 +61,10 @@ assert.equal(host[12], 0);
 shade.move(80, 90, 7700);
 shade.pulse(7700, 18);
 shade.reset();
-assert.equal(frame(7716), false, "Reset cancels the pulse, dwell, and wake together");
+assert.equal(frame(7716), false, "Reset cancels the pulse and wake together");
 assert.equal(host[3], 0);
 assert.equal(host[12], 0);
-console.log("Electricity checks passed: visible graph propagation, reusable fields, dwell, wake, cancellation, and idle.");
+console.log("Electricity checks passed: visible graph propagation, reusable fields, explicit pulses, wake, cancellation, and idle.");
 
 assert.equal(effectsEnabled(null), true, "New visitors get working effects without an opt-in");
 assert.equal(effectsEnabled("on"), true);
@@ -141,11 +140,7 @@ assert.equal(ripple.paint(sizeHost, 1910), false, "Slow precise pointer movement
 
 // Switching modes cancels full effects; Reduced renders only an immediate static light.
 const reducedPaints = [];
-let reducedDwells = 0;
-const steady = createElectricShade(
-  () => reducedDwells++,
-  (values) => reducedPaints.push(values)
-);
+const steady = createElectricShade((values) => reducedPaints.push(values));
 steady.move(20, 30, 0);
 steady.pulse(0, 18);
 steady.reduced(true);
@@ -156,8 +151,7 @@ assert.deepEqual([...host.slice(0, 4)], [80, 90, 190, 1], "Reduced responds imme
 const steadyHost = [...host];
 steady.pulse(200, 18);
 assert.equal(steady.tick(host, { timeMs: 2000 }), false);
-assert.deepEqual([...host], steadyHost, "Reduced has no timed pulse, trail or dwell");
-assert.equal(reducedDwells, 0);
+assert.deepEqual([...host], steadyHost, "Reduced has no timed pulse or trail");
 assert.deepEqual(reducedPaints, [null], "Reduced does not upload geometry animation");
 steady.leave();
 assert.equal(steady.tick(host, { timeMs: 2016 }), false);

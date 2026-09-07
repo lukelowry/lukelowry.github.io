@@ -1,10 +1,47 @@
 # Latkit integration
 
-`@latkit/embed` 0.8.0 and `@latkit/network` 0.9.0 are exact npm dependencies;
+`@latkit/embed` 0.9.0 and `@latkit/network` 0.10.0 are exact npm dependencies;
 `package-lock.json` pins the full dependency graph. `npm run build:js` bundles registration,
 `parseNetwork` into ignored `assets/generated/latkit.js`,
 with license notices and version metadata. Preview and CI build it before Jekyll.
-No Latkit implementation is maintained in this repository or fetched at browser runtime from a CDN.
+No Latkit implementation is copied into this repository or fetched at browser runtime from a CDN.
+The current preview requires the adjacent network source for the unreleased `whenRendered()` API:
+`npm run build:js -- --latkit-network-source ../latkit/packages/network/src/index.ts`.
+The default npm build deliberately fails its API check until the dependency is updated to a release
+containing that contract. Do not deploy this preview against the currently pinned network release.
+
+## Homepage render payload
+
+`tools/build-home-grids.mjs` derives `assets/grids/{USA,EuropeA}.home.bin` and `.bin.gz`
+from the full NetworkJSON exports. It runs during `build:js` and `assets:grids`, uses deterministic
+gzip, and writes only changed bytes. Both variants have content-busted URLs in the homepage markup.
+Projects and JSON downloads continue to use the complete electrical topology and bus IDs.
+
+The homepage stores only visible vertices and same-voltage edges, in their original relative order.
+Coordinates and European polyline bends remain Float32-exact; no geographic quantization is used.
+Branch kV is derived from its first endpoint only after the exporter verifies exact equality.
+Visibility and straight-edge route offsets are generated with filled arrays at decode.
+Voltage-layer indices, rendered heights, and per-layer framing hulls are computed at build time.
+The exporter rejects changed topology bounds, and records the ratio of the original and compact
+Float32 characteristic lengths so native vertex radii, edge widths, and height amplitude stay stable.
+This ratio depends on Latkit's current native sizing contract; recheck it when updating Latkit.
+
+The versioned `GHM1` binary has a 12-byte little-endian prefix (magic, JSON header byte count,
+complete file byte count), UTF-8 metadata padded to four bytes, then contiguous 32-bit arrays.
+`HOME_SECTIONS` in `home-payload.mjs` defines the ordered array types. Metadata includes each array
+length, voltage palette and levels, geometry scale, and framing bounds/hulls. The decoder checks
+version and section lengths, then uses typed views into the response buffer on little-endian hosts.
+No base64 geometry decoding or copying is needed. Large-array changes require a new format version.
+The raw variant supports browsers without `DecompressionStream`; invalid payloads use the terminal
+scene fallback. `check-home-payload.mjs` compares every visible item to the full source and verifies
+reproducibility, framing, colors, geometry, and malformed-input rejection.
+
+The generated bootstrap is self-contained. Desktop scene imports, runtime import, and first data
+fetch start together. The bootstrap passes its loading service into the homepage scene, so both
+consume the same request; the decoded model replaces the cached payload. Scene URLs and optional
+chunks carry content hashes. Mobile stops before those desktop requests. Europe still loads only
+when its section approaches. Interaction code and shader setup begin after the final base frame;
+font loading and interaction readiness do not gate that frame. Successful live startup uses no poster.
 
 ## Website code
 
@@ -49,9 +86,8 @@ light follows mouse/pen input with 70 ms easing; fast movement leaves a 680 ms w
 The network itself responds through `vertexSize`: a 115 px pressure field enlarges nearby buses
 by up to 65%; fast sweeps emit bounded, 900 ms expanding size waves. A slight contraction follows
 the crest. There is no cursor overlay. Visual pointer tracking extends
-across page content without changing native picking. After a
-680 ms dwell near an exposed bus, one pulse branches through visible connections. Selecting a
-bus or branch (including by keyboard or touch) launches a stronger pulse. These are illustrative
+across page content without changing native picking. Resting the pointer never activates a pulse
+or selection. Only deliberate bus/branch selection by click, tap, or keyboard launches a pulse. These are illustrative
 hop-distance signals, not electrical simulations.
 
 `pulse.mjs` builds visible adjacency once, then computes at most 18 hops when a pulse starts.
@@ -69,7 +105,7 @@ The light, wake, and pulse settle to idle. Scroll, blur, resize, and page hiding
 the pointer-driven network effects start enabled, including when the browser requests reduced
 motion. The accessibility icon at the far-right edge of the header opens theme, animation, and contrast
 settings. Full keeps the pointer light, wake, and vertex-radius waves. Reduced uses an immediate,
-steady hover light with no trails, dwell pulses, size changes, or continued animation frames.
+steady hover light with no trails, pulses, size changes, or continued animation frames.
 Off removes the decorative shade while preserving native picking and selection.
 The background networks have no captions, hover readouts, or bus information panels.
 Escape or blank-space clicks/taps clear a selection. Keyboard instructions remain in the canvas
@@ -94,8 +130,8 @@ These are verified against network 0.9.0; remove them when upstream behavior cov
   until all page-wide touch contacts end; it does not intercept normal taps, drags, or scrolling.
 - `setPointer(null)` does not always wake a settled shade over blank space. The host clears the pointer
   and resumes the existing native loop once on leave. No additional animation loop is created.
-- `painted` is per attachment, not per data revision. Await `ready`, attachment, and paint, then allow
-  the configured fields and final composition two frame opportunities before hiding the poster.
+- `painted` is per attachment, not per data revision. Await `ready`, attachment, then
+  `whenRendered()` after configured fields and camera placement before revealing the live canvas.
 - Native shader CSS coordinates use one minimum backing/CSS ratio for both axes. Quantized asymmetric
   resize can shift the light slightly. That coordinate conversion remains owned by Latkit.
 
@@ -117,8 +153,8 @@ Headless Linux runners may expose `navigator.gpu` without an available adapter. 
 preference check verifies the visible static poster and hidden interaction controls, and explicitly
 reports that live GPU coverage was skipped. A fallback with an available adapter still fails the
 check. Keep the Chrome run on a GPU-capable machine for shader, geometry, and motion verification.
-Grid checks also cover pulse forks, cycles, hidden connections, disconnected components, dwell
-rearming, wake decay, local pressure, outward waves, size bounds, rebound, cancellation, and return to idle.
+Grid checks also cover pulse forks, cycles, hidden connections, disconnected components, no hover activation,
+wake decay, local pressure, outward waves, size bounds, rebound, cancellation, and return to idle.
 Target 16.7 ms frames on a 60 Hz display; performance is hardware-dependent. A physical touch-device
 and screen-reader review remains appropriate before publishing.
 

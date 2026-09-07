@@ -1,4 +1,5 @@
 import "./check-electricity.mjs";
+import "./check-home-payload.mjs";
 import "./check-spring-wave.mjs";
 import { voltageRGB } from "../assets/js/grids/voltage.mjs";
 import assert from "node:assert/strict";

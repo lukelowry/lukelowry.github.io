@@ -117,15 +117,14 @@ export async function checkSpring(browser, url) {
         assert.equal(await root.evaluate((root) => root.__spring.writes), settled.writes, "Position uploads stop when settled");
         console.log(`Spring ${name}/${theme}: ${motion.peak.toFixed(2)}px peak, fixed distant vertices/camera, exact restoration and idle.`);
       }
-      // Dwell keeps a local force response while native picking is moving.
-      await page.mouse.move(...source.source.p);
-      const prior = await root.evaluate((root) => root.__spring.shadeWrites);
-      await page.waitForTimeout(900);
-      assert.ok(
-        (await root.evaluate((root) => root.__spring.shadeWrites)) > prior,
-        "Dwell keeps the elastic field active through the cached rest-layout index"
-      );
+      // Resting over a vertex must settle naturally without activation.
       const probe = await observeInspection(root);
+      await page.mouse.move(...source.source.p);
+      await page.waitForTimeout(3000);
+      assert.equal(await probe.selected(), null, "Resting a pointer never selects a bus");
+      const hoverWrites = await root.evaluate((root) => root.__spring.writes);
+      await page.waitForTimeout(300);
+      assert.equal(await root.evaluate((root) => root.__spring.writes), hoverWrites, "A stationary pointer settles without a delayed pluck");
       await page.mouse.move(700, 30);
       await page.waitForTimeout(2600);
       await page.mouse.move(...source.target);

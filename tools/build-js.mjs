@@ -1,5 +1,7 @@
 import { build } from "esbuild";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { buildHomeGrids } from "./build-home-grids.mjs";
+import { mkdir, readFile, writeFile, readdir, unlink } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { resolve, dirname } from "node:path";
 
@@ -16,6 +18,7 @@ if (!controller.includes("whenRendered")) {
     "This site requires Latkit Network.whenRendered(). For this unreleased local preview, pass --latkit-network-source ../latkit/packages/network/src/index.ts; publish/update Latkit before deploying."
   );
 }
+await buildHomeGrids();
 await mkdir(output, { recursive: true });
 const result = await build({
   absWorkingDir: root,
@@ -46,10 +49,11 @@ const result = await build({
       ]
     : [],
 });
-// Bundle the critical host graph; optional scene/interaction imports stay split.
-await build({
+// Desktop scenes share chunks; the tiny bootstrap has no import prerequisites.
+const scenes = await build({
   absWorkingDir: root,
-  entryPoints: ["assets/js/grids/index.mjs"],
+  entryPoints: ["assets/js/grids/home.mjs", "assets/js/grids/wave.mjs"],
+  metafile: true,
   outdir: fileURLToPath(new URL("grids/", output)),
   bundle: true,
   splitting: true,
@@ -61,6 +65,44 @@ await build({
   // Jekyll must copy these ESM bundles, not run its classic-script minifier.
   outExtension: { ".js": ".mjs" },
 });
+const sceneURLs = {};
+for (const name of ["home", "wave"]) {
+  const path = Object.keys(scenes.metafile.outputs).find((path) => path.endsWith(`/grids/${name}.mjs`));
+  const hash = createHash("sha256")
+    .update(await readFile(resolve(root, path)))
+    .digest("hex")
+    .slice(0, 16);
+  sceneURLs[`./${name}.mjs`] = `./${name}.mjs?v=${hash}`;
+}
+const bootstrap = await build({
+  absWorkingDir: root,
+  metafile: true,
+  entryPoints: ["assets/js/grids/index.mjs"],
+  outfile: fileURLToPath(new URL("grids/index.mjs", output)),
+  bundle: true,
+  format: "esm",
+  platform: "browser",
+  target: "es2022",
+  minify: true,
+  plugins: [
+    {
+      name: "deferred-desktop-scenes",
+      setup(build) {
+        build.onResolve({ filter: /^\.\/(home|wave)\.mjs$/ }, ({ path }) => ({ path: sceneURLs[path], external: true }));
+      },
+    },
+  ],
+});
+// Prune only obsolete ESM files in this build-owned directory after both builds
+// succeed. Never accumulate stale chunks in the next static deployment.
+const emitted = new Set([...Object.keys(scenes.metafile.outputs), ...Object.keys(bootstrap.metafile.outputs)].map((path) => resolve(root, path)));
+for (const directory of [new URL("grids/", output), new URL("grids/chunks/", output)]) {
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    if (!entry.isFile() || !entry.name.endsWith(".mjs")) continue;
+    const file = new URL(entry.name, directory);
+    if (!emitted.has(fileURLToPath(file))) await unlink(file);
+  }
+}
 // These files are build output, never repository source.
 const packages = ["embed", "network", "model", "monitor", "gpu", "colormaps"];
 const versions = {};

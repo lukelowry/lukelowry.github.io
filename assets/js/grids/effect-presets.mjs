@@ -10,7 +10,7 @@ const presets = {
 };
 export function createNetworkEffect(name, context) {
   const geometry = (presets[name] || presets.spring)(context);
-  const shade = createElectricShade(context.onDwell, (host, time) => geometry.paint(host, time));
+  const shade = createElectricShade((host, time) => geometry.paint(host, time));
   if (name !== "electric") shade.wgsl = springWGSL;
   return { ...geometry, shade };
 }

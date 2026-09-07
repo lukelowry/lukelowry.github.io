@@ -24,7 +24,7 @@ export async function checkLoading(browser, url) {
     const pending = new Set();
     for (const [name, pattern] of [
       ["runtime", "**/assets/generated/latkit.js*"],
-      ["topology", "**/assets/grids/USA.json*"],
+      ["topology", "**/assets/grids/USA.home.bin*"],
     ]) {
       await context.route(pattern, async (route) => {
         pending.add(name);
@@ -105,6 +105,12 @@ export async function checkLoading(browser, url) {
         false,
         "Successful desktop startup requests no artwork image"
       );
+      assert.equal(requests.filter((request) => /\/USA\.home\.bin/.test(request)).length, 1, "Bootstrap and scene share one payload request");
+      assert.equal(
+        requests.some((request) => /\/USA\.json/.test(request)),
+        false,
+        "Homepage never loads the full scientific dataset"
+      );
       assert.deepEqual(errors, []);
       console.log(
         `Loading: concurrent requests, no poster, independent font readiness, final framing, scroll before interaction, and ${
@@ -114,6 +120,46 @@ export async function checkLoading(browser, url) {
     } finally {
       releaseInputs();
       releaseInteraction();
+      await context.close();
+    }
+  }
+}
+
+// The binary contract must also work without streaming gzip and fail cleanly
+// when the downloaded asset is corrupt, rather than display partial geometry.
+export async function checkPayloadLoading(browser, url) {
+  for (const corrupt of [false, true]) {
+    const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+    await context.route("**/livereload.js*", (route) => route.fulfill({ body: "" }));
+    await context.route("**/googletagmanager.com/**", (route) => route.fulfill({ body: "" }));
+    await context.addInitScript(() => {
+      delete window.DecompressionStream;
+    });
+    if (corrupt)
+      await context.route("**/assets/grids/USA.home.bin?*", (route) =>
+        route.fulfill({ body: Buffer.alloc(16), contentType: "application/octet-stream" })
+      );
+    const page = await context.newPage(),
+      requests = [],
+      errors = [];
+    page.on("request", (request) => requests.push(request.url()));
+    page.on("pageerror", (error) => errors.push(error.message));
+    try {
+      await page.goto(url, { waitUntil: "domcontentloaded" });
+      const root = page.locator('[data-grid-backdrop][data-case="USA"]');
+      await page.waitForSelector(`[data-grid-backdrop][data-case="USA"][${corrupt ? "data-fallback" : "data-ready"}]`);
+      assert.equal(await root.locator("latkit-network").count(), corrupt ? 0 : 1);
+      assert.equal(await root.locator("img").count(), corrupt ? 1 : 0);
+      assert.equal(requests.filter((request) => /\/USA\.home\.bin\?/.test(request)).length, 1);
+      assert.equal(
+        requests.some((request) => /\.bin\.gz|USA\.json|EuropeA\.home/.test(request)),
+        false
+      );
+      assert.deepEqual(errors, []);
+      console.log(
+        `Binary loading: ${corrupt ? "corrupt payload selects terminal fallback" : "raw payload renders without DecompressionStream"} passed.`
+      );
+    } finally {
       await context.close();
     }
   }

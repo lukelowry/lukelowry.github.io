@@ -5,7 +5,7 @@ import { showBackdropFallback } from "./fallback.mjs";
 import { VERTEX_SIZE_RANGE } from "./visual-options.mjs";
 import { mountEffectPreference } from "./effect-preference.mjs";
 
-export function mountBackdrop(root, effects, presentation) {
+export function mountBackdrop(root, effects, presentation, loader) {
   const element = root.querySelector("latkit-network");
   const name = root.dataset.case;
   const view = sceneView(name);
@@ -165,9 +165,9 @@ export function mountBackdrop(root, effects, presentation) {
   async function activate() {
     if (activation || root.hasAttribute("data-fallback")) return activation;
     activation = (async () => {
-      current = await loadGrid(root);
-      bounds = framingBounds(current);
-      outline = framingVertices(current);
+      current = await loadGrid(root, name, loader);
+      bounds = current.framing?.bounds ?? framingBounds(current);
+      outline = current.framing?.outline ?? framingVertices(current);
       const domain = `0 ${Math.max(...current.levels)}`;
       element.setAttribute("vertex-color-domain", domain);
       element.setAttribute("edge-color-domain", domain);
@@ -179,8 +179,8 @@ export function mountBackdrop(root, effects, presentation) {
         heightScale: RESTING_VIEW.heightScale,
         heightRange: [0, 1],
         sizeRange: VERTEX_SIZE_RANGE,
-        vertexScale: name === "EuropeA" ? 0.68 : 0.53,
-        edgeScale: name === "EuropeA" ? 0.48 : 0.34,
+        vertexScale: (name === "EuropeA" ? 0.68 : 0.53) * (current.geometryScale ?? 1),
+        edgeScale: (name === "EuropeA" ? 0.48 : 0.34) * (current.geometryScale ?? 1),
       });
       // Assign the source once. Embed binds its named fields declaratively.
       element.data = {
@@ -190,7 +190,7 @@ export function mountBackdrop(root, effects, presentation) {
           { id: "branch_kv", scope: "edge", components: 1, values: current.branchKV },
           { id: "visible_vertices", scope: "vertex", components: 1, values: current.visibleVertices },
           { id: "visible_edges", scope: "edge", components: 1, values: current.visibleEdges },
-          { id: "voltage_height", scope: "vertex", components: 1, values: voltageHeights(current) },
+          { id: "voltage_height", scope: "vertex", components: 1, values: current.voltageHeight ?? voltageHeights(current) },
         ],
       };
       await element.ready;
@@ -265,9 +265,9 @@ export function storyState(scroll, viewport, boundary) {
   };
 }
 
-export function mountStory(roots, presentation) {
+export function mountStory(roots, presentation, loader) {
   const effects = mountEffectPreference();
-  const renderers = [...roots].map((root) => ({ name: root.dataset.case, renderer: mountBackdrop(root, effects, presentation) }));
+  const renderers = [...roots].map((root) => ({ name: root.dataset.case, renderer: mountBackdrop(root, effects, presentation, loader) }));
   const europe = document.querySelector('[data-grid-section="EuropeA"]');
   const research = document.querySelector(".home-research");
   let boundary = 0,

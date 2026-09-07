@@ -45,7 +45,6 @@ for (const curved of [false, true]) {
   const idle = uploads.length;
   assert.equal(effect.paint(host, 3000), false);
   assert.equal(uploads.length, idle, "No uploads at rest");
-  assert.deepEqual(effect.nearest(382, 400, 28), { kind: "vertex", index: 1 }, "Dwell uses cached visible rest positions");
   effect.leave();
   effect.move(450, 400, 3100);
   effect.paint(host, 3300);

@@ -13,7 +13,7 @@
   },
   "private": true,
   "scripts": {
-    "assets:grids": "python tools/export-grids.py && python tools/build-grid-stills.py",
+    "assets:grids": "python tools/export-grids.py && node tools/build-home-grids.mjs && python tools/build-grid-stills.py",
     "preview": "docker compose -f compose.local.yml up --build -d",
     "preview:stop": "docker compose -f compose.local.yml down",
     "check:grids": "node tools/check-grids.mjs",

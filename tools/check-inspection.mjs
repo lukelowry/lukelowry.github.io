@@ -22,7 +22,7 @@ export async function checkInspection(page, name) {
       p[1] > 120 &&
       p[1] < innerHeight - 180 &&
       document.elementFromPoint(...p) === element;
-    for (let index = 0; index < model.numbers.length; index++) {
+    for (let index = 0; index < model.topology.vertexCount; index++) {
       if (!model.visibleVertices[index]) continue;
       const p = element.network.locate({ kind: "vertex", index });
       if (!exposed(p)) continue;
@@ -314,6 +314,9 @@ async function checkPulse(page, root, point) {
   });
   try {
     await page.mouse.move(point.x, point.y);
+    await page.waitForTimeout(1200);
+    assert.equal(await page.evaluate(() => window.__pulseCheck.uploads.length), 0, "Resting the pointer never launches a pulse");
+    await page.mouse.click(point.x, point.y);
     await page.waitForFunction(() => window.__pulseCheck.uploads.length === 2);
     await page.waitForTimeout(150);
     assert.ok(await page.evaluate(() => window.__pulseCheck.sizes.some((size) => size > 1.7)), "A connected pulse must enlarge actual vertices");
@@ -327,12 +330,12 @@ async function checkPulse(page, root, point) {
       height: 200,
     };
     const changed = await pixelDifference(page, pulsing, settled, clip);
-    assert.ok(changed.maximum >= 8, `A dwell pulse must change network pixels: ${JSON.stringify(changed)}`);
+    assert.ok(changed.maximum >= 8, `An explicit click pulse must change network pixels: ${JSON.stringify(changed)}`);
     const uploads = await page.evaluate(() => window.__pulseCheck.uploads);
     assert.deepEqual(
       uploads.map((u) => u.name),
       ["vertexShade", "edgeShade"],
-      "One dwell binds only two shade channels, once"
+      "One click binds only two shade channels, once"
     );
     assert.ok(
       uploads.every((u) => u.valid && u.reached > 0),
@@ -361,7 +364,9 @@ async function checkPulse(page, root, point) {
       await root.getAttribute("data-case")
     );
   }
-  console.log(`${await root.getAttribute("data-case")}: visible dwell pulse, one-time field uploads, selection pulse, and explicit pause passed.`);
+  console.log(
+    `${await root.getAttribute("data-case")}: no hover activation, one-time field uploads, explicit click pulse, and explicit pause passed.`
+  );
 }
 
 // Test-only observation of native events and programmatic selection, without UI readouts.
