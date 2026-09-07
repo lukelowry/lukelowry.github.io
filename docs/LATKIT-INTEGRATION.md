@@ -8,7 +8,26 @@ No Latkit implementation is maintained in this repository or fetched at browser 
 
 ## Website code
 
-`assets/js/grids/index.mjs` loads only the scene the page uses:
+`assets/js/grids/index.mjs` chooses the presentation before importing a scene. Viewports at or
+below 767px, and devices with a coarse primary pointer and no hover (including rotated phones),
+use static images. Fresh mobile visits load no Latkit runtime, topology, picking, shader, or
+simulation modules. Width changes on a desktop can mount the live view once or suspend it;
+shrinking the window stops network rendering and scroll coordination without losing desktop state.
+
+`presentation.mjs` supplies the shared media preference and sets responsive image sources for the
+saved light/dark theme. Keep its media query in sync with `grids.css` and the picture sources in
+`grid-backdrop.liquid`, `grid-showcase.liquid`, and `grid-still.liquid`. The mobile homepage places
+USA and Europe artwork directly before their reading sections; no fixed layers, masks, captions,
+or viewport-height spacers are used. The Projects demo uses a static preview and hides playback
+controls. Full animation never overrides the mobile image presentation.
+
+`tools/build-grid-stills.py` derives transparent 640px and 960px WebP variants from the existing
+posters, trimming empty margins and preserving the whole network. It runs with `npm run assets:grids`
+and can also run separately without rebuilding topology. Only the active theme loads; the second
+home illustration and Projects preview use lazy image loading. Picture sources prevent the hidden
+desktop posters from downloading on mobile. A no-JavaScript mobile visit gets the light stills.
+
+Desktop scene modules:
 
 - `home.mjs`: lazy loading, named fields, native paint readiness, lighting, and section reveals.
 - `inspection.mjs`: exposed bus/branch keyboard interaction and touch cancellation, without a readout.
@@ -19,7 +38,7 @@ No Latkit implementation is maintained in this repository or fetched at browser 
 - `data.mjs` / `voltage.mjs`: cached input, native parsing, bus IDs, visibility, and voltage colors.
 - `wave.mjs` / `signal.mjs`: the separate Projects animation and its controls.
 
-Each case is assigned once. Latkit owns the canvas, picking, overlap cycling, touch scrolling,
+On desktop, each case is assigned once. Latkit owns the canvas, picking, overlap cycling, touch scrolling,
 backing-store resize, and the render loop. Resizing retains the canvas, data, selection, and GPU buffers.
 A 120 ms settled adjustment restores our custom subset fit and asymmetric alignment with one fit
 and at most two corrections. Whole-topology fit padding cannot express these oversized compositions.
@@ -83,7 +102,10 @@ These are verified against network 0.9.0; remove them when upstream behavior cov
 ## Verification
 
 Run the README checks. Browser coverage includes coastline geometry, hover/selection/cycling,
-keyboard access, touch scrolling/cancellation, resize retention, themes, reduced motion, and fallback.
+keyboard access, desktop resize retention, themes, reduced motion, and fallback.
+Mobile checks cover both themes, 320px and 390px phones, landscape, tablets, native touch scrolling,
+zero renderer/topology/desktop-poster requests, no-JavaScript images, and GPU suspension when a
+desktop window becomes narrow.
 The header panel is checked for keyboard navigation and focus return, cross-page persistence,
 light/dark and high contrast accessibility, and fit at 320px. Reduced is checked for visible steady
 highlighting with no vertex-size or pulse uploads.

@@ -17,6 +17,7 @@ social: false # includes social icons at the bottom of the page
 ---
 
 <div class="home-scene home-scene-usa" data-grid-section="USA" markdown="1">
+{% include grid-still.liquid asset="USA-layers" loading="eager" %}
 <div class="home-copy" markdown="1">
 
 <section class="home-research-step" markdown="1">
@@ -39,6 +40,7 @@ but not limited to: modal analysis, propagative EMT simulation, and the converge
 </div>
 
 <div class="home-scene home-scene-europe" data-grid-section="EuropeA" markdown="1">
+{% include grid-still.liquid asset="EuropeA-layers" %}
 <div class="home-copy" markdown="1">
 
 <section class="home-research-step" markdown="1">

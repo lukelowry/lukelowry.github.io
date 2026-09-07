@@ -1,0 +1,38 @@
+{% assign still_base = '/assets/grids/' | append: include.asset | append: '-mobile-' %}
+{% assign still_light_small = still_base | append: 'light-640.webp' %}
+{% assign still_light_large = still_base | append: 'light-960.webp' %}
+{% assign still_dark_small = still_base | append: 'dark-640.webp' %}
+{% assign still_dark_large = still_base | append: 'dark-960.webp' %}
+<div class="grid-still">
+  <img
+    data-grid-still
+    data-light-src="{{ still_light_small | relative_url | bust_file_cache }}"
+    data-light-srcset="{{ still_light_small | relative_url | bust_file_cache }} 640w, {{ still_light_large | relative_url | bust_file_cache }} 960w"
+    data-dark-src="{{ still_dark_small | relative_url | bust_file_cache }}"
+    data-dark-srcset="{{ still_dark_small | relative_url | bust_file_cache }} 640w, {{ still_dark_large | relative_url | bust_file_cache }} 960w"
+    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+    sizes="(max-width: 767px) 100vw, 720px"
+    alt="{{ include.alt | default: '' }}"
+    width="960"
+    height="540"
+    loading="{{ include.loading | default: 'lazy' }}"
+    decoding="async"
+  >
+  <noscript>
+    <picture>
+      <source
+        media="(max-width: 767px), (hover: none) and (pointer: coarse)"
+        srcset="{{ still_light_small | relative_url | bust_file_cache }} 640w, {{ still_light_large | relative_url | bust_file_cache }} 960w"
+        sizes="(max-width: 767px) 100vw, 720px"
+      >
+      <img
+        src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+        alt="{{ include.alt | default: '' }}"
+        width="960"
+        height="540"
+        loading="{{ include.loading | default: 'lazy' }}"
+        decoding="async"
+      >
+    </picture>
+  </noscript>
+</div>

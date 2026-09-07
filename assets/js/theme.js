@@ -49,11 +49,14 @@ function applyTheme() {
   });
   const description = document.getElementById("animation-description");
   if (description)
-    description.textContent = {
-      full: "Hover and select to send ripples through the network.",
-      reduced: "Steady hover highlight. No ripples or autoplay.",
-      off: "Still network. Selection remains available.",
-    }[appearance.animation];
+    description.textContent =
+      document.documentElement.dataset.gridPresentation === "static"
+        ? "Mobile networks use still images."
+        : {
+            full: "Hover and select to send ripples through the network.",
+            reduced: "Steady hover highlight. No ripples or autoplay.",
+            off: "Still network. Selection remains available.",
+          }[appearance.animation];
   if (changed) document.dispatchEvent(new CustomEvent("themechange", { detail: theme }));
   if (animationChanged) document.dispatchEvent(new CustomEvent("animationchange", { detail: appearance.animation }));
 }
@@ -114,6 +117,7 @@ function initTheme() {
     },
     { once: true }
   );
+  document.addEventListener("gridpresentationchange", applyTheme);
   systemTheme.addEventListener("change", applyTheme);
   window.addEventListener("storage", (event) => {
     if (event.key !== null && !(event.key in appearanceChoices) && event.key !== "grid-effects") return;

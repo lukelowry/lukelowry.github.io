@@ -8,7 +8,7 @@ import { mountEffectPreference } from "./effect-preference.mjs";
 
 const nextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve));
 
-export function mountBackdrop(root, effects) {
+export function mountBackdrop(root, effects, presentation) {
   const element = root.querySelector("latkit-network");
   const name = root.dataset.case;
   const view = sceneView(name);
@@ -26,7 +26,7 @@ export function mountBackdrop(root, effects) {
     resizeTimer;
 
   function theme() {
-    if (!current) return;
+    if (!current || !presentation.live) return;
     const dark = isDark();
     const maxKV = Math.max(...current.levels);
     element.network.setOptions({
@@ -41,6 +41,12 @@ export function mountBackdrop(root, effects) {
   async function lighting() {
     if (!configured) return;
     const version = ++shadeRevision;
+    if (!presentation.live) {
+      electricity.enable(false);
+      element.network.pause();
+      root.dataset.lighting = "off";
+      return;
+    }
     const enabled = effects.enabled;
     try {
       electricity.enable(false);
@@ -64,7 +70,7 @@ export function mountBackdrop(root, effects) {
   // adjustment only restores our custom composition after the dimensions settle.
   // It retains data, GPU buffers, selection, and the visible canvas throughout.
   async function fitScene(initial = false) {
-    if (!configured || fitting || root.hasAttribute("data-fallback")) return;
+    if (!configured || fitting || !presentation.live || root.hasAttribute("data-fallback")) return;
     fitting = true;
     clearTimeout(resizeTimer);
     const version = revision;
@@ -113,7 +119,7 @@ export function mountBackdrop(root, effects) {
 
   function scheduleFit() {
     clearTimeout(resizeTimer);
-    if (!configured || document.hidden || (!visible && ready)) return;
+    if (!configured || !presentation.live || document.hidden || (!visible && ready)) return;
     resizeTimer = setTimeout(() => fitScene().catch(fail), 120);
   }
 
@@ -185,6 +191,10 @@ export function mountBackdrop(root, effects) {
     lighting();
   });
   effects.subscribe(lighting);
+  presentation.subscribe(() => {
+    theme();
+    lighting();
+  });
   element.addEventListener("error", fail);
   element.addEventListener("pipelineError", fail);
   return {
@@ -216,17 +226,21 @@ export function storyState(scroll, viewport, boundary) {
   };
 }
 
-export function mountStory(roots) {
+export function mountStory(roots, presentation) {
   const effects = mountEffectPreference();
-  const renderers = [...roots].map((root) => ({ name: root.dataset.case, renderer: mountBackdrop(root, effects) }));
+  const renderers = [...roots].map((root) => ({ name: root.dataset.case, renderer: mountBackdrop(root, effects, presentation) }));
   const europe = document.querySelector('[data-grid-section="EuropeA"]');
   const research = document.querySelector(".home-research");
-  const motion = matchMedia("(prefers-reduced-motion: reduce)");
   let boundary = 0,
     measure = true,
     frame = 0;
   function draw() {
+    cancelAnimationFrame(frame);
     frame = 0;
+    if (!presentation.live) {
+      for (const { renderer } of renderers) renderer.update({ visible: false, preload: false, seam: 0 });
+      return;
+    }
     if (measure) {
       boundary = scrollY + europe.getBoundingClientRect().top;
       measure = false;
@@ -241,7 +255,7 @@ export function mountStory(roots) {
     }
   }
   function schedule() {
-    if (!frame) frame = requestAnimationFrame(draw);
+    if (presentation.live && !frame) frame = requestAnimationFrame(draw);
   }
   const resize = new ResizeObserver(() => {
     measure = true;
@@ -264,6 +278,9 @@ export function mountStory(roots) {
     schedule();
   });
   document.addEventListener("visibilitychange", draw);
-  motion.addEventListener("change", schedule);
+  presentation.subscribe(() => {
+    measure = true;
+    draw();
+  });
   draw();
 }

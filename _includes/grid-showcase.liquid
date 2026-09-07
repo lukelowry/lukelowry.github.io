@@ -6,6 +6,7 @@
   data-assets="{{ '/assets/grids/' | relative_url }}"
   data-runtime="{{ '/assets/generated/latkit.js' | relative_url | bust_file_cache }}"
 >
+  {% include grid-still.liquid asset="USA" alt="USA power network: buses and transmission lines" %}
   <div class="grid-wave-stage">
     <latkit-network
       aria-label="USA power network"
@@ -18,24 +19,36 @@
       poles="false"
       motion="auto"
     >
-      <img
-        class="grid-poster grid-poster-light"
-        src="{{ '/assets/grids/USA-light.webp' | relative_url }}"
-        alt="USA power network: buses and transmission lines"
-        width="1600"
-        height="820"
-        loading="lazy"
-        decoding="async"
-      >
-      <img
-        class="grid-poster grid-poster-dark"
-        src="{{ '/assets/grids/USA-dark.webp' | relative_url }}"
-        alt="USA power network: buses and transmission lines"
-        width="1600"
-        height="820"
-        loading="lazy"
-        decoding="async"
-      >
+      <picture>
+        <source
+          media="(max-width: 767px), (hover: none) and (pointer: coarse)"
+          srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+        >
+        <img
+          class="grid-poster grid-poster-light"
+          src="{{ '/assets/grids/USA-light.webp' | relative_url }}"
+          alt="USA power network: buses and transmission lines"
+          width="1600"
+          height="820"
+          loading="lazy"
+          decoding="async"
+        >
+      </picture>
+      <picture>
+        <source
+          media="(max-width: 767px), (hover: none) and (pointer: coarse)"
+          srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+        >
+        <img
+          class="grid-poster grid-poster-dark"
+          src="{{ '/assets/grids/USA-dark.webp' | relative_url }}"
+          alt="USA power network: buses and transmission lines"
+          width="1600"
+          height="820"
+          loading="lazy"
+          decoding="async"
+        >
+      </picture>
     </latkit-network>
     <span class="grid-inspection" aria-hidden="true" hidden></span>
   </div>

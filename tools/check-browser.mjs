@@ -1,3 +1,4 @@
+import { checkMobileGrids } from "./check-mobile-grids.mjs";
 import { setAppearance, checkAppearance } from "./check-appearance.mjs";
 import { checkEffectPreference } from "./check-effect-preference.mjs";
 import assert from "node:assert/strict";
@@ -6,7 +7,7 @@ import { readdir } from "node:fs/promises";
 import { resolve } from "node:path";
 import { createRequire } from "node:module";
 import { serveSite } from "./site-server.mjs";
-import { checkInspection, checkTouchInspection } from "./check-inspection.mjs";
+import { checkInspection } from "./check-inspection.mjs";
 import { sceneView } from "../assets/js/grids/framing.mjs";
 
 const require = createRequire(import.meta.url);
@@ -317,10 +318,10 @@ try {
       return entry;
     });
   });
-  await page.setViewportSize({ width: 390, height: 844 });
+  await page.setViewportSize({ width: 1024, height: 900 });
   await page.waitForTimeout(400);
   await page.waitForFunction(() => !document.querySelector("[data-fitting]"));
-  await assertNetworkCentered("Mobile USA");
+  await assertNetworkCentered("Compact desktop USA");
   const resizeAudit = await page.evaluate(() =>
     window.gridAudit.map((e) => ({
       name: e.root.dataset.case,
@@ -337,14 +338,14 @@ try {
   }
   console.log(`Resize audit: ${JSON.stringify(resizeAudit)}`);
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
-  const mobileBounds = await Promise.all(backdrops.map((root) => root.boundingBox()));
+  const compactBounds = await Promise.all(backdrops.map((root) => root.boundingBox()));
   await scroll(100000);
   await page.waitForTimeout(400);
   await page.waitForFunction(() => !document.querySelector("[data-fitting]"));
-  await assertNetworkCentered("Mobile Europe");
+  await assertNetworkCentered("Compact desktop Europe");
   assert.equal(await page.locator(".grid-backdrop-caption").count(), 0, "Background networks have no information overlay");
   for (let i = 0; i < backdrops.length; i++) {
-    assert.deepEqual(await backdrops[i].boundingBox(), mobileBounds[i], "Mobile scroll must not move either canvas.");
+    assert.deepEqual(await backdrops[i].boundingBox(), compactBounds[i], "Desktop scroll must not move either canvas.");
   }
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.waitForTimeout(100);
@@ -356,7 +357,7 @@ try {
   const resizing = await context.newPage();
   resizing.on("pageerror", (error) => errors.push(error.message));
   await resizing.goto(site.url, { waitUntil: "domcontentloaded" });
-  await resizing.setViewportSize({ width: 390, height: 844 });
+  await resizing.setViewportSize({ width: 1024, height: 900 });
   await resizing.waitForSelector('[data-grid-backdrop][data-case="USA"][data-ready], [data-grid-backdrop][data-case="USA"][data-fallback]');
   await resizing.waitForFunction(() => !document.querySelector("[data-fitting]"));
   const resizeError = await resizing.evaluate(async () => {
@@ -431,8 +432,8 @@ try {
   }
   await checkAppearance(browser, site.url);
   await checkEffectPreference(browser, site.url);
-  await checkTouchInspection(browser, site.url);
-  const unavailable = await browser.newContext({ viewport: { width: 390, height: 844 }, colorScheme: "dark" });
+  await checkMobileGrids(browser, site.url);
+  const unavailable = await browser.newContext({ viewport: { width: 1440, height: 1000 }, colorScheme: "dark" });
   await unavailable.addInitScript(() => Object.defineProperty(navigator, "gpu", { value: undefined, configurable: true }));
   await unavailable.route("**/googletagmanager.com/**", (route) => route.fulfill({ body: "" }));
   const unavailablePage = await unavailable.newPage();
@@ -457,7 +458,7 @@ try {
   await staticPage.setViewportSize({ width: 390, height: 844 });
   await staticPage.goto(site.url + "/projects/#usa-network");
   assert.equal(await staticPage.getByRole("link", { name: "publications", exact: true }).isVisible(), true);
-  assert.equal(await staticPage.locator(".grid-poster-light").isVisible(), true);
+  assert.equal(await staticPage.locator(".grid-still noscript img").isVisible(), true);
   await fallback.close();
   assert.deepEqual(errors, [], "Browser errors");
   assert.deepEqual(consoleErrors, [], "Console errors");

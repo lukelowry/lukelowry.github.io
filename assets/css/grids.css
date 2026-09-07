@@ -289,15 +289,28 @@ html[data-theme="dark"] .grid-poster-dark {
     right: -5vw;
   }
 }
-@media (max-width: 575px) {
-  .home-page {
-    display: block;
+/* Mobile artwork lives in the reading flow; no fixed canvases or scroll masks. */
+.grid-still {
+  display: none;
+}
+.grid-still img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+}
+@media (max-width: 767px), (hover: none) and (pointer: coarse) {
+  .grid-backdrop-track {
+    display: none !important;
   }
+  .home-page,
+  .home-scene,
   .home-body footer > .container {
     display: block;
   }
   .home-intro {
     gap: 1rem;
+    margin-bottom: 1.25rem;
   }
   .home-intro .profile {
     width: 94px;
@@ -312,39 +325,37 @@ html[data-theme="dark"] .grid-poster-dark {
   .home-intro .more-info {
     font-size: 0.62rem;
   }
-  .home-scene {
-    display: block;
-  }
   .home-research {
-    display: block;
-    margin: 2.5rem 0 4rem;
+    margin: 0 0 2.5rem;
   }
   .home-research .home-copy {
-    position: relative;
-    padding: 1rem 0;
+    padding: 0;
   }
   .home-research-step,
   .home-research-step:first-child,
+  .home-scene-usa .home-research-step:last-child,
   .home-scene-europe .home-research-step:first-child {
-    min-height: 36svh;
-    padding: 2rem 0;
+    display: block;
+    min-height: 0;
+    padding: 0;
+    margin: 0 0 2.25rem;
   }
-  .grid-backdrop {
-    top: 90px;
-    left: -14vw;
-    width: 112vw;
-    height: 64svh;
-    opacity: 0.18;
-  }
-  .grid-backdrop[data-case="EuropeA"] {
-    left: auto;
-    right: -14vw;
+  .grid-still {
+    display: block;
+    width: 100%;
+    margin: 0 0 1.75rem;
   }
   .grid-wave {
-    margin: 3rem 0 1rem;
+    margin: 2.5rem 0 1rem;
   }
-  .grid-wave latkit-network {
-    height: 340px;
+  .grid-wave .grid-still {
+    margin-bottom: 0;
+  }
+  .grid-wave-stage,
+  .grid-wave .grid-wave-controls,
+  .grid-wave .grid-status,
+  .grid-wave .grid-keyboard-help {
+    display: none !important;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -439,11 +450,10 @@ html[data-theme="dark"] .grid-poster-dark {
   outline: 3px solid var(--global-theme-color);
   outline-offset: -6px;
 }
-@media (max-width: 575px) {
+@media (max-width: 767px), (hover: none) and (pointer: coarse) {
+  .home-body > main,
+  .home-body > footer,
   .home-research .home-copy {
-    pointer-events: none;
-  }
-  .home-copy :is(h2, p, ul, ol, figure, blockquote, pre, table, .publications) {
     pointer-events: auto;
   }
 }
