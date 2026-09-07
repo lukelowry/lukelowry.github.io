@@ -439,70 +439,6 @@ html[data-theme="dark"] .grid-poster-dark {
   outline: 3px solid var(--global-theme-color);
   outline-offset: -6px;
 }
-.grid-backdrop-caption {
-  position: fixed;
-  z-index: 2;
-  left: 2vw;
-  width: 47vw;
-  max-width: 900px;
-  font-size: 0.8rem;
-  line-height: 1.5;
-  text-align: center;
-  color: var(--global-text-color);
-  pointer-events: none;
-}
-.grid-backdrop-caption[data-grid-caption="EuropeA"] {
-  left: auto;
-  right: 2vw;
-}
-.grid-backdrop-label {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  max-width: 100%;
-  min-height: 44px;
-  padding: 0.3rem 0.7rem;
-  border: 1px solid var(--global-divider-color);
-  border-radius: 5px;
-  background: var(--global-bg-color);
-  pointer-events: auto;
-}
-.grid-backdrop-readout {
-  overflow-wrap: anywhere;
-}
-.grid-backdrop-caption button {
-  flex: 0 0 auto;
-  min-width: 44px;
-  min-height: 44px;
-  padding: 0.4rem;
-  border: 0;
-  border-radius: 3px;
-  font: inherit;
-  color: inherit;
-  background: var(--global-code-bg-color);
-  cursor: pointer;
-}
-.grid-backdrop-play-hint {
-  display: none;
-  margin: 0.45rem 0 0;
-  font-size: 0.75rem;
-  color: var(--global-text-color);
-}
-@media (hover: hover) and (pointer: fine) {
-  .grid-backdrop-play-hint {
-    display: block;
-  }
-}
-.grid-backdrop-help {
-  margin: 0.3rem 0 0;
-  padding: 0.3rem 0.6rem;
-  background: var(--global-bg-color);
-}
-.grid-backdrop-caption [hidden],
-.grid-backdrop-caption[hidden] {
-  display: none !important;
-}
 @media (max-width: 575px) {
   .home-research .home-copy {
     pointer-events: none;
@@ -510,47 +446,7 @@ html[data-theme="dark"] .grid-poster-dark {
   .home-copy :is(h2, p, ul, ol, figure, blockquote, pre, table, .publications) {
     pointer-events: auto;
   }
-  .grid-backdrop-caption,
-  .grid-backdrop-caption[data-grid-caption="EuropeA"] {
-    left: 12px;
-    right: 12px;
-    width: auto;
-  }
-  .grid-backdrop-label {
-    font-size: 0.75rem;
-  }
-}
-@media print, (forced-colors: active) {
-  .grid-backdrop-caption {
-    display: none !important;
-  }
-}
-@media (max-width: 575px) {
-  .grid-backdrop-caption {
-    top: auto !important;
-    bottom: 12px;
-  }
-  body.home-body {
-    padding-bottom: var(--grid-caption-padding, 16px);
-  }
-  html[data-theme] .home-body #back-to-top {
-    bottom: var(--grid-caption-clearance, 24px);
-  }
 }
 .home-publications h2 a {
   color: inherit;
-}
-
-.grid-backdrop-effects {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.35rem 0.65rem;
-  margin-top: 0.4rem;
-  font-size: 0.75rem;
-}
-.grid-backdrop-effects button {
-  pointer-events: auto;
-  padding-inline: 0.65rem;
 }

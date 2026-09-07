@@ -11,7 +11,7 @@ No Latkit implementation is maintained in this repository or fetched at browser 
 `assets/js/grids/index.mjs` loads only the scene the page uses:
 
 - `home.mjs`: lazy loading, named fields, native paint readiness, lighting, and section reveals.
-- `inspection.mjs`: pinned readout, accessible exposed bus/branch browsing, and touch cancellation.
+- `inspection.mjs`: exposed bus/branch keyboard interaction and touch cancellation, without a readout.
 - `electricity.mjs` / `pulse.mjs`: a custom native fragment shade, pointer wake, and visible-graph pulses.
 - `vertex-ripple.mjs`: native vertex radii, local pressure, sweep waves, and connected rebound.
 - `effect-preference.mjs`: shared site-level motion choice, persisted in local storage.
@@ -48,10 +48,20 @@ Only nearby buckets are visited for pointer waves; the reusable full size buffer
 radii. No extra animation loop is installed; size changes share the shade tick.
 The light, wake, and pulse settle to idle. Scroll, blur, resize, and page hiding cancel animation;
 the pointer-driven network effects start enabled, including when the browser requests reduced
-motion. The caption offers "Pause effects" / "Enable effects". Only a deliberate site-level pause
-disables them; the choice persists across reloads. A fresh public-site visit works without importing
-any localhost preference. Local preview links support `?effects=on`, `off`, or `default`. Touch retains
-native tap selection and page gestures.
+motion. The accessibility icon at the far-right edge of the header opens theme, animation, and contrast
+settings. Full keeps the pointer light, wake, and vertex-radius waves. Reduced uses an immediate,
+steady hover light with no trails, dwell pulses, size changes, or continued animation frames.
+Off removes the decorative shade while preserving native picking and selection.
+The background networks have no captions, hover readouts, or bus information panels.
+Escape or blank-space clicks/taps clear a selection. Keyboard instructions remain in the canvas
+accessibility description. Touch retains native selection and page gestures.
+
+`theme.js` applies and persists preferences before first paint. Theme defaults to System, animation
+to Full, and contrast to Standard. An earlier explicit `grid-effects=off` choice is retained until
+an animation option is chosen. A fresh public-site visit needs no saved opt-in. The shared animation
+preference also prevents demo autoplay in Reduced/Off; the demo's own Play button remains available
+for deliberate playback. Reduced/Off disable site transitions and smooth Back to top scrolling.
+Settings work in memory when storage is blocked and synchronize between tabs when storage is available.
 Offscreen and hidden-tab scenes pause. Shade failure leaves the basic network usable;
 missing WebGPU or a failed scene leaves its static poster.
 
@@ -74,6 +84,9 @@ These are verified against network 0.9.0; remove them when upstream behavior cov
 
 Run the README checks. Browser coverage includes coastline geometry, hover/selection/cycling,
 keyboard access, touch scrolling/cancellation, resize retention, themes, reduced motion, and fallback.
+The header panel is checked for keyboard navigation and focus return, cross-page persistence,
+light/dark and high contrast accessibility, and fit at 320px. Reduced is checked for visible steady
+highlighting with no vertex-size or pulse uploads.
 Browser checks require real vertex-size channel changes, restored radii, idle rendering, no cursor
 overlay, and visible network shader output, including a fresh origin with no saved choice
 while the browser still reports reduced motion. This covers the actual Windows/Chrome

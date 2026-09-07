@@ -127,17 +127,60 @@
               {% endif %}
             {% endif %}
           {% endfor %}
-          {% if site.enable_darkmode %}
-            <!-- Theme preference -->
-            <li class="toggle-container">
-              <button id="light-toggle" type="button" aria-label="Change theme" title="Change theme">
-                <i class="ti ti-sun-moon" id="light-toggle-system" aria-hidden="true"></i>
-                <i class="ti ti-moon-filled" id="light-toggle-dark" aria-hidden="true"></i>
-                <i class="ti ti-sun-filled" id="light-toggle-light" aria-hidden="true"></i>
-              </button>
-            </li>
-          {% endif %}
         </ul>
+      </div>
+    </div>
+    <div class="accessibility" hidden>
+      <button
+        id="accessibility-toggle"
+        type="button"
+        aria-label="Accessibility and appearance"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        aria-controls="accessibility-panel"
+        title="Accessibility and appearance"
+      >
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <circle cx="12" cy="7" r="1.25" fill="currentColor" stroke="none"></circle>
+          <path d="M6.5 10l5.5 1 5.5-1M12 11v3m0 0-3 4m3-4 3 4"></path>
+        </svg>
+      </button>
+      <div id="accessibility-panel" role="dialog" aria-labelledby="accessibility-title" hidden>
+        <h2 id="accessibility-title">Accessibility &amp; appearance</h2>
+        <fieldset>
+          <legend>Theme</legend>
+          <div class="appearance-options">
+            <label><input type="radio" name="theme" value="system"><span>System</span></label>
+            <label><input type="radio" name="theme" value="light"><span>Light</span></label>
+            <label><input type="radio" name="theme" value="dark"><span>Dark</span></label>
+          </div>
+        </fieldset>
+        <fieldset aria-describedby="animation-description">
+          <legend>Animation</legend>
+          <div class="appearance-options">
+            <label><input type="radio" name="animation" value="full"><span>Full</span></label>
+            <label><input type="radio" name="animation" value="reduced"><span>Reduced</span></label>
+            <label><input type="radio" name="animation" value="off"><span>Off</span></label>
+          </div>
+          <p id="animation-description"></p>
+        </fieldset>
+        <fieldset>
+          <legend>Contrast</legend>
+          <div class="appearance-options">
+            <label><input type="radio" name="contrast" value="standard"><span>Standard</span></label>
+            <label><input type="radio" name="contrast" value="high"><span>High</span></label>
+          </div>
+        </fieldset>
       </div>
     </div>
   </nav>

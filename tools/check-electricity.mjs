@@ -138,3 +138,30 @@ ripple.reset();
 ripple.move(40, 100, 1300);
 for (let step = 1; step <= 20; step++) ripple.move(40 + step, 100, 1300 + step * 30);
 assert.equal(ripple.paint(sizeHost, 1910), false, "Slow precise pointer movement does not emit sweep waves");
+
+// Switching modes cancels full effects; Reduced renders only an immediate static light.
+const reducedPaints = [];
+let reducedDwells = 0;
+const steady = createElectricShade(
+  () => reducedDwells++,
+  (values) => reducedPaints.push(values)
+);
+steady.move(20, 30, 0);
+steady.pulse(0, 18);
+steady.reduced(true);
+assert.deepEqual(reducedPaints, [null], "Changing mode clears the native size field");
+steady.move(80, 90, 100);
+assert.equal(steady.tick(host, { timeMs: 116 }), false);
+assert.deepEqual([...host.slice(0, 4)], [80, 90, 190, 1], "Reduced responds immediately without smoothing");
+const steadyHost = [...host];
+steady.pulse(200, 18);
+assert.equal(steady.tick(host, { timeMs: 2000 }), false);
+assert.deepEqual([...host], steadyHost, "Reduced has no timed pulse, trail or dwell");
+assert.equal(reducedDwells, 0);
+assert.deepEqual(reducedPaints, [null], "Reduced does not upload geometry animation");
+steady.leave();
+assert.equal(steady.tick(host, { timeMs: 2016 }), false);
+assert.equal(host[3], 0, "Leaving removes the highlight immediately");
+steady.reduced(false);
+steady.move(80, 90, 2100);
+assert.equal(steady.tick(host, { timeMs: 2116 }), true, "Full animation can resume after Reduced");

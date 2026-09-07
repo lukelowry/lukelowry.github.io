@@ -1,3 +1,4 @@
+import { setAppearance } from "./check-appearance.mjs";
 import assert from "node:assert/strict";
 
 // Exercise real pointer/keyboard input against submitted GPU geometry, including dense branches.
@@ -5,9 +6,7 @@ export async function checkInspection(page, name) {
   const root = page.locator(`[data-grid-backdrop][data-case="${name}"]`);
   if ((await root.getAttribute("data-ready")) === null) return;
   await page.waitForSelector(`[data-grid-backdrop][data-case="${name}"][data-inspectable]`);
-  const caption = page.locator(`[data-grid-caption="${name}"]`);
-  const readout = caption.locator(".grid-backdrop-readout");
-  const status = caption.getByRole("status");
+  const probe = await observeInspection(root);
   const canvas = root.locator("canvas");
   const points = await root.evaluate(async (root) => {
     const element = root.querySelector("latkit-network");
@@ -80,82 +79,52 @@ export async function checkInspection(page, name) {
   const move = async (point) => page.mouse.move(point.x, point.y);
   const click = async (point) => page.mouse.click(point.x, point.y);
   await move(points.vertex);
-  await page.waitForFunction(
-    (name) => document.querySelector(`[data-grid-caption="${name}"] .grid-backdrop-readout`).textContent.includes("Bus "),
-    name
-  );
-  assert.equal(await status.textContent(), "", "Hover must not fill the live region");
+  await probe.wait("hovered", "vertex");
   await click(points.vertex);
-  const pinned = await readout.innerText();
-  assert.match(pinned, /Bus \d+.*kV.*Selected/);
-  assert.match(await status.innerText(), /Selected/);
+  const pinned = await probe.selected();
+  assert.equal(pinned.kind, "vertex");
   await move(points.edge);
-  assert.equal(await readout.innerText(), pinned, "Hover must not replace a pinned readout");
+  assert.deepEqual(await probe.selected(), pinned, "Hover must not replace the selected item");
   await click(points.vertex);
-  assert.match(await readout.innerText(), /Branch \d+.*Selected/, "Repeat clicks must reach an overlapping branch");
+  assert.equal((await probe.selected()).kind, "edge", "Repeat clicks reach an overlapping branch");
   await click(points.edge);
-  assert.match(await readout.innerText(), /Branch \d+.*\d+.*kV.*Selected/);
+  assert.equal((await probe.selected()).kind, "edge");
   await canvas.press("Escape");
-  assert.match(await readout.innerText(), /Hover or select/);
+  assert.equal(await probe.selected(), null);
   await move(points.empty);
   await move(points.edge);
-  await page.waitForFunction(
-    (name) => document.querySelector(`[data-grid-caption="${name}"] .grid-backdrop-readout`).textContent.includes("Branch "),
-    name
-  );
-  assert.doesNotMatch(await readout.innerText(), /Selected/);
+  await probe.wait("hovered", "edge");
+  assert.equal(await probe.selected(), null);
   await click(points.edge);
   await click(points.empty);
-  assert.match(await readout.innerText(), /Hover or select/);
+  assert.equal(await probe.selected(), null, "Blank-space clicks clear selection");
 
-  // Focus must be reachable by Tab through the custom element's shadow boundary.
+  // Focus remains reachable through the custom element's shadow boundary.
   await page.evaluate(() => document.querySelector(".skip-link").focus());
   await page.keyboard.press("Tab");
   assert.equal(await page.evaluate(() => document.activeElement?.shadowRoot?.activeElement?.tagName), "CANVAS");
   const pose = await root.evaluate((root) => root.querySelector("latkit-network").network.getPose());
   await page.keyboard.press("ArrowRight");
-  await page.waitForFunction(
-    (name) => /Bus .*Selected/.test(document.querySelector(`[data-grid-caption="${name}"] .grid-backdrop-readout`).textContent),
-    name
-  );
-  assert.match(await readout.innerText(), /Bus \d+.*Selected/);
+  await probe.wait("selected", "vertex");
   await page.keyboard.press("ArrowDown");
-  await page.waitForFunction(
-    (name) => /Branch .*Selected/.test(document.querySelector(`[data-grid-caption="${name}"] .grid-backdrop-readout`).textContent),
-    name
-  );
-  assert.match(await readout.innerText(), /Branch \d+.*Selected/);
-  assert.equal(await caption.locator(".grid-backdrop-help").isVisible(), true);
+  await probe.wait("selected", "edge");
   assert.deepEqual(
     await root.evaluate((root) => root.querySelector("latkit-network").network.getPose()),
     pose,
     "Selection keys must not move the camera"
   );
+  await page.keyboard.press("Escape");
+  assert.equal(await probe.selected(), null);
   await page.keyboard.press("Tab");
-  assert.equal(
-    await caption
-      .getByRole("button", { name: `Clear ${name === "EuropeA" ? "Europe" : name} selection` })
-      .evaluate((e) => e === document.activeElement),
-    true
-  );
-  await page.keyboard.press("Enter");
-  assert.match(await readout.innerText(), /Hover or select/);
-  await page.keyboard.press("Tab");
-  assert.equal(
-    await caption.getByRole("button", { name: "Pause effects", exact: true }).evaluate((button) => button === document.activeElement),
-    true
-  );
-  await page.keyboard.press("Tab");
-  assert.equal(await page.evaluate(() => document.activeElement.tagName), "A", "Tab must leave the network after its effects control");
+  assert.equal(await page.evaluate(() => document.activeElement.tagName), "A", "Tab leaves the network directly for page navigation");
+  assert.equal(await page.locator(".grid-backdrop-caption").count(), 0, "Network interaction must not create a caption or info box");
 
   await move(points.vertex);
   await page.mouse.down();
   await page.mouse.move(points.vertex.x + 40, points.vertex.y + 25, { steps: 5 });
   await page.mouse.up();
   assert.deepEqual(await root.evaluate((root) => root.querySelector("latkit-network").network.getPose()), pose, "Dragging must not move the camera");
-  assert.doesNotMatch(await readout.innerText(), /Selected/, "Dragging must not pin a selection");
-  const label = await caption.boundingBox();
-  assert.ok(label.y >= 80 && label.y + label.height <= (await page.viewportSize()).height, "Label must fit the viewport");
+  assert.equal(await probe.selected(), null, "Dragging must not pin a selection");
 
   await checkPulse(page, root, points.vertex);
   const scroll = await page.evaluate(() => scrollY);
@@ -191,10 +160,20 @@ export async function checkTouchInspection(browser, url) {
       return null;
     });
     assert.ok(point, "Mobile network must have an exposed tap target");
-    const readout = page.locator('[data-grid-caption="USA"] .grid-backdrop-readout');
+    const empty = await page.evaluate(() => {
+      const element = document.querySelector('[data-grid-backdrop][data-case="USA"] latkit-network');
+      for (let y = 250; y < 590; y += 20)
+        for (let x = 25; x < innerWidth - 25; x += 20) {
+          if (document.elementFromPoint(x, y) === element && !element.network.hitTest(x, y, 22).length) return [x, y];
+        }
+      return null;
+    });
+    assert.ok(empty, "Mobile inspection has an exposed blank-space target");
+    const probe = await observeInspection(page.locator('[data-grid-backdrop][data-case="USA"]'));
     await page.touchscreen.tap(...point);
-    assert.match(await readout.innerText(), /Selected/);
-    await page.getByRole("button", { name: "Clear USA selection", exact: true }).click();
+    assert.ok(await probe.selected());
+    await page.touchscreen.tap(...empty);
+    assert.equal(await probe.selected(), null, "Tapping blank network space clears selection");
     const session = await context.newCDPSession(page);
     // A second contact anywhere on the page must cancel the first pending tap.
     for (const second of [
@@ -207,11 +186,12 @@ export async function checkTouchInspection(browser, url) {
       await session.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [first, other] });
       await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [other] });
       await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
-      assert.doesNotMatch(await readout.innerText(), /Selected/, "A two-contact gesture must not pin a selection");
+      assert.equal(await probe.selected(), null, "A two-contact gesture must not pin a selection");
     }
     await page.touchscreen.tap(...point);
-    assert.match(await readout.innerText(), /Selected/, "Single-touch inspection must recover after two contacts");
-    await page.getByRole("button", { name: "Clear USA selection", exact: true }).click();
+    assert.ok(await probe.selected(), "Single-touch inspection must recover after two contacts");
+    await page.touchscreen.tap(...empty);
+    assert.equal(await probe.selected(), null, "Tapping blank network space clears selection");
     const start = await page.evaluate(() => scrollY);
     await session.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: point[0], y: point[1] }] });
     for (let step = 1; step <= 6; step++) {
@@ -220,7 +200,7 @@ export async function checkTouchInspection(browser, url) {
     }
     await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
     await page.waitForFunction((start) => scrollY > start + 20, start);
-    assert.doesNotMatch(await readout.innerText(), /Selected/, "A swipe must not pin a bus or branch");
+    assert.equal(await probe.selected(), null, "A swipe must not pin a bus or branch");
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     console.log("Mobile native touch: tap, two-contact cancellation, recovery, and page scrolling passed.");
   } finally {
@@ -317,10 +297,7 @@ async function checkLighting(page, root, edge) {
       "Leaving restores native radii"
     );
     const layout = await page.evaluate(() => [scrollY, document.body.scrollHeight]);
-    await page
-      .locator(`[data-grid-caption="${await root.getAttribute("data-case")}"]`)
-      .getByRole("button", { name: "Pause effects", exact: true })
-      .click();
+    await setAppearance(page, "Animation", "Off");
     await page.waitForFunction(
       (name) => document.querySelector(`[data-grid-backdrop][data-case="${name}"]`).dataset.lighting === "off",
       await root.getAttribute("data-case")
@@ -336,13 +313,7 @@ async function checkLighting(page, root, edge) {
   } finally {
     await page.evaluate(() => window.__lightingCheck.restore());
     await page.mouse.move(700, 30);
-    const resume = page
-      .locator(`[data-grid-caption="${await root.getAttribute("data-case")}"]`)
-      .getByRole("button", { name: "Enable effects", exact: true });
-    if (await resume.count()) {
-      await resume.click();
-      assert.equal(await page.evaluate(() => localStorage.getItem("grid-effects")), "on", "Resuming after canvas focus must work on the first click");
-    }
+    await setAppearance(page, "Animation", "Full");
   }
   console.log(
     `${await root.getAttribute("data-case")}: electrical light output, idle, blank-space leave, native radius changes, and explicit pause passed.`
@@ -440,10 +411,7 @@ async function checkPulse(page, root, point) {
     );
     await page.mouse.click(point.x, point.y);
     await page.waitForFunction(() => window.__pulseCheck.uploads.length === 4);
-    await page
-      .locator(`[data-grid-caption="${await root.getAttribute("data-case")}"]`)
-      .getByRole("button", { name: "Pause effects", exact: true })
-      .click();
+    await setAppearance(page, "Animation", "Off");
     await page.waitForFunction(
       (name) => document.querySelector(`[data-grid-backdrop][data-case="${name}"]`).dataset.lighting === "off",
       await root.getAttribute("data-case")
@@ -458,17 +426,41 @@ async function checkPulse(page, root, point) {
       delete window.__pulseCheck;
     });
     await page.mouse.move(700, 30);
-    const resume = page
-      .locator(`[data-grid-caption="${await root.getAttribute("data-case")}"]`)
-      .getByRole("button", { name: "Enable effects", exact: true });
-    if (await resume.count()) {
-      await resume.click();
-      assert.equal(await page.evaluate(() => localStorage.getItem("grid-effects")), "on", "Resuming after canvas focus must work on the first click");
-    }
+    await setAppearance(page, "Animation", "Full");
     await page.waitForFunction(
       (name) => document.querySelector(`[data-grid-backdrop][data-case="${name}"]`).dataset.lighting === "on",
       await root.getAttribute("data-case")
     );
   }
   console.log(`${await root.getAttribute("data-case")}: visible dwell pulse, one-time field uploads, selection pulse, and explicit pause passed.`);
+}
+
+// Test-only observation of native events and programmatic selection, without UI readouts.
+export async function observeInspection(root) {
+  await root.evaluate((root) => {
+    const element = root.querySelector("latkit-network");
+    const network = element.network;
+    const select = network.select;
+    const state = (root.__inspectionCheck = { selected: null, hovered: null });
+    element.addEventListener("select", (event) => {
+      state.selected = event.detail;
+    });
+    element.addEventListener("hover", (event) => {
+      state.hovered = event.detail;
+    });
+    network.select = function (item) {
+      state.selected = item;
+      return select.call(this, item);
+    };
+  });
+  return {
+    selected: () => root.evaluate((root) => root.__inspectionCheck.selected),
+    wait: async (field, kind) =>
+      root
+        .page()
+        .waitForFunction(
+          ({ name, field, kind }) => document.querySelector(`[data-grid-backdrop][data-case="${name}"]`).__inspectionCheck[field]?.kind === kind,
+          { name: await root.getAttribute("data-case"), field, kind }
+        ),
+  };
 }

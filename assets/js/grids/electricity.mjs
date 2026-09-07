@@ -44,6 +44,7 @@ fn shade(f: Fragment) -> vec4f {
 // Pure animation state, driven entirely by Latkit's existing render loop.
 export function createElectricShade(onDwell = () => {}, paint = () => {}) {
   const history = new Float64Array(TRAIL_COUNT * 4);
+  let reduced = false;
   let target = null,
     x = NONE,
     y = NONE,
@@ -63,6 +64,10 @@ export function createElectricShade(onDwell = () => {}, paint = () => {}) {
   history.fill(0);
   return {
     wgsl,
+    reduced(value) {
+      reduced = value;
+      this.reset();
+    },
     theme(dark) {
       light = dark ? [0.86, 0.95, 1.0] : [0.035, 0.18, 0.47];
       accent = dark ? [1.0, 0.82, 0.48] : [0.0, 0.43, 0.48];
@@ -93,12 +98,22 @@ export function createElectricShade(onDwell = () => {}, paint = () => {}) {
       paint(null);
     },
     pulse(time, max, strength = 1) {
+      if (reduced) return;
       pulseStart = time;
       pulseEnd = Math.max(1200, (max + 3) * HOP_MS);
       pulseStrength = strength;
       dwelled = true;
     },
     tick(host, { timeMs }) {
+      if (reduced) {
+        // One immediate color highlight: no history, interpolation, size uploads,
+        // dwell timer or continued frames once the pointer stops.
+        host.fill(0);
+        host.set([target?.[0] ?? NONE, target?.[1] ?? NONE, 190, target ? 1 : 0]);
+        host.set(light, 4);
+        host.set(accent, 8);
+        return false;
+      }
       const dt = Number.isFinite(last) ? Math.max(0, Math.min(64, timeMs - last)) : 16;
       last = timeMs;
       const easing = 1 - Math.exp(-dt / 70);
@@ -175,6 +190,7 @@ export function mountElectricity(root) {
   let field,
     ripple,
     enabled = false,
+    mode = "full",
     rect,
     buttons = 0;
   const available = () => enabled && root.hasAttribute("data-inspectable") && !document.hidden;
@@ -182,7 +198,7 @@ export function mountElectricity(root) {
     if (available()) element.network.resume();
   };
   function launch(item, time = performance.now(), strength = 1) {
-    if (!available()) return;
+    if (!available() || mode !== "full") return;
     const values = field?.from(item);
     if (!values) return;
     element.network.setChannel("vertexShade", values.vertices);
@@ -213,6 +229,12 @@ export function mountElectricity(root) {
     "pointermove",
     (event) => {
       if (event.pointerType === "touch" || !available()) return;
+      if (event.target.closest?.(".accessibility")) {
+        shade.leave();
+        ripple?.leave();
+        wake();
+        return;
+      }
       rect ||= root.getBoundingClientRect();
       const x = event.clientX - rect.left,
         y = event.clientY - rect.top;
@@ -222,7 +244,7 @@ export function mountElectricity(root) {
       } else {
         const time = performance.now();
         shade.move(x, y, time, !event.buttons && document.elementFromPoint(event.clientX, event.clientY) === element);
-        if (!event.buttons) ripple?.move(x, y, time);
+        if (mode === "full" && !event.buttons) ripple?.move(x, y, time);
       }
       wake();
     },
@@ -275,6 +297,10 @@ export function mountElectricity(root) {
         rect.width,
         rect.height
       );
+    },
+    mode(value) {
+      mode = value;
+      shade.reduced(value === "reduced");
     },
     enable(value) {
       enabled = value;

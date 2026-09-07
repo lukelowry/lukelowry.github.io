@@ -1,3 +1,4 @@
+import { setAppearance, checkAppearance } from "./check-appearance.mjs";
 import { checkEffectPreference } from "./check-effect-preference.mjs";
 import assert from "node:assert/strict";
 import { chromium } from "playwright";
@@ -72,19 +73,13 @@ try {
   );
   assert.equal(await page.locator(".project-card a a").count(), 0, "Card links cannot be nested");
   await page.emulateMedia({ reducedMotion: "reduce" });
-  for (const [setting, next] of [
-    ["system", "light"],
-    ["light", "dark"],
-    ["dark", "system"],
-  ]) {
-    const toggle = page.getByRole("button", { name: `Theme: ${setting}. Switch to ${next} theme.`, exact: true });
-    await toggle.focus();
-    await page.keyboard.press("Enter");
-    assert.equal(await page.locator("html").getAttribute("data-theme-setting"), next);
+  for (const next of ["Light", "Dark", "System"]) {
+    await setAppearance(page, "Theme", next);
+    assert.equal(await page.locator("html").getAttribute("data-theme-setting"), next.toLowerCase());
     assert.equal(
       await page.locator("body").evaluate((body) => getComputedStyle(body).transitionDuration),
       "0s",
-      "Reduced motion must disable the template theme transition"
+      "Reduced motion disables theme transitions"
     );
   }
   await page.emulateMedia({ reducedMotion: "no-preference" });
@@ -347,15 +342,7 @@ try {
   await page.waitForTimeout(400);
   await page.waitForFunction(() => !document.querySelector("[data-fitting]"));
   await assertNetworkCentered("Mobile Europe");
-  const mobileCaption = page.locator('[data-grid-caption="EuropeA"]');
-  if (await mobileCaption.isVisible()) {
-    const labelBox = await mobileCaption.boundingBox();
-    const topButtonBox = await backToTop.boundingBox();
-    assert.ok(topButtonBox.y + topButtonBox.height <= labelBox.y - 4, "Mobile Back to top must sit above the network label");
-    await scroll(100000);
-    const footerBox = await page.locator(".footer-copy").boundingBox();
-    assert.ok(footerBox.y + footerBox.height <= labelBox.y, "The page must scroll its footer clear of the fixed label");
-  }
+  assert.equal(await page.locator(".grid-backdrop-caption").count(), 0, "Background networks have no information overlay");
   for (let i = 0; i < backdrops.length; i++) {
     assert.deepEqual(await backdrops[i].boundingBox(), mobileBounds[i], "Mobile scroll must not move either canvas.");
   }
@@ -427,14 +414,22 @@ try {
       assert.equal(await page.evaluate(() => document.activeElement.dataset.action), "fullscreen");
     }
     await page.locator('[data-action="play"]').click();
-    await page.emulateMedia({ reducedMotion: "reduce" });
+    await setAppearance(page, "Animation", "Reduced");
     await page.getByRole("button", { name: "Play animation", exact: true }).waitFor();
     assert.equal(await page.locator('[data-action="play"]').innerText(), "Play");
     await page.reload({ waitUntil: "networkidle" });
     await page.waitForSelector("[data-grid-wave][data-ready]");
     assert.equal(await page.locator('[data-action="play"]').innerText(), "Play", "Reduced motion must start paused");
-    console.log("Verified live WebGPU bus selection, keyboard exit, zoom, reset, and reduced motion.");
+    await page.getByRole("button", { name: "Play animation", exact: true }).click();
+    assert.equal(await page.locator('[data-action="play"]').innerText(), "Pause", "The scientific demo can still be played deliberately");
+    await setAppearance(page, "Animation", "Off");
+    assert.equal(await page.locator('[data-action="play"]').innerText(), "Play");
+    await page.reload({ waitUntil: "networkidle" });
+    await page.waitForSelector("[data-grid-wave][data-ready]");
+    assert.equal(await page.locator('[data-action="play"]').innerText(), "Play", "Off prevents autoplay");
+    console.log("Verified live WebGPU bus selection, keyboard exit, zoom, reset, and shared motion settings.");
   }
+  await checkAppearance(browser, site.url);
   await checkEffectPreference(browser, site.url);
   await checkTouchInspection(browser, site.url);
   const unavailable = await browser.newContext({ viewport: { width: 390, height: 844 }, colorScheme: "dark" });

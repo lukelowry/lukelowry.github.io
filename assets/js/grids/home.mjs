@@ -11,7 +11,6 @@ const nextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve))
 export function mountBackdrop(root, effects) {
   const element = root.querySelector("latkit-network");
   const name = root.dataset.case;
-  const playHint = document.querySelector(`[data-grid-caption="${name}"] .grid-backdrop-play-hint`);
   const view = sceneView(name);
   const electricity = mountElectricity(root);
   const inspection = mountInspection(root, { onSelect: (item) => electricity.select(item) });
@@ -44,17 +43,16 @@ export function mountBackdrop(root, effects) {
     const version = ++shadeRevision;
     const enabled = effects.enabled;
     try {
-      playHint.hidden = true;
       electricity.enable(false);
+      electricity.mode(effects.mode);
       electricity.theme(isDark());
       await element.network.setShade(enabled ? electricity.shade : null);
       if (version === shadeRevision) {
         electricity.enable(enabled);
-        playHint.hidden = !enabled;
         root.dataset.lighting = enabled ? "on" : "off";
       }
     } catch {
-      // Shade compilation must not take away the usable network or its readout.
+      // Shade compilation must not take away the usable network.
       if (version === shadeRevision) {
         electricity.enable(false);
         root.dataset.lighting = "unavailable";

@@ -22,7 +22,8 @@ if (backToTop) {
   window.addEventListener("scroll", updateBackToTop, { passive: true });
   backToTop.addEventListener("click", () => {
     document.getElementById("main-content").focus({ preventScroll: true });
-    window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+    const reduced = document.documentElement.dataset.animation !== "full" || matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduced ? "instant" : "smooth" });
   });
   updateBackToTop();
 }
