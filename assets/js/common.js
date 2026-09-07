@@ -37,3 +37,33 @@ if (toc) {
   window.jQuery(() => window.jQuery("body").scrollspy({ target: "#toc-sidebar", offset: 100 }));
 }
 window.jQuery('[data-toggle="popover"]').popover({ trigger: "hover focus" });
+
+document.querySelectorAll("[data-copy-citation]").forEach((button) => {
+  const panel = button.closest(".bibtex");
+  const code = panel?.querySelector("pre code");
+  const status = panel?.querySelector(".citation-status");
+  const download = panel?.querySelector("a[download]");
+  if (!code || !status || !download) return;
+  const citationURI = download.getAttribute("href");
+  const citationText = decodeURIComponent(citationURI.slice(citationURI.indexOf(",") + 1));
+
+  button.hidden = false;
+  button.addEventListener("click", async () => {
+    if (button.getAttribute("aria-busy") === "true") return;
+    button.setAttribute("aria-busy", "true");
+    status.textContent = "";
+    try {
+      await navigator.clipboard.writeText(citationText);
+      status.textContent = "BibTeX copied.";
+    } catch {
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(code);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      status.textContent = "Citation selected. Copy it, or download the BibTeX file.";
+    } finally {
+      button.removeAttribute("aria-busy");
+    }
+  });
+});

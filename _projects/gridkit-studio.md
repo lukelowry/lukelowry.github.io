@@ -6,6 +6,7 @@ description: VS Code Extension for GridKit Development and Research
 category: work
 importance: -2
 github: https://github.com/lukelowry/lattice
+github_public: false # Restore the source button when the repository becomes public.
 marketplace: https://marketplace.visualstudio.com/items?itemName=lukelowery.gridkit-studio
 img: /assets/img/projects/gridkit-studio.png
 og_image: /assets/img/projects/gridkit-studio.png
@@ -23,4 +24,6 @@ giscus_comments: false
 ## Links
 
 - [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=lukelowery.gridkit-studio)
-- [Code](https://github.com/lukelowry/lattice)
+{% if page.github_public != false %}
+- [Code]({{ page.github }})
+{% endif %}

@@ -3,6 +3,7 @@ layout: page
 title: projects
 display_title: Projects
 page_class: collection-page projects-page
+profile_links: github
 permalink: /projects/
 description: Completed and ongoing academic projects 
 nav: true

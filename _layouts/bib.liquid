@@ -207,6 +207,14 @@
       {% if entry.doi %}
         <a href="https://doi.org/{{ entry.doi }}" class="btn btn-sm z-depth-0">DOI</a>
       {% endif %}
+      {% if page.url == '/publications/' %}
+        <a
+          href="https://scholar.google.com/scholar?q={{ entry.title | strip_html | url_encode }}"
+          class="btn btn-sm z-depth-0"
+          aria-label="Find {{ entry.title | strip_html | escape }} on Google Scholar"
+          >Google Scholar</a
+        >
+      {% endif %}
       {% if entry.arxiv %}
         <a href="http://arxiv.org/abs/{{ entry.arxiv }}" class="btn btn-sm z-depth-0">arXiv</a>
       {% endif %}
@@ -388,6 +396,7 @@
     {% if entry.bibtex_show %}
       <!-- Hidden bibtex block -->
       <div id="bibtex-{{ entry.key | escape }}" class="bibtex hidden" hidden>
+        {% include citation-actions.liquid entry=entry %}
         {% highlight bibtex %}
         {{- entry.bibtex | hideCustomBibtex -}}
         {% endhighlight %}

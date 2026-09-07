@@ -29,6 +29,7 @@ layout: default
       </div>
     {% endif %}
   </div>
+  {% include profile-links.liquid class="home-profile-links" links="email,github,cv,scholar,orcid" compact=true %}
   <article>
     <div class="home-research">{{ content }}</div>
     {% if page.social %}

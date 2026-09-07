@@ -352,3 +352,19 @@ html[data-theme="dark"] .grid-poster-dark {
 .home-publications h2 a {
   color: inherit;
 }
+
+.home-page > .home-profile-links {
+  grid-column: 2;
+  gap: 0.375rem;
+  pointer-events: auto;
+}
+.home-profile-links .profile-link {
+  padding-inline: 0.5rem;
+}
+@media (max-width: 479px) {
+  .home-page > .home-profile-links {
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    justify-content: start;
+  }
+}

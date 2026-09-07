@@ -1,0 +1,12 @@
+{% assign citation_text = include.entry.bibtex | hideCustomBibtex | strip %}
+<div class="citation-actions">
+  <button type="button" class="citation-action" data-copy-citation hidden>{% include collection-icon.liquid name="copy" %} Copy BibTeX</button>
+  <a
+    class="citation-action"
+    href="data:application/x-bibtex;charset=utf-8,{{ citation_text | url_encode | replace: '+', '%20' }}"
+    download="{{ include.entry.key | escape }}.bib"
+  >
+    {% include collection-icon.liquid name="download" %} Download BibTeX
+  </a>
+  <p class="citation-status" role="status" aria-live="polite" aria-atomic="true"></p>
+</div>

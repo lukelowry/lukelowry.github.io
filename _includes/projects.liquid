@@ -21,11 +21,16 @@
     {% if project.description != blank %}
       <p class="card-text">{{ project.description }}</p>
     {% endif %}
-    {% if project.github or project.readthedocs or project.marketplace %}
+    {% if project.github or project.readthedocs or project.marketplace or project.citation %}
       <div class="project-resources">
-        {% if project.github %}
-          <a class="project-repository" href="{{ project.github | escape }}" aria-label="{{ project.title | escape }} code repository"
-            >Code {% include collection-icon.liquid name="external" -%}
+        {% if project.github and project.github_public != false %}
+          <a class="project-repository" href="{{ project.github | escape }}" aria-label="{{ project.title | escape }} code repository on GitHub"
+            >GitHub {% include collection-icon.liquid name="external" -%}
+          </a>
+        {% endif %}
+        {% if project.citation %}
+          <a class="project-repository" href="{{ project.citation | escape }}" aria-label="Cite {{ project.title | escape }}">
+            Cite {% include collection-icon.liquid name="external" %}
           </a>
         {% endif %}
         {% if project.readthedocs %}

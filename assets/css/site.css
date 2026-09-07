@@ -757,3 +757,71 @@ html[data-contrast="high"][data-theme="dark"] {
     display: none;
   }
 }
+
+/* Profile destinations and citation tools share the site's restrained controls. */
+.profile-links,
+.citation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.profile-links {
+  margin-top: 1.25rem;
+}
+.profile-link,
+.citation-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  min-height: 44px;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--global-text-color) 55%, var(--global-bg-color));
+  border-radius: 6px;
+  background: var(--global-bg-color);
+  color: var(--global-text-color);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.4;
+  text-decoration: none;
+  cursor: pointer;
+}
+.profile-link:hover,
+.citation-action:hover {
+  border-color: var(--global-theme-color);
+  background: var(--global-code-bg-color);
+  color: var(--global-theme-color);
+  text-decoration: none;
+}
+.profile-link .collection-icon,
+.citation-action .collection-icon {
+  width: 16px;
+  height: 16px;
+}
+.citation-actions {
+  padding-block: 0.25rem 0.75rem;
+}
+.citation-action[hidden] {
+  display: none;
+}
+.citation-action[aria-busy="true"] {
+  cursor: wait;
+}
+.publications ol.bibliography .citation-status {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--global-secondary-text-color);
+  font-size: 0.8125rem;
+  text-align: left;
+}
+.citation-status:empty {
+  display: none;
+}
+@media print {
+  .profile-links,
+  .citation-actions {
+    display: none !important;
+  }
+}

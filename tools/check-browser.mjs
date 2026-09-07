@@ -1,3 +1,4 @@
+import { checkResearchLinks } from "./check-research-links.mjs";
 import { checkCVPublications } from "./check-cv-publications.mjs";
 import { checkReload } from "./check-reload.mjs";
 import { checkLoading, checkPayloadLoading } from "./check-loading.mjs";
@@ -69,6 +70,7 @@ try {
   }
   assert.deepEqual(accessFailures, [], "Accessibility violations");
   await checkCVPublications(page, site.url);
+  await checkResearchLinks(page, site.url);
   await page.emulateMedia({ colorScheme: "light" });
   await page.goto(site.url + "/projects/", { waitUntil: "networkidle" });
   assert.equal(await page.locator("latkit-network, [data-grid-still], #usa-network").count(), 0, "Projects has no network illustration");
@@ -85,9 +87,10 @@ try {
   assert.equal(await page.evaluate(() => document.activeElement.id), "main-content");
   for (const title of ["GridKit", "GridKit Studio", "Latkit"]) {
     assert.equal(await page.getByRole("link", { name: title, exact: true }).count(), 1);
-    assert.equal(await page.getByRole("link", { name: `${title} code repository`, exact: true }).count(), 1);
   }
+  assert.equal(await page.locator('.project-card a[href="https://github.com/lukelowry/lattice"]').count(), 0, "Private source is not linked");
   for (const name of ["GridKit", "Latkit"]) {
+    assert.equal(await page.getByRole("link", { name: `${name} code repository on GitHub`, exact: true }).count(), 1);
     assert.equal(await page.getByRole("link", { name: `${name} documentation on ReadTheDocs`, exact: true }).count(), 1);
   }
   assert.equal(

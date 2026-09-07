@@ -6,6 +6,7 @@ img: /assets/img/USA_Wavelet.png
 importance: 1
 category: work
 github: https://github.com/lukelowry/sgwt
+citation: https://github.com/lukelowry/sgwt/blob/main/CITATION.cff
 readthedocs: https://sgwt.readthedocs.io/
 ---
 

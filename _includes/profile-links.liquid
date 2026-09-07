@@ -1,0 +1,50 @@
+{% assign profile_link_types = include.links | default: 'email,github,scholar,orcid,cv' | split: ',' %}
+<nav
+  class="profile-links{% if include.class %} {{ include.class | escape }}{% endif %}"
+  aria-label="{{ include.label | default: 'Contact and profiles' | escape }}"
+>
+  {% for profile_link_type in profile_link_types %}
+    {% case profile_link_type %}
+      {% when 'email' %}
+        {% if site.data.socials.email %}
+          <a class="profile-link" href="mailto:{{ site.data.socials.email | encode_email }}">
+            {% include collection-icon.liquid name="email" %} Email
+          </a>
+        {% endif %}
+      {% when 'github' %}
+        {% if site.data.socials.github_username %}
+          <a class="profile-link" href="https://github.com/{{ site.data.socials.github_username | escape }}">
+            GitHub {% include collection-icon.liquid name="external" %}
+          </a>
+        {% endif %}
+      {% when 'scholar' %}
+        {% if site.data.socials.scholar_userid %}
+          <a
+            class="profile-link"
+            href="https://scholar.google.com/citations?user={{ site.data.socials.scholar_userid | escape }}"
+            aria-label="Google Scholar"
+          >
+            {% if include.compact %}Scholar{% else %}Google Scholar{% endif %}
+            {% include collection-icon.liquid name="external" %}
+          </a>
+        {% endif %}
+      {% when 'orcid' %}
+        {% if site.data.socials.orcid_id %}
+          <a class="profile-link" href="https://orcid.org/{{ site.data.socials.orcid_id | escape }}">
+            ORCID {% include collection-icon.liquid name="external" %}
+          </a>
+        {% endif %}
+      {% when 'cv' %}
+        {% if site.cv_download %}
+          <a
+            class="profile-link"
+            href="{{ site.cv_download | prepend: '/assets/pdf/' | relative_url }}"
+            download="Luke-Lowery-CV.pdf"
+            aria-label="Download CV (PDF)"
+          >
+            {% include collection-icon.liquid name="download" %} CV
+          </a>
+        {% endif %}
+    {% endcase %}
+  {% endfor %}
+</nav>
