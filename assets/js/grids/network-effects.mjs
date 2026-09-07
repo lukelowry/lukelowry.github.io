@@ -13,7 +13,9 @@ export function mountNetworkEffects(root) {
     mode = "full",
     rect,
     buttons = 0,
-    pulseBound = false;
+    pulseBound = false,
+    pointerActive = false,
+    lastPointer = null;
   const available = () => enabled && root.hasAttribute("data-inspectable") && !root.hasAttribute("data-fitting") && !document.hidden;
   const wake = () => {
     if (available()) element.network.resume();
@@ -70,29 +72,39 @@ export function mountNetworkEffects(root) {
   }
   function reset() {
     buttons = 0;
+    pointerActive = false;
     effect?.shade.reset();
     clearPulse();
     rect = null;
+    wake();
+  }
+  function leave() {
+    if (!pointerActive) return;
+    pointerActive = false;
+    effect?.shade.leave();
+    effect?.leave();
     wake();
   }
   // Visual input can cross the reading column; native picking still belongs to the canvas.
   window.addEventListener(
     "pointermove",
     (event) => {
-      if (event.pointerType === "touch" || !available()) return;
+      // Browsers may resend a stationary pointer after scrolling/layout changes.
+      // Those updates must not restart a wave that scrolling just released.
+      const moved = !lastPointer || event.clientX !== lastPointer.x || event.clientY !== lastPointer.y || event.pointerType !== lastPointer.type;
+      lastPointer = { x: event.clientX, y: event.clientY, type: event.pointerType };
+      if (event.pointerType === "touch" || !available() || !moved) return;
       if (event.target.closest?.(".accessibility")) {
-        effect?.shade.leave();
-        effect?.leave();
-        wake();
+        leave();
         return;
       }
       rect ||= root.getBoundingClientRect();
       const x = event.clientX - rect.left,
         y = event.clientY - rect.top;
       if (x < -190 || y < 0 || x > rect.width + 190 || y > rect.height) {
-        effect?.shade.leave();
-        effect?.leave();
+        leave();
       } else {
+        pointerActive = true;
         const time = performance.now();
         effect?.shade.move(x, y, time, !event.buttons && document.elementFromPoint(event.clientX, event.clientY) === element);
         if (mode === "full" && !event.buttons) effect?.move(x, y, time);
@@ -123,11 +135,15 @@ export function mountNetworkEffects(root) {
   );
   window.addEventListener("pointercancel", reset, { passive: true });
   document.documentElement.addEventListener("pointerleave", () => {
+    lastPointer = null;
     effect?.shade.leave();
     effect?.leave();
     wake();
   });
-  for (const type of ["blur", "pagehide", "resize", "scroll"]) window.addEventListener(type, reset, { passive: true });
+  // Scrolling ends pointer forcing; the fixed canvas and existing wave keep
+  // their positions while the field relaxes. Structural changes still reset.
+  window.addEventListener("scroll", leave, { passive: true });
+  for (const type of ["blur", "pagehide", "resize"]) window.addEventListener(type, reset, { passive: true });
   document.addEventListener("visibilitychange", reset);
   return {
     reset,

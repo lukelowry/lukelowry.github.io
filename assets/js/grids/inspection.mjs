@@ -10,6 +10,8 @@ export function mountInspection(root, { onSelect = () => {}, motion } = {}) {
     selected = null,
     press = null;
   let pressRevision = 0;
+  let pointerActive = false;
+  let clipHeight = 0;
   let ready = false,
     enabled = false,
     state = { visible: false, seam: Infinity };
@@ -21,6 +23,8 @@ export function mountInspection(root, { onSelect = () => {}, motion } = {}) {
     branchCursor = -1;
 
   function clearHover() {
+    if (!pointerActive) return;
+    pointerActive = false;
     element.network.setPointer(null);
     // network 0.9.0 does not wake on an empty-space leave; resume its existing
     // loop once so a settled light can fade even when no bus was hovered.
@@ -137,6 +141,7 @@ export function mountInspection(root, { onSelect = () => {}, motion } = {}) {
     { passive: true }
   );
   function cancelPress() {
+    if (!press) return;
     pressRevision++;
     press = null;
     motion?.release();
@@ -147,6 +152,13 @@ export function mountInspection(root, { onSelect = () => {}, motion } = {}) {
   element.addEventListener("select", (event) => {
     if (enabled && !multiTouch) select(event.detail, true);
   });
+  element.addEventListener(
+    "pointermove",
+    () => {
+      pointerActive = enabled;
+    },
+    { passive: true }
+  );
   element.addEventListener("pointerleave", clearHover);
   element.addEventListener("pointerleave", cancelPress);
 
@@ -229,17 +241,22 @@ export function mountInspection(root, { onSelect = () => {}, motion } = {}) {
       availability();
     },
     update(next) {
-      if (next.seam !== state.seam && canvas) {
-        browsing++;
-        clearHover();
+      if (next.seam !== state.seam || innerHeight !== clipHeight) {
+        clipHeight = innerHeight;
+        if (canvas) {
+          browsing++;
+          clearHover();
+        }
+        // Keep the full feathered reveal. Clip only beyond its transparent edge;
+        // clipping at the opaque edge removed the fade and made a 72px hard gap.
+        const before = next.seam - 36,
+          after = next.seam + 36;
+        track.style.setProperty("--grid-switch-before", `${before}px`);
+        track.style.setProperty("--grid-switch-after", `${after}px`);
+        track.style.clipPath =
+          root.dataset.case === "USA" ? `inset(0 0 ${Math.max(0, innerHeight - after)}px 0)` : `inset(${Math.max(0, before)}px 0 0 0)`;
       }
       state = next;
-      // CSS masks do not constrain hit testing. Clip at the fully opaque side of the seam.
-      const inset =
-        root.dataset.case === "USA"
-          ? `inset(0 0 ${Math.max(0, innerHeight - state.seam + 36)}px 0)`
-          : `inset(${Math.max(0, state.seam + 36)}px 0 0 0)`;
-      track.style.clipPath = inset;
       availability();
     },
   };

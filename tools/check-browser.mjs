@@ -1,3 +1,4 @@
+import { checkScroll } from "./check-scroll.mjs";
 import { checkSpring } from "./check-spring-browser.mjs";
 import { checkMobileGrids } from "./check-mobile-grids.mjs";
 import { setAppearance, checkAppearance } from "./check-appearance.mjs";
@@ -433,6 +434,7 @@ try {
   }
   await checkAppearance(browser, site.url);
   await checkEffectPreference(browser, site.url);
+  await checkScroll(browser, site.url);
   await checkSpring(browser, site.url);
   await checkMobileGrids(browser, site.url);
   const unavailable = await browser.newContext({ viewport: { width: 1440, height: 1000 }, colorScheme: "dark" });

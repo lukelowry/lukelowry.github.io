@@ -212,6 +212,9 @@ export function mountBackdrop(root, effects, presentation) {
         if (!ready || Math.abs(root.clientWidth - width) > 1 || Math.abs(root.clientHeight - height) > 1) scheduleFit();
       } else if (!visible && wasVisible) {
         clearTimeout(resizeTimer);
+        // Retire motion only after the reveal is fully outside the viewport.
+        // Returning to the scene should never resume a stale, frozen wave.
+        networkEffects.reset();
         element.network.pause();
       }
     },
@@ -248,9 +251,8 @@ export function mountStory(roots, presentation) {
       measure = false;
     }
     const state = storyState(scrollY, innerHeight, boundary);
-    // Precompute the two stops: the legacy CSS minifier corrupts var() nested inside calc().
-    document.documentElement.style.setProperty("--grid-switch-before", `${state.seam - 36}px`);
-    document.documentElement.style.setProperty("--grid-switch-after", `${state.seam + 36}px`);
+    // Each track owns its reveal styles; scrolling need not invalidate inherited
+    // custom properties across the entire document.
     document.documentElement.dataset.gridStory = "";
     for (const { name, renderer } of renderers) {
       renderer.update({ ...state[name], seam: state.seam });
