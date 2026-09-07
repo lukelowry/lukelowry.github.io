@@ -2,7 +2,7 @@ import { mountEffectPreference } from "./effect-preference.mjs";
 import { adjacency, createWave } from "./signal.mjs";
 import { loadUSA, isDark, surfaceColor, ramp, whenAttached } from "./data.mjs";
 
-export function mountWave(root) {
+export function mountWave(root, presentation) {
   const effects = mountEffectPreference();
   const element = root.querySelector("latkit-network");
   const inspection = root.querySelector(".grid-inspection");
@@ -35,7 +35,7 @@ export function mountWave(root) {
     fullscreen.hidden = !attached || !document.fullscreenEnabled;
   }
   function theme() {
-    if (!current) return;
+    if (!current || !presentation.live) return;
     element.network.setOptions({
       surfaceColor: surfaceColor(),
       edgeBaseColor: null,
@@ -45,7 +45,7 @@ export function mountWave(root) {
     });
   }
   document.addEventListener("themechange", theme);
-  const canAnimate = () => wanted && visible && !document.hidden && attached && current;
+  const canAnimate = () => presentation.live && wanted && visible && !document.hidden && attached && current;
   function schedule() {
     if (canAnimate() && !frameId) frameId = requestAnimationFrame(frame);
     if (!canAnimate()) {
@@ -92,6 +92,7 @@ export function mountWave(root) {
     schedule();
   }
   async function activate() {
+    if (!presentation.live) return;
     if (activation) return activation;
     activation = (async () => {
       status.textContent = "Loading interactive view.";
@@ -125,6 +126,7 @@ export function mountWave(root) {
       root.dataset.ready = "";
       controls();
       status.textContent = "";
+      if (!presentation.live) element.network.pause();
       schedule();
     })().catch(fail);
     return activation;
@@ -222,6 +224,14 @@ export function mountWave(root) {
     { threshold: 0 }
   ).observe(root);
   document.addEventListener("visibilitychange", schedule);
+  presentation.subscribe(() => {
+    if (presentation.live) {
+      theme();
+      if (attached) element.network.resume();
+      if (visible) activate();
+    } else if (attached) element.network.pause();
+    schedule();
+  });
   effects.subscribe(() => {
     if (effects.mode !== "full") {
       wanted = false;

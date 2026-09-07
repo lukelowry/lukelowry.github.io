@@ -1,11 +1,30 @@
-// Each page imports only the scene it actually displays.
+import { mountPresentation } from "./presentation.mjs";
+
+const presentation = mountPresentation();
 const backdrops = document.querySelectorAll("[data-grid-backdrop]");
 const wave = document.querySelector("[data-grid-wave]");
-if (backdrops.length) {
-  const { mountStory } = await import("./home.mjs");
-  mountStory(backdrops);
+let mounting = false;
+let mounted = false;
+
+// A fresh mobile visit imports no renderer, topology, picking, or animation code.
+async function mountLive() {
+  if (!presentation.live || mounting || mounted) return;
+  mounting = true;
+  try {
+    if (backdrops.length) {
+      const { mountStory } = await import("./home.mjs");
+      if (!presentation.live) return;
+      mountStory(backdrops, presentation);
+    }
+    if (wave) {
+      const { mountWave } = await import("./wave.mjs");
+      if (!presentation.live) return;
+      mountWave(wave, presentation);
+    }
+    mounted = true;
+  } finally {
+    mounting = false;
+  }
 }
-if (wave) {
-  const { mountWave } = await import("./wave.mjs");
-  mountWave(wave);
-}
+presentation.subscribe(mountLive);
+await mountLive();
