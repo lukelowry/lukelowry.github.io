@@ -22,3 +22,13 @@ assets/json/*.case.json
 
 # npm dependency bundles produced by build:js.
 assets/generated/
+
+# Impeccable local working state; shared config and product records remain trackable.
+.impeccable/config.local.json
+.impeccable/hook.cache.json
+.impeccable/hook.pending.json
+.impeccable/*.png
+.impeccable/review/
+.impeccable/questions/
+.impeccable/live/*
+!.impeccable/live/config.json
