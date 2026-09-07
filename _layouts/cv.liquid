@@ -82,46 +82,44 @@ layout: default
 
     <article>
       <div class="cv">
-        {% for data in site.data.resume %}
-          {% if site.jsonresume and site.jsonresume.size > 0 %}
-            {% unless site.jsonresume contains data[0] %}
-              {% continue %}
-            {% endunless %}
-          {% endif %}
-          {% if data[0] == 'meta' or data[1].size == 0 %} {% continue %} {% endif %}
-          <a class="anchor" id="{{ data[0] }}"></a>
+        {% for section in site.jsonresume %}
+          {% assign section_data = site.data.resume[section] %}
+          {% unless section == 'publications' %}
+            {% if section == 'meta' or section_data == null or section_data.size == 0 %}{% continue %}{% endif %}
+          {% endunless %}
+          <a class="anchor" id="{{ section }}"></a>
           <div class="card mt-3 p-3">
-            <h3 class="card-title font-weight-medium">{{ data[0] | capitalize }}</h3>
+            <h3 class="card-title font-weight-medium">{{ section | capitalize }}</h3>
             <div>
-              {% case data[0] %}
+              {% case section %}
                 {% when 'basics' %}
-                  {% include resume/basics.liquid %}
+                  {% include resume/basics.liquid content=section_data %}
                 {% when 'education' %}
-                  {% include resume/education.liquid %}
+                  {% include resume/education.liquid content=section_data %}
                 {% when 'work' %}
-                  {% include resume/work.liquid %}
+                  {% include resume/work.liquid content=section_data %}
                 {% when 'volunteer' %}
-                  {% include resume/volunteer.liquid %}
+                  {% include resume/volunteer.liquid content=section_data %}
                 {% when 'leadership' %}
-                  {% include resume/leadership.liquid %}
+                  {% include resume/leadership.liquid content=section_data %}
                 {% when 'presentations' %}
-                  {% include resume/presentations.liquid %}
+                  {% include resume/presentations.liquid content=section_data %}
                 {% when 'projects' %}
-                  {% include resume/projects.liquid %}
+                  {% include resume/projects.liquid content=section_data %}
                 {% when 'awards' %}
-                  {% include resume/awards.liquid %}
+                  {% include resume/awards.liquid content=section_data %}
                 {% when 'skills' %}
-                  {% include resume/skills.liquid %}
+                  {% include resume/skills.liquid content=section_data %}
                 {% when 'publications' %}
-                  {% include resume/publications.liquid %}
+                  {% include resume/publications.liquid content=section_data %}
                 {% when 'languages' %}
-                  {% include resume/languages.liquid %}
+                  {% include resume/languages.liquid content=section_data %}
                 {% when 'interests' %}
-                  {% include resume/interests.liquid %}
+                  {% include resume/interests.liquid content=section_data %}
                 {% when 'certificates' %}
-                  {% include resume/certificates.liquid %}
+                  {% include resume/certificates.liquid content=section_data %}
                 {% when 'references' %}
-                  {% include resume/references.liquid %}
+                  {% include resume/references.liquid content=section_data %}
                 {% else %}
 
               {% endcase %}

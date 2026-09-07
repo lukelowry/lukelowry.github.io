@@ -32,13 +32,15 @@ npm run check:browser
 
 Browser/PDF tools need `npx playwright install chromium`, or installed Chrome with
 `SITE_BROWSER_CHANNEL=chrome`. `SITE_ROOT` selects a build other than `_site`.
-The CV PDF is generated from `assets/json/resume.json` and preserved during preview rebuilds.
+The CV page and PDF use `assets/json/resume.json` for resume sections and `_bibliography/papers.bib`
+for publications. Run `npm run assets:cv` after a local Jekyll rebuild to refresh the PDF; CI does this
+automatically. The PDF is preserved during preview rebuilds.
 Checks and screenshots write to ignored `output/`.
 
 ## Editing
 
 - Prose: `_pages/` and `_projects/`. Homepage sections are explicit Markdown-enabled HTML containers.
-- Publications: `_bibliography/papers.bib`. CV: `assets/json/resume.json`.
+- Publications, including the CV publication section: `_bibliography/papers.bib`. Other CV sections: `assets/json/resume.json`.
 - Project cards: `img`, optional `img_alt`/`image_fit: contain`, `github`, `readthedocs`, and `marketplace` front matter.
   Remove `noindex: true` and `sitemap: false` when a project outline is ready to index.
 - Styles: `assets/css/site.css` for shared UI, `grids.css` for network pages, `_sass/` for theme foundations.

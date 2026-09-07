@@ -1,4 +1,4 @@
-// Print the existing approved CV. This does not author or synchronize any CV fields.
+// Print the built CV, including publications from the shared bibliography.
 import { chromium } from "playwright";
 import { mkdir } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -36,6 +36,7 @@ try {
       .cv .date-column + div { flex:0 0 81%; max-width:81%; padding:0; margin:0!important; }
       .cv .card .list-group-item .badge { border:0!important; padding:0; font-size:7.5pt; font-weight:500!important; color:#444!important; background:transparent!important; }
       .cv h6 { font-size:10pt!important; line-height:1.35; margin:0 0 3pt 10pt!important; }
+      .cv .cv-publication-authors, .cv .cv-publication-details, .cv .cv-publication-doi { margin-left:10pt!important; }
       .cv ul.items { padding-left:22pt; margin-bottom:0; }
       .cv a { color:#111!important; text-decoration:none; }
       .cv li { orphans:2; widows:2; }

@@ -1,0 +1,55 @@
+---
+---
+<div class="list-group-item" data-publication-key="{{ entry.key }}">
+  <div class="row">
+    <div class="col-xs-2 cl-sm-2 col-md-2 text-center date-column">
+      <table class="table-cv">
+        <tbody>
+          <tr>
+            <td>
+              <span class="badge font-weight-bold danger-color-dark text-uppercase align-middle" style="min-width: 75px">{{ entry.year }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-xs-10 cl-sm-10 col-md-10 mt-2 mt-md-0">
+      <h6 class="title font-weight-bold ml-1 ml-md-4">
+        <a class="cv-publication-link" href="{{ '/publications/' | absolute_url }}#{{ entry.key }}">{{ entry.title }}</a>
+      </h6>
+      <div class="cv-publication-authors ml-1 ml-md-4">
+        {%- for author in entry.author_array -%}
+          {%- unless forloop.first -%}
+            {%- if forloop.length > 2 %}, {% else %}  {% endif -%}
+          {%- endunless -%}
+          {%- if forloop.last and forloop.length > 1 %}and {% endif -%}
+          {%- if site.scholar.last_name contains author.last and site.scholar.first_name contains author.first -%}
+            <em>
+              {{- author.first }}
+              {{ author.last -}}
+            </em>
+          {%- else -%}
+            {{- author.first }}
+            {{ author.last -}}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+      {% assign venue = entry.journal | default: entry.booktitle | default: entry.school %}
+      {% if venue %}
+        <div class="cv-publication-details ml-1 ml-md-4">
+          <em class="cv-publication-venue">{{ venue }}</em>
+          {%- if entry.volume and entry.volume != '' -%}
+            , {{ entry.volume -}}
+            {%- if entry.number and entry.number != '' %}({{ entry.number }}){% endif -%}
+          {%- endif %}
+          {%- if entry.pages and entry.pages != '' %}, pp. {{ entry.pages | replace: '--', '&ndash;' }}{% endif %}
+        </div>
+      {% endif %}
+      {% if entry.doi %}
+        <div class="cv-publication-doi ml-1 ml-md-4">
+          <a href="https://doi.org/{{ entry.doi }}">DOI: {{ entry.doi }}</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

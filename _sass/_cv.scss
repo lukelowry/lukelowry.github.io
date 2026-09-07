@@ -218,3 +218,25 @@ ul.timeline li::before {
      color: var(--global-text-color);
 }
 */
+
+// Keep the shared bibliography in the CV's existing row layout.
+.cv-publications > .bibliography {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cv-publications > .bibliography > li {
+  break-inside: avoid;
+}
+
+.cv-publication-authors,
+.cv-publication-details,
+.cv-publication-doi {
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.cv-publication-doi {
+  overflow-wrap: anywhere;
+}

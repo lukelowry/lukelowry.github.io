@@ -1,3 +1,4 @@
+import { checkCVPublications } from "./check-cv-publications.mjs";
 import { checkReload } from "./check-reload.mjs";
 import { checkLoading, checkPayloadLoading } from "./check-loading.mjs";
 import { checkScroll } from "./check-scroll.mjs";
@@ -59,6 +60,7 @@ try {
     }
   }
   assert.deepEqual(accessFailures, [], "Accessibility violations");
+  await checkCVPublications(page, site.url);
   await page.emulateMedia({ colorScheme: "light" });
   await page.goto(site.url + "/projects/", { waitUntil: "networkidle" });
   assert.equal(await page.locator("latkit-network, [data-grid-still], #usa-network").count(), 0, "Projects has no network illustration");

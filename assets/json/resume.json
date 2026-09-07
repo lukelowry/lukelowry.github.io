@@ -143,43 +143,6 @@
       ]
     }
   ],
-  "publications": [
-    {
-      "name": "Spectral Graph Filters for Large Power Systems",
-      "publisher": "In the proceedings of 2026 IEEE Texas Power and Energy Conference (TPEC)",
-      "releaseDate": "2026-02",
-      "website": "",
-      "summary": ""
-    },
-    {
-      "name": "Using Spectral Graph Wavelets to Analyze Large Power System Oscillation Modes",
-      "publisher": "59th Hawaii International Conference on System Sciences (HICSS)",
-      "releaseDate": "2025-12",
-      "website": "",
-      "summary": ""
-    },
-    {
-      "name": "Voltage Stability Interface Limits in Non-Uniform Geomagnetic Disturbances",
-      "publisher": "In the proceedings of 2024 56th North American Power Symposium (NAPS)",
-      "releaseDate": "2024-01-01",
-      "website": "",
-      "summary": ""
-    },
-    {
-      "name": "EMT Simulation with Spectral Graph Wavelets",
-      "publisher": "In the proceedings of 2025 IEEE Texas Power and Energy Conference (TPEC)",
-      "releaseDate": "2025-01-01",
-      "website": "",
-      "summary": ""
-    },
-    {
-      "name": "Voltage Stability in Plausible Non-Uniform Geomagnetic Disturbances",
-      "publisher": "IEEE Transactions on Power Systems",
-      "releaseDate": "2025-01-01",
-      "website": "",
-      "summary": ""
-    }
-  ],
   "presentations": [
     {
       "name": "Voltage Stability in Non-Uniform Geomagnetic Disturbances",

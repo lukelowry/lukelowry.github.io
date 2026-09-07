@@ -222,6 +222,8 @@ scholar:
   details_link: Details
 
   query: "@*"
+  sort_by: year
+  order: descending
   group_by: year
   group_order: descending
 
@@ -368,18 +370,19 @@ jekyll_get_json:
   - data: resume
     json: assets/json/resume.json # it can also be an url
 
+# CV section order; publications are rendered from _bibliography/papers.bib.
 jsonresume:
   - basics
   - work
   - education
+  - leadership
   - publications
+  - presentations
+  - awards
   - projects
   - volunteer
-  - awards
   - certificates
   - skills
-  - presentations
-  - leadership
   - interests
   - references
 
