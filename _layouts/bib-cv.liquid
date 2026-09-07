@@ -14,9 +14,9 @@
       </table>
     </div>
     <div class="col-xs-10 cl-sm-10 col-md-10 mt-2 mt-md-0">
-      <h6 class="title font-weight-bold ml-1 ml-md-4">
+      <h3 class="title" data-toc-skip>
         <a class="cv-publication-link" href="{{ '/publications/' | absolute_url }}#{{ entry.key }}">{{ entry.title }}</a>
-      </h6>
+      </h3>
       <div class="cv-publication-authors ml-1 ml-md-4">
         {%- for author in entry.author_array -%}
           {%- unless forloop.first -%}

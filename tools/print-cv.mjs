@@ -31,14 +31,14 @@ try {
       .cv .card-title { font-size:14pt; border-bottom:1px solid #bbb; padding-bottom:4pt; margin-bottom:4pt; break-after:avoid; }
       .cv .list-group { display:block; margin:0; }
       .cv .list-group-item { padding:6pt 0!important; border:0!important; break-inside:avoid; }
-      .cv .row { margin:0; flex-wrap:nowrap; }
-      .cv .date-column { flex:0 0 19%; max-width:19%; text-align:left!important; padding:0; transform:none; }
-      .cv .date-column + div { flex:0 0 81%; max-width:81%; padding:0; margin:0!important; }
+      .cv .list-group-item > .row { display:grid; grid-template-columns:19% minmax(0,1fr); gap:0; margin:0; }
+      .cv .date-column { max-width:none; text-align:left!important; padding:0; transform:none; }
+      .cv .date-column + div { max-width:none; padding:0; margin:0!important; }
       .cv .card .list-group-item .badge { border:0!important; padding:0; font-size:7.5pt; font-weight:500!important; color:#444!important; background:transparent!important; }
-      .cv h6 { font-size:10pt!important; line-height:1.35; margin:0 0 3pt 10pt!important; }
+      .cv .title, .cv .cv-detail { font-size:10pt!important; line-height:1.35; margin:0 0 3pt 10pt!important; }
       .cv .cv-publication-authors, .cv .cv-publication-details, .cv .cv-publication-doi { margin-left:10pt!important; }
       .cv ul.items { padding-left:22pt; margin-bottom:0; }
-      .cv a { color:#111!important; text-decoration:none; }
+      .cv a { color:#111!important; text-decoration:none!important; }
       .cv li { orphans:2; widows:2; }
     `,
   });

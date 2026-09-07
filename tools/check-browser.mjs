@@ -48,7 +48,15 @@ try {
         }))
       );
       if (violations.length) accessFailures.push({ theme, path, violations });
-      if (path === "/cv/") assert.equal(await page.locator("#toc-sidebar > ul").count(), 1, "Initialize the sidebar TOC once");
+      if (path === "/cv/") {
+        assert.equal(await page.locator("#toc-sidebar > ul").count(), 1, "Initialize the sidebar TOC once");
+        assert.deepEqual(
+          await page.locator("#toc-sidebar a").allTextContents(),
+          await page.locator(".cv .card-title").allTextContents(),
+          "The CV sidebar includes only resume sections"
+        );
+        assert.equal(await page.locator('.cv a[href=""]').count(), 0, "CV entries without a destination are plain headings");
+      }
       const background = await page.locator("body").evaluate((body) => getComputedStyle(body).backgroundColor);
       assert.equal(background, theme === "dark" ? "rgb(28, 28, 29)" : "rgb(255, 255, 255)", `${path}: computed ${theme} background`);
       assert.equal(await page.locator("main h1").count(), 1, `${path}: one main heading`);

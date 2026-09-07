@@ -1,4 +1,7 @@
 /* Site layout and interaction styles. */
+:root {
+  --global-secondary-text-color: color-mix(in srgb, var(--global-text-color) 80%, var(--global-bg-color));
+}
 body {
   font-family: Roboto, sans-serif;
   font-weight: 300;

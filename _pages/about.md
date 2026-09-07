@@ -3,7 +3,7 @@ layout: about
 grid_backdrops: true
 title: about
 permalink: /
-subtitle: <a href='https://engineering.tamu.edu/electrical/index.html' target="_blank" rel="noopener noreferrer">Texas A&M University<span class="sr-only">(opens in a new tab/external site)</span></a> of College Station, TX
+subtitle: <a href='https://engineering.tamu.edu/electrical/index.html' target="_blank" rel="noopener noreferrer">Texas A&M University<span class="sr-only">(opens in a new tab/external site)</span></a> <span class="home-location">of College Station, TX</span>
 
 profile:
   align: right
@@ -17,14 +17,15 @@ social: false # includes social icons at the bottom of the page
 ---
 
 <div class="home-scene home-scene-usa" data-grid-section="USA" markdown="1">
-{% include grid-still.liquid asset="USA-layers" loading="eager" %}
 <div class="home-copy" markdown="1">
 
-<section class="home-research-step" markdown="1">
+<section class="home-research-step home-statement" markdown="1">
 
 Indiscriminate access to secure, sustainable, and affordable energy is not a privilege; it is a right. My research and career are dedicated to making this a reality through the advancement of electrical power systems.
 
 </section>
+
+{% include grid-still.liquid asset="USA-layers" loading="eager" %}
 
 <section class="home-research-step" markdown="1">
 

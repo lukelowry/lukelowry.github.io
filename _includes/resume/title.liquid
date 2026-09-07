@@ -1,0 +1,7 @@
+<h3 class="title" data-toc-skip>
+  {% if include.url and include.url != '' %}
+    <a href="{{ include.url }}">{{ include.text }}</a>
+  {% else %}
+    {{ include.text }}
+  {% endif %}
+</h3>
