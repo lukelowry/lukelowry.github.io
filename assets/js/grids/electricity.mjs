@@ -1,6 +1,5 @@
 const TRAIL_COUNT = 11;
 const TRAIL_MS = 680;
-const DWELL_MS = 680;
 const HOP_MS = 115;
 const NONE = -1e6;
 
@@ -25,7 +24,6 @@ fn shade(f: Fragment) -> vec4f {
       wake = max(wake, electric_pool(f.px, center, mix(a.z, b.z, t)) * mix(a.w, b.w, t));
     }
   }
-  let charge = electric_pool(f.px, host[4].xy, 72.0) * host[3].y;
   var pulse = 0.0;
   if (f.value >= 0.0 && host[3].x > 0.0) {
     let distance = (f.value - host[2].w) / 1.15;
@@ -33,13 +31,13 @@ fn shade(f: Fragment) -> vec4f {
   }
   let light = clamp(pool * 0.78 + core * 0.22, 0.0, 0.94);
   var color = mix(f.color.rgb, host[1].rgb, light);
-  color = mix(color, host[2].rgb, clamp(wake * 0.85 + charge * 0.65 + pulse * 0.95, 0.0, 0.96));
+  color = mix(color, host[2].rgb, clamp(wake * 0.85 + pulse * 0.95, 0.0, 0.96));
   return vec4f(color, f.color.a);
 }
 `;
 
 // Pure animation state, driven entirely by Latkit's existing render loop.
-export function createElectricShade(onDwell = () => {}, paint = () => {}) {
+export function createElectricShade(paint = () => {}) {
   const history = new Float64Array(TRAIL_COUNT * 4);
   let reduced = false;
   let target = null,
@@ -47,11 +45,6 @@ export function createElectricShade(onDwell = () => {}, paint = () => {}) {
     y = NONE,
     amount = 0,
     last = NaN;
-  let anchorX = NONE,
-    anchorY = NONE,
-    dwellStart = 0,
-    dwelled = true,
-    canDwell = false;
   let sampleTime = -Infinity,
     pulseStart = -Infinity,
     pulseEnd = 0,
@@ -69,20 +62,11 @@ export function createElectricShade(onDwell = () => {}, paint = () => {}) {
       light = dark ? [0.86, 0.95, 1.0] : [0.035, 0.18, 0.47];
       accent = dark ? [1.0, 0.82, 0.48] : [0.0, 0.43, 0.48];
     },
-    move(px, py, time, dwell = true) {
-      if (!target || Math.hypot(px - anchorX, py - anchorY) > 14 || dwell !== canDwell) {
-        anchorX = px;
-        anchorY = py;
-        dwellStart = time;
-        dwelled = !dwell;
-      }
-      canDwell = dwell;
+    move(px, py) {
       target = [px, py];
     },
     leave() {
       target = null;
-      dwelled = true;
-      canDwell = false;
     },
     reset() {
       this.leave();
@@ -99,12 +83,11 @@ export function createElectricShade(onDwell = () => {}, paint = () => {}) {
       pulseStart = time;
       pulseEnd = Math.max(1200, (max + 3) * HOP_MS);
       pulseStrength = strength;
-      dwelled = true;
     },
     tick(host, { timeMs }) {
       if (reduced) {
         // One immediate color highlight: no history, interpolation, size uploads,
-        // dwell timer or continued frames once the pointer stops.
+        // or continued frames once the pointer stops.
         host.fill(0);
         host.set([target?.[0] ?? NONE, target?.[1] ?? NONE, 190, target ? 1 : 0]);
         host.set(light, 4);
@@ -134,13 +117,6 @@ export function createElectricShade(onDwell = () => {}, paint = () => {}) {
           sampleTime = timeMs;
         }
       }
-      const waiting = Boolean(target && canDwell && !dwelled);
-      let charge = waiting ? Math.max(0, Math.min(1, (timeMs - dwellStart - 180) / (DWELL_MS - 180))) : 0;
-      if (waiting && timeMs - dwellStart >= DWELL_MS) {
-        dwelled = true;
-        charge = 0;
-        onDwell(anchorX, anchorY, timeMs);
-      }
       const pulseAge = timeMs - pulseStart;
       const pulsing = pulseAge >= 0 && pulseAge < pulseEnd;
       host.fill(0);
@@ -151,9 +127,6 @@ export function createElectricShade(onDwell = () => {}, paint = () => {}) {
       // Keep inactive uniforms finite even before the first pulse.
       if (!pulsing) host[11] = 0;
       host[12] = pulsing ? pulseStrength * Math.min(1, (pulseEnd - pulseAge) / 260) : 0;
-      host[13] = charge;
-      host[16] = anchorX;
-      host[17] = anchorY;
       let trailing = false;
       for (let i = 0; i < TRAIL_COUNT; i++) {
         const j = i * 4;
@@ -177,7 +150,7 @@ export function createElectricShade(onDwell = () => {}, paint = () => {}) {
         }
       }
       const rippling = paint(host, timeMs);
-      return Boolean(rippling || !settled || trailing || pulsing || (waiting && !dwelled));
+      return Boolean(rippling || !settled || trailing || pulsing);
     },
   };
 }

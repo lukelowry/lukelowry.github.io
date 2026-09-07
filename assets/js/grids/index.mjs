@@ -1,3 +1,5 @@
+import * as loader from "./loading.mjs";
+import { showBackdropFallback } from "./fallback.mjs";
 import { mountPresentation } from "./presentation.mjs";
 
 const presentation = mountPresentation();
@@ -12,15 +14,23 @@ async function mountLive() {
   mounting = true;
   try {
     if (backdrops.length) {
-      const { mountStory } = await import("./home.mjs");
+      const [{ mountStory }] = await Promise.all([
+        import("./home.mjs"),
+        // mountBackdrop consumes the cached failure and chooses its fallback.
+        loader.preloadGrid(backdrops[0]).catch(() => {}),
+      ]);
       if (!presentation.live) return;
-      mountStory(backdrops, presentation);
+      mountStory(backdrops, presentation, loader);
     }
     if (wave) {
       const { mountWave } = await import("./wave.mjs");
       if (!presentation.live) return;
       mountWave(wave, presentation);
     }
+    mounted = true;
+  } catch (error) {
+    for (const root of backdrops) showBackdropFallback(root);
+    if (!backdrops.length) throw error;
     mounted = true;
   } finally {
     mounting = false;

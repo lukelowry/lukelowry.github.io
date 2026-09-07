@@ -247,14 +247,6 @@ export function mountInspection(root, { onSelect = () => {}, motion } = {}) {
           browsing++;
           clearHover();
         }
-        // Keep the full feathered reveal. Clip only beyond its transparent edge;
-        // clipping at the opaque edge removed the fade and made a 72px hard gap.
-        const before = next.seam - 36,
-          after = next.seam + 36;
-        track.style.setProperty("--grid-switch-before", `${before}px`);
-        track.style.setProperty("--grid-switch-after", `${after}px`);
-        track.style.clipPath =
-          root.dataset.case === "USA" ? `inset(0 0 ${Math.max(0, innerHeight - after)}px 0)` : `inset(${Math.max(0, before)}px 0 0 0)`;
       }
       state = next;
       availability();

@@ -12,7 +12,6 @@ export function mountNetworkEffects(root) {
     enabled = false,
     mode = "full",
     rect,
-    buttons = 0,
     pulseBound = false,
     pointerActive = false,
     lastPointer = null;
@@ -37,18 +36,9 @@ export function mountNetworkEffects(root) {
     effect?.shade.pulse(time, values.max, strength);
     wake();
   }
-  function dwell(x, y, time) {
-    if (!available() || buttons || !rect) return;
-    const px = x + rect.left,
-      py = y + rect.top;
-    if (document.elementFromPoint(px, py) !== element) return;
-    const source = element.network.hitTest(px, py, 28).find((item) => item.kind === "vertex") ?? effect?.nearest?.(x, y, 28);
-    if (source) launch(source, time, 0.78);
-  }
   function create() {
     effect = createNetworkEffect(preset, {
       model,
-      onDwell: dwell,
       upload: (channel, values) => element.network.setChannel(channel, values, channel === "vertexSize" ? VERTEX_SIZE_RANGE : undefined),
     });
   }
@@ -71,7 +61,6 @@ export function mountNetworkEffects(root) {
     pulseBound = false;
   }
   function reset() {
-    buttons = 0;
     pointerActive = false;
     effect?.shade.reset();
     clearPulse();
@@ -106,7 +95,7 @@ export function mountNetworkEffects(root) {
       } else {
         pointerActive = true;
         const time = performance.now();
-        effect?.shade.move(x, y, time, !event.buttons && document.elementFromPoint(event.clientX, event.clientY) === element);
+        effect?.shade.move(x, y);
         if (mode === "full" && !event.buttons) effect?.move(x, y, time);
       }
       wake();
@@ -116,20 +105,12 @@ export function mountNetworkEffects(root) {
   window.addEventListener(
     "pointerdown",
     (event) => {
-      buttons = event.buttons;
       if (event.pointerType === "touch") reset();
       else {
         effect?.shade.leave();
         effect?.leave();
         wake();
       }
-    },
-    { passive: true }
-  );
-  window.addEventListener(
-    "pointerup",
-    () => {
-      buttons = 0;
     },
     { passive: true }
   );

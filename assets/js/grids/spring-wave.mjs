@@ -21,8 +21,7 @@ export function createSpringWave(model, upload) {
   const vertexShade = new Float32Array(count),
     edgeShade = new Float32Array(model.topology.edges.length / 2);
   const pixels = new Float64Array(count * 2).fill(NaN);
-  const cells = new Map(),
-    samples = [],
+  const samples = [],
     edges = [];
   const limit = model.topology.polylinePoints?.length ? 5 : 9;
   let field,
@@ -97,7 +96,6 @@ export function createSpringWave(model, upload) {
     topologyPulse: false,
     reframe(locate, width, height) {
       reset();
-      cells.clear();
       samples.length = edges.length = 0;
       pixels.fill(NaN);
       field = createSpringField(width, height);
@@ -117,9 +115,6 @@ export function createSpringWave(model, upload) {
         const sample = field.sampleAt(...p);
         if (!sample) continue;
         samples.push({ id, ...sample });
-        const key = `${Math.floor(p[0] / 128)},${Math.floor(p[1] / 128)}`;
-        if (!cells.has(key)) cells.set(key, []);
-        cells.get(key).push(id);
       }
       const scale = (axis) => {
         const a = extremes[axis * 2],
@@ -131,21 +126,6 @@ export function createSpringWave(model, upload) {
       scaleY = scale(1);
       for (let id = 0; id < edgeShade.length; id++)
         if (model.visibleEdges?.[id] ?? true) edges.push({ id, a: model.topology.edges[id * 2], b: model.topology.edges[id * 2 + 1] });
-    },
-    nearest(x, y, radius) {
-      let nearest = null,
-        best = radius;
-      for (let cy = Math.floor((y - radius) / 128); cy <= Math.floor((y + radius) / 128); cy++)
-        for (let cx = Math.floor((x - radius) / 128); cx <= Math.floor((x + radius) / 128); cx++) {
-          for (const id of cells.get(`${cx},${cy}`) || []) {
-            const distance = Math.hypot(pixels[id * 2] - x, pixels[id * 2 + 1] - y);
-            if (distance < best) {
-              best = distance;
-              nearest = { kind: "vertex", index: id };
-            }
-          }
-        }
-      return nearest;
     },
     move(x, y) {
       if (frozen) return;
