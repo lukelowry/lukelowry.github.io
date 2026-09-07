@@ -1,19 +1,11 @@
-// Host policy: exposed bus/branch keyboard browsing and a quiet, pinned readout.
+// Host policy: exposed bus/branch keyboard interaction for the visual effects.
 // Native inspect owns picking, cycling, pointer input, and page-scroll gestures.
 export function mountInspection(root, { onSelect = () => {} } = {}) {
   const element = root.querySelector("latkit-network");
   const track = root.closest(".grid-backdrop-track");
-  const caption = document.querySelector(`[data-grid-caption="${root.dataset.case}"]`);
-  const readout = caption.querySelector(".grid-backdrop-readout");
-  const clear = caption.querySelector("[data-grid-clear]");
-  const help = caption.querySelector(".grid-backdrop-help");
-  const status = caption.querySelector('[role="status"]');
   const forcedColors = matchMedia("(forced-colors: active)");
   const name = root.dataset.case === "EuropeA" ? "Europe" : "USA";
-  let model,
-    canvas,
-    selected = null,
-    hovered = null;
+  let model, canvas;
   let ready = false,
     enabled = false,
     state = { visible: false, seam: Infinity };
@@ -21,56 +13,21 @@ export function mountInspection(root, { onSelect = () => {} } = {}) {
   let multiTouch = false,
     interaction;
   let browsing = 0;
-  let lastReadout = "";
   let busCursor = -1,
     branchCursor = -1;
 
-  function describe(item) {
-    if (item.kind === "vertex") return `Bus ${model.numbers[item.index]} \u00b7 ${model.kv[item.index]} kV`;
-    const a = model.topology.edges[item.index * 2];
-    const b = model.topology.edges[item.index * 2 + 1];
-    return `Branch ${model.numbers[a]} \u2013 ${model.numbers[b]} \u00b7 ${model.branchKV[item.index]} kV`;
-  }
-
-  function positionCaption() {
-    if (caption.hidden) return;
-    const bottom = root.getBoundingClientRect().bottom;
-    // Keep arithmetic out of CSS var()/calc(): the legacy minifier corrupts it.
-    document.documentElement.style.setProperty("--grid-caption-padding", `${caption.offsetHeight + 16}px`);
-    document.documentElement.style.setProperty("--grid-caption-clearance", `${caption.offsetHeight + 24}px`);
-    caption.style.top = `${Math.max(80, Math.min(bottom, innerHeight - caption.offsetHeight - 12))}px`;
-  }
-
-  function show() {
-    const item = selected || hovered;
-    const text = `${name} \u00b7 ${item ? describe(item) : "Hover or select a bus or branch."}${selected ? " \u00b7 Selected" : ""}`;
-    if (text !== lastReadout) {
-      readout.textContent = text;
-      lastReadout = text;
-    }
-    clear.hidden = !selected;
-    positionCaption();
-  }
-
   function clearHover() {
-    const changed = hovered !== null;
-    hovered = null;
     element.network.setPointer(null);
     // network 0.9.0 does not wake on an empty-space leave; resume its existing
     // loop once so a settled light can fade even when no bus was hovered.
     if (enabled && !document.hidden) element.network.resume();
-    if (changed) show();
   }
 
   function select(item, native = false) {
-    selected = item;
-    hovered = null;
     if (!native) element.network.select(item);
     if (item?.kind === "vertex") busCursor = item.index;
     if (item?.kind === "edge") branchCursor = item.index;
-    status.textContent = item ? `${name}. ${describe(item)}. Selected.` : `${name} selection cleared.`;
     onSelect(item);
-    show();
   }
 
   function availability() {
@@ -81,9 +38,8 @@ export function mountInspection(root, { onSelect = () => {} } = {}) {
       if (!enabled) {
         browsing++;
         clearHover();
-        help.hidden = true;
         // Do not leave focus inside content that is becoming inert.
-        if (document.activeElement === element || caption.contains(document.activeElement)) {
+        if (document.activeElement === element) {
           document.querySelector("#main-content").focus({ preventScroll: true });
         }
       }
@@ -92,13 +48,7 @@ export function mountInspection(root, { onSelect = () => {} } = {}) {
     track.inert = !enabled;
     track.setAttribute("aria-hidden", String(!enabled));
     root.toggleAttribute("data-inspectable", enabled);
-    caption.hidden = !enabled;
-    if (!document.querySelector(".grid-backdrop-caption:not([hidden])")) {
-      document.documentElement.style.removeProperty("--grid-caption-padding");
-      document.documentElement.style.removeProperty("--grid-caption-clearance");
-    }
     if (canvas) canvas.tabIndex = enabled ? 0 : -1;
-    positionCaption();
   }
 
   function containsPoint(point) {
@@ -108,7 +58,7 @@ export function mountInspection(root, { onSelect = () => {} } = {}) {
     if (x < Math.max(8, rect.left + rect.width * 0.02) || x > Math.min(innerWidth - 8, rect.right - rect.width * 0.02)) return false;
     if (y < Math.max(80, rect.top) || y > Math.min(innerHeight - 12, rect.bottom)) return false;
     if (root.dataset.case === "USA" ? y > state.seam - 36 : y < state.seam + 36) return false;
-    // Text, links, navigation, and the label own their pixels, including on narrow screens.
+    // Text, links, and navigation own their pixels, including on narrow screens.
     return document.elementFromPoint(x, y) === element;
   }
 
@@ -129,14 +79,8 @@ export function mountInspection(root, { onSelect = () => {} } = {}) {
       select(item);
       return;
     }
-    status.textContent = `No ${kind === "vertex" ? "buses" : "branches"} in the exposed part of the network. Scroll to reveal more.`;
   }
 
-  element.addEventListener("hover", (event) => {
-    if (!enabled || (hovered?.kind === event.detail?.kind && hovered?.index === event.detail?.index)) return;
-    hovered = event.detail;
-    show(); // Hover stays quiet; only deliberate selection updates the live region.
-  });
   element.addEventListener("select", (event) => {
     if (enabled && !multiTouch) select(event.detail, true);
   });
@@ -182,8 +126,6 @@ export function mountInspection(root, { onSelect = () => {} } = {}) {
     "keydown",
     (event) => {
       if (!enabled || event.altKey || event.ctrlKey || event.metaKey) return;
-      help.hidden = false;
-      positionCaption();
       const keys = { ArrowLeft: ["vertex", -1], ArrowRight: ["vertex", 1], ArrowUp: ["edge", -1], ArrowDown: ["edge", 1] };
       if (event.key === "Escape" || keys[event.key]) {
         event.preventDefault();
@@ -196,35 +138,9 @@ export function mountInspection(root, { onSelect = () => {} } = {}) {
     },
     true
   );
-  element.addEventListener("focusin", () => {
-    help.hidden = !canvas.matches(":focus-visible");
-    positionCaption();
-  });
-  function leaveInspection(event) {
-    // Keep the caption still while focus moves from the canvas into its controls;
-    // hiding help on pointer-down can move a button before pointer-up arrives.
-    if (event.relatedTarget === element || caption.contains(event.relatedTarget)) return;
-    help.hidden = true;
-    positionCaption();
-  }
-  element.addEventListener("focusout", (event) => {
+  element.addEventListener("focusout", () => {
     browsing++;
-    leaveInspection(event);
   });
-  caption.addEventListener("focusout", leaveInspection);
-  clear.addEventListener("click", () => {
-    canvas.focus({ preventScroll: true });
-    clearHover();
-    select(null);
-  });
-  caption.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      canvas.focus({ preventScroll: true });
-      clearHover();
-      select(null);
-    }
-  });
-  new ResizeObserver(positionCaption).observe(caption);
   forcedColors.addEventListener("change", availability);
   window.addEventListener("blur", resetPointers);
   document.addEventListener("visibilitychange", () => {
@@ -240,9 +156,8 @@ export function mountInspection(root, { onSelect = () => {} } = {}) {
       // Keep precision for mouse/pen; taps retain a 22px radius and keyboard access.
       element.network.setOptions({ keyboard: false, pickRadiusPx: 4 });
       element.removeAttribute("tabindex");
-      canvas.setAttribute("aria-description", help.textContent);
+      canvas.setAttribute("aria-description", "Left/Right: select a bus. Up/Down: select a branch. Escape: clear. Tab: leave.");
       element.setAttribute("aria-label", `${name} network. Select buses or branches.`);
-      show();
       availability();
     },
     setReady(value) {

@@ -1,8 +1,9 @@
+import { mountEffectPreference } from "./effect-preference.mjs";
 import { adjacency, createWave } from "./signal.mjs";
 import { loadUSA, isDark, surfaceColor, ramp, whenAttached } from "./data.mjs";
 
 export function mountWave(root) {
-  const motion = matchMedia("(prefers-reduced-motion: reduce)");
+  const effects = mountEffectPreference();
   const element = root.querySelector("latkit-network");
   const inspection = root.querySelector(".grid-inspection");
   const play = root.querySelector('[data-action="play"]');
@@ -20,7 +21,7 @@ export function mountWave(root) {
     activation,
     attached = false,
     visible = false;
-  let wanted = !motion.matches,
+  let wanted = effects.mode === "full",
     frameId = 0,
     previous = 0,
     elapsed = 4;
@@ -221,8 +222,8 @@ export function mountWave(root) {
     { threshold: 0 }
   ).observe(root);
   document.addEventListener("visibilitychange", schedule);
-  motion.addEventListener("change", () => {
-    if (motion.matches) {
+  effects.subscribe(() => {
+    if (effects.mode !== "full") {
       wanted = false;
       controls();
       schedule();
