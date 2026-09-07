@@ -1,6 +1,7 @@
 import { visibleVoltageNetwork } from "./voltage.mjs";
 
-let runtime;
+import { preloadGrid, releaseGridPayload } from "./loading.mjs";
+export { loadRuntime } from "./loading.mjs";
 const models = new Map();
 
 // Latkit owns topology/field decoding. Bus IDs are site metadata, outside NetworkJSON.
@@ -10,27 +11,15 @@ function busNumbers(slot) {
   return Uint32Array.from({ length: bytes.byteLength / 4 }, (_, i) => view.getUint32(i * 4, true));
 }
 
-export function loadRuntime(root) {
-  runtime ??= (async () => {
-    if (!navigator.gpu || !(await navigator.gpu.requestAdapter())) throw new Error("WebGPU unavailable");
-    return import(root.dataset.runtime);
-  })();
-  return runtime;
-}
-
 // Each case is fetched once per page; signal frames are still generated locally.
 export async function loadGrid(root, name = root.dataset.case || "USA") {
   if (!["USA", "EuropeA"].includes(name)) throw new Error("Unknown grid case");
-  const { parseNetwork } = await loadRuntime(root);
   const key = `${root.dataset.assets}${name}`;
   if (!models.has(key))
     models.set(
       key,
       (async () => {
-        const compressed = "DecompressionStream" in window;
-        const response = await fetch(`${key}.json${compressed ? ".gz" : ""}`);
-        if (!response.ok) throw new Error(`Grid request failed: ${response.status}`);
-        const json = await (compressed ? new Response(response.body.pipeThrough(new DecompressionStream("gzip"))).json() : response.json());
+        const [{ parseNetwork }, json] = await preloadGrid(root, name);
         const { topology, fields } = parseNetwork(json);
         const field = (id) => {
           const entry = fields?.find((value) => value.id === id);
@@ -40,7 +29,7 @@ export async function loadGrid(root, name = root.dataset.case || "USA") {
         const kv = field("kv");
         const branchKV = field("branch_kv");
         const layers = visibleVoltageNetwork(kv, topology.edges);
-        return {
+        const model = {
           topology,
           kv,
           branchKV,
@@ -48,6 +37,8 @@ export async function loadGrid(root, name = root.dataset.case || "USA") {
           ...layers,
           numbers: busNumbers(json.busNumbers),
         };
+        releaseGridPayload(root, name);
+        return model;
       })()
     );
   return models.get(key);

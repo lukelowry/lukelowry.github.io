@@ -276,7 +276,7 @@ async function pixelDifference(page, actual, expected, clip) {
   );
 }
 
-async function assertSamePixels(page, actual, expected, clip, message) {
+export async function assertSamePixels(page, actual, expected, clip, message) {
   const difference = await pixelDifference(page, actual, expected, clip);
   // GPU color quantization can differ by one unit after a new uniform submission.
   assert.ok(difference.maximum <= 2 && difference.changedFraction < 0.005, `${message}: ${JSON.stringify(difference)}`);

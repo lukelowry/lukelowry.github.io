@@ -1,19 +1,20 @@
 import { voltageRGB } from "./voltage.mjs";
-import { loadGrid, isDark, surfaceColor, whenAttached, whenPainted } from "./data.mjs";
+import { loadGrid, isDark, surfaceColor, whenAttached } from "./data.mjs";
 import { RESTING_VIEW, sceneView, voltageHeights, framingBounds, framingVertices, projectedBounds } from "./framing.mjs";
-import { mountInspection } from "./inspection.mjs";
-import { mountNetworkEffects } from "./network-effects.mjs";
-import { VERTEX_SIZE_RANGE } from "./vertex-ripple.mjs";
+import { showBackdropFallback } from "./fallback.mjs";
+import { VERTEX_SIZE_RANGE } from "./visual-options.mjs";
 import { mountEffectPreference } from "./effect-preference.mjs";
-
-const nextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve));
 
 export function mountBackdrop(root, effects, presentation) {
   const element = root.querySelector("latkit-network");
   const name = root.dataset.case;
   const view = sceneView(name);
-  const networkEffects = mountNetworkEffects(root);
-  const inspection = mountInspection(root, { motion: networkEffects, onSelect: (item) => networkEffects.select(item) });
+  const track = root.closest(".grid-backdrop-track");
+  let networkEffects, inspection, enhancement;
+  let story = { visible: false, seam: Infinity };
+  let clipHeight = 0;
+  let revealSeam;
+  let enhanceFrame = 0;
   let current, activation, bounds, outline;
   let shadeRevision = 0;
   let configured = false,
@@ -39,7 +40,7 @@ export function mountBackdrop(root, effects, presentation) {
   }
 
   async function lighting() {
-    if (!configured) return;
+    if (!configured || !networkEffects || root.hasAttribute("data-fallback")) return;
     const version = ++shadeRevision;
     if (!presentation.live) {
       networkEffects.enable(false);
@@ -55,6 +56,8 @@ export function mountBackdrop(root, effects, presentation) {
       networkEffects.theme(isDark());
       await element.network.setShade(enabled ? networkEffects.shade : null);
       if (version === shadeRevision) {
+        if (!presentation.live || root.hasAttribute("data-fallback")) return;
+        if (!fitting) networkEffects.reframe();
         networkEffects.enable(enabled);
         root.dataset.lighting = enabled ? "on" : "off";
       }
@@ -70,7 +73,7 @@ export function mountBackdrop(root, effects, presentation) {
   // Native Latkit owns continuous resize and backing-store updates. This bounded
   // adjustment only restores our custom composition after the dimensions settle.
   // It retains data, GPU buffers, selection, and the visible canvas throughout.
-  async function fitScene(initial = false) {
+  async function fitScene() {
     if (!configured || fitting || !presentation.live || root.hasAttribute("data-fallback")) return;
     fitting = true;
     clearTimeout(resizeTimer);
@@ -80,15 +83,12 @@ export function mountBackdrop(root, effects, presentation) {
     const network = element.network;
     network.resume();
     root.dataset.fitting = "";
-    networkEffects.reset();
+    networkEffects?.reset();
     try {
       network.fit(bounds.items, false);
       network.zoomBy(view.zoom);
       network.setPose({ ...bounds.center, pitch: view.pitch, bearing: view.bearing }, false);
-      if (initial) await whenPainted(element);
-      // painted is per attachment; give our named fields and final pose time to submit.
-      await nextFrame();
-      await nextFrame();
+      await network.whenRendered();
       const rect = root.getBoundingClientRect();
       const anchor = [rect.left + width * (view.rightEdge ?? view.leftEdge), rect.top + height * (view.anchorY ?? 0.46)];
       // Two corrections at one pose replace the former nine-pose calibration.
@@ -101,15 +101,15 @@ export function mountBackdrop(root, effects, presentation) {
         if (Math.hypot(dx, dy) < 0.5) break;
         network.panBy(dx, dy);
         network.setPose(network.getPose(), false);
-        await nextFrame();
-        await nextFrame();
+        await network.whenRendered();
       }
       if (version === revision) {
-        networkEffects.reframe();
+        networkEffects?.reframe();
         root.dataset.ready = "";
         root.dataset.loaded = name;
         ready = true;
-        inspection.setReady(true);
+        inspection?.setReady(presentation.live);
+        scheduleEnhancement();
       }
     } finally {
       fitting = false;
@@ -127,18 +127,43 @@ export function mountBackdrop(root, effects, presentation) {
 
   function fail() {
     if (root.hasAttribute("data-fallback")) return;
-    root.dataset.fallback = "";
+    showBackdropFallback(root);
+    shadeRevision++;
+    cancelAnimationFrame(enhanceFrame);
     ready = false;
     revision++;
     clearTimeout(resizeTimer);
     root.removeAttribute("data-ready");
-    inspection.setReady(false);
-    networkEffects.enable(false);
-    if (current) element.network.detach();
+    inspection?.setReady(false);
+    networkEffects?.enable(false);
+  }
+
+  function scheduleEnhancement() {
+    if (!ready || !presentation.live || networkEffects || enhancement || enhanceFrame || root.hasAttribute("data-fallback")) return;
+    // Yield optional setup to the next browser frame, after revealing this one.
+    // This schedules work; renderer acknowledgments alone determine readiness.
+    enhanceFrame = requestAnimationFrame(() => {
+      enhanceFrame = 0;
+      enhancement = (async () => {
+        const { mountInteractions } = await import("./interactions.mjs");
+        if (!presentation.live || root.hasAttribute("data-fallback")) return;
+        ({ motion: networkEffects, inspection } = mountInteractions(root, current));
+        inspection.update(story);
+        await lighting();
+        if (!root.hasAttribute("data-fallback")) inspection.setReady(ready && presentation.live);
+      })()
+        .catch(() => {
+          root.dataset.lighting = "unavailable";
+          networkEffects?.enable(false);
+        })
+        .finally(() => {
+          enhancement = null;
+        });
+    });
   }
 
   async function activate() {
-    if (activation) return activation;
+    if (activation || root.hasAttribute("data-fallback")) return activation;
     activation = (async () => {
       current = await loadGrid(root);
       bounds = framingBounds(current);
@@ -171,12 +196,8 @@ export function mountBackdrop(root, effects, presentation) {
       await element.ready;
       await whenAttached(element);
       configured = true;
-      networkEffects.attach(current);
-      await lighting();
-      inspection.attach(current);
       root.dataset.voltageLevels = current.levels.join(",");
-      await document.fonts.ready;
-      await fitScene(true);
+      await fitScene();
     })().catch(fail);
     return activation;
   }
@@ -196,12 +217,25 @@ export function mountBackdrop(root, effects, presentation) {
   presentation.subscribe(() => {
     theme();
     lighting();
+    inspection?.setReady(ready && presentation.live);
+    scheduleEnhancement();
   });
   element.addEventListener("error", fail);
   element.addEventListener("pipelineError", fail);
   return {
     update(state) {
-      inspection.update(state);
+      story = state;
+      // Reveal geometry belongs to the visual scene, independent of interaction.
+      if (state.seam !== revealSeam || innerHeight !== clipHeight) {
+        revealSeam = state.seam;
+        clipHeight = innerHeight;
+        const before = state.seam - 36,
+          after = state.seam + 36;
+        track.style.setProperty("--grid-switch-before", `${before}px`);
+        track.style.setProperty("--grid-switch-after", `${after}px`);
+        track.style.clipPath = name === "USA" ? `inset(0 0 ${Math.max(0, innerHeight - after)}px 0)` : `inset(${Math.max(0, before)}px 0 0 0)`;
+      }
+      inspection?.update(state);
       const wasVisible = visible;
       visible = state.visible && !document.hidden;
       root.dataset.active = String(visible);
@@ -214,7 +248,7 @@ export function mountBackdrop(root, effects, presentation) {
         clearTimeout(resizeTimer);
         // Retire motion only after the reveal is fully outside the viewport.
         // Returning to the scene should never resume a stale, frozen wave.
-        networkEffects.reset();
+        networkEffects?.reset();
         element.network.pause();
       }
     },

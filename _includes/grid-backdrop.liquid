@@ -2,48 +2,54 @@
 {% for grid_case in grid_cases %}
   {% assign grid_label = grid_case %}
   {% if grid_case == 'EuropeA' %}{% assign grid_label = 'Europe' %}{% endif %}
+  {% assign fallback_light = grid_case | prepend: '/assets/grids/' | append: '-layers-light.webp' %}
+  {% assign fallback_dark = grid_case | prepend: '/assets/grids/' | append: '-layers-dark.webp' %}
   <div class="grid-backdrop-track" data-case="{{ grid_case }}" aria-hidden="true" inert>
     <div
       class="grid-backdrop"
       data-grid-backdrop
+      data-fallback-light="{{ fallback_light | relative_url | bust_file_cache }}"
+      data-fallback-dark="{{ fallback_dark | relative_url | bust_file_cache }}"
       data-case="{{ grid_case }}"
       data-assets="{{ '/assets/grids/' | relative_url }}"
       data-runtime="{{ '/assets/generated/latkit.js' | relative_url | bust_file_cache }}"
     >
-      <div class="grid-backdrop-poster">
-        {% assign poster_light = grid_case | prepend: '/assets/grids/' | append: '-layers-light.webp' %}
-        {% assign poster_dark = grid_case | prepend: '/assets/grids/' | append: '-layers-dark.webp' %}
-        <picture>
-          <source
-            media="(max-width: 767px), (hover: none) and (pointer: coarse)"
-            srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-          >
-          <img
-            class="grid-poster grid-poster-light"
-            src="{{ poster_light | relative_url | bust_file_cache }}"
-            alt=""
-            width="1600"
-            height="820"
-            loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-            decoding="async"
-          >
-        </picture>
-        <picture>
-          <source
-            media="(max-width: 767px), (hover: none) and (pointer: coarse)"
-            srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-          >
-          <img
-            class="grid-poster grid-poster-dark"
-            src="{{ poster_dark | relative_url | bust_file_cache }}"
-            alt=""
-            width="1600"
-            height="820"
-            loading="lazy"
-            decoding="async"
-          >
-        </picture>
-      </div>
+      <noscript>
+        <div class="grid-backdrop-fallback">
+          {% assign poster_light = grid_case | prepend: '/assets/grids/' | append: '-layers-light.webp' %}
+          {% assign poster_dark = grid_case | prepend: '/assets/grids/' | append: '-layers-dark.webp' %}
+          <picture>
+            <source
+              media="(max-width: 767px), (hover: none) and (pointer: coarse)"
+              srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+            >
+            <img
+              class="grid-poster grid-poster-light"
+              src="{{ poster_light | relative_url | bust_file_cache }}"
+              alt=""
+              width="1600"
+              height="820"
+              loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+              decoding="async"
+            >
+          </picture>
+          <picture>
+            <source
+              media="(max-width: 767px), (hover: none) and (pointer: coarse)"
+              srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+            >
+            <img
+              class="grid-poster grid-poster-dark"
+              src="{{ poster_dark | relative_url | bust_file_cache }}"
+              alt=""
+              width="1600"
+              height="820"
+              loading="lazy"
+              decoding="async"
+            >
+          </picture>
+        </div>
+      </noscript>
       <latkit-network
         projection="tilt"
         interaction="none"
@@ -66,4 +72,4 @@
     </div>
   </div>
 {% endfor %}
-<script type="module" src="{{ '/assets/js/grids/index.mjs' | relative_url | bust_file_cache }}"></script>
+<script type="module" src="{{ '/assets/generated/grids/index.mjs' | relative_url | bust_file_cache }}"></script>

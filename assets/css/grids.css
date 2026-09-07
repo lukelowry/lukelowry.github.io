@@ -159,10 +159,10 @@ html.transition .grid-backdrop-track * {
   left: auto;
   right: calc(25.5vw - min(28.5vw, 590px));
 }
-.grid-backdrop[data-case="USA"] .grid-backdrop-poster {
+.grid-backdrop[data-case="USA"] .grid-backdrop-fallback {
   transform: translate(-43%, -4%) scale(2.08);
 }
-.grid-backdrop[data-case="EuropeA"] .grid-backdrop-poster {
+.grid-backdrop[data-case="EuropeA"] .grid-backdrop-fallback {
   transform: translate(50%, 0) scale(2.12);
 }
 .grid-backdrop latkit-network {
@@ -173,19 +173,16 @@ html.transition .grid-backdrop-track * {
   height: 100%;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 240ms ease;
+  transition: none;
 }
-.grid-backdrop-poster {
+.grid-backdrop-fallback {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  transition: opacity 240ms ease;
+  transition: none;
 }
 .grid-backdrop[data-ready] latkit-network {
   opacity: 1;
-}
-.grid-backdrop[data-ready] .grid-backdrop-poster {
-  opacity: 0;
 }
 .grid-poster {
   position: absolute;
@@ -360,7 +357,7 @@ html[data-theme="dark"] .grid-poster-dark {
 }
 @media (prefers-reduced-motion: reduce) {
   .grid-backdrop latkit-network,
-  .grid-backdrop-poster {
+  .grid-backdrop-fallback {
     transition: none;
   }
 }

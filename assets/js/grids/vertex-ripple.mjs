@@ -1,5 +1,6 @@
 // Native vertex radii, driven by the same clock as the network shade.
-export const VERTEX_SIZE_RANGE = [0.85, 1.85];
+import { VERTEX_SIZE_RANGE } from "./visual-options.mjs";
+export { VERTEX_SIZE_RANGE };
 const CELL = 128;
 const WAVE_MS = 900;
 const bump = (x) => Math.max(0, 1 - x * x) ** 2;

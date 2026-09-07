@@ -3,7 +3,7 @@ import { createRequire } from "node:module";
 import { setAppearance } from "./check-appearance.mjs";
 const require = createRequire(import.meta.url);
 const liveResource =
-  /\/assets\/generated\/latkit\.js|\/assets\/grids\/[^/]+\.json(?:\.gz)?|\/assets\/js\/grids\/(?:home|wave|electricity|inspection|data|signal|pulse|vertex-ripple)\.mjs/;
+  /\/assets\/generated\/latkit\.js|\/assets\/generated\/grids\/chunks\/(?:home|wave|interactions)-[^/]+\.mjs|\/assets\/grids\/[^/]+\.json(?:\.gz)?|\/assets\/js\/grids\/(?:home|wave|electricity|inspection|data|signal|pulse|vertex-ripple)\.mjs/;
 
 export async function checkMobileGrids(browser, url) {
   for (const viewport of [

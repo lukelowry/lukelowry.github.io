@@ -1,3 +1,4 @@
+import { checkLoading } from "./check-loading.mjs";
 import { checkScroll } from "./check-scroll.mjs";
 import { checkSpring } from "./check-spring-browser.mjs";
 import { checkMobileGrids } from "./check-mobile-grids.mjs";
@@ -432,6 +433,7 @@ try {
     assert.equal(await page.locator('[data-action="play"]').innerText(), "Play", "Off prevents autoplay");
     console.log("Verified live WebGPU bus selection, keyboard exit, zoom, reset, and shared motion settings.");
   }
+  await checkLoading(browser, site.url);
   await checkAppearance(browser, site.url);
   await checkEffectPreference(browser, site.url);
   await checkScroll(browser, site.url);
@@ -456,7 +458,7 @@ try {
   const fallback = await browser.newContext({ javaScriptEnabled: false });
   const staticPage = await fallback.newPage();
   await staticPage.goto(site.url + "/");
-  assert.equal(await staticPage.locator(".grid-backdrop-poster img").count(), 4);
+  assert.equal(await staticPage.locator(".grid-backdrop-fallback img").count(), 4);
   assert.equal(await staticPage.locator(".grid-backdrop-caption:visible").count(), 0);
   assert.equal(await staticPage.locator(".home-copy .home-publications").count(), 1);
   await staticPage.setViewportSize({ width: 390, height: 844 });
