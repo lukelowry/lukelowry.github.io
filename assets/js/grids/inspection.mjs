@@ -1,11 +1,15 @@
 // Host policy: exposed bus/branch keyboard interaction for the visual effects.
 // Native inspect owns picking, cycling, pointer input, and page-scroll gestures.
-export function mountInspection(root, { onSelect = () => {} } = {}) {
+export function mountInspection(root, { onSelect = () => {}, motion } = {}) {
   const element = root.querySelector("latkit-network");
   const track = root.closest(".grid-backdrop-track");
   const forcedColors = matchMedia("(forced-colors: active)");
   const name = root.dataset.case === "EuropeA" ? "Europe" : "USA";
-  let model, canvas;
+  let model,
+    canvas,
+    selected = null,
+    press = null;
+  let pressRevision = 0;
   let ready = false,
     enabled = false,
     state = { visible: false, seam: Infinity };
@@ -24,6 +28,8 @@ export function mountInspection(root, { onSelect = () => {} } = {}) {
   }
 
   function select(item, native = false) {
+    selected = item;
+    if (native && press) press.handled = true;
     if (!native) element.network.select(item);
     if (item?.kind === "vertex") busCursor = item.index;
     if (item?.kind === "edge") branchCursor = item.index;
@@ -36,6 +42,7 @@ export function mountInspection(root, { onSelect = () => {} } = {}) {
     if (next !== enabled) {
       enabled = next;
       if (!enabled) {
+        cancelPress();
         browsing++;
         clearHover();
         // Do not leave focus inside content that is becoming inert.
@@ -81,10 +88,67 @@ export function mountInspection(root, { onSelect = () => {} } = {}) {
     }
   }
 
+  // Position animation temporarily suspends Latkit's exact picker. Hold the
+  // visible geometry during a press, including its native pointerup handler.
+  // An unusually quick click gets one bounded retry using that same native picker.
+  element.addEventListener(
+    "pointerdown",
+    (event) => {
+      if (!enabled || event.pointerType === "touch" || event.button !== 0) return;
+      press = { x: event.clientX, y: event.clientY, id: event.pointerId, moving: motion?.press(), handled: false, dragged: false };
+      pressRevision++;
+    },
+    { capture: true, passive: true }
+  );
+  window.addEventListener(
+    "pointermove",
+    (event) => {
+      if (press && event.pointerId === press.id && Math.hypot(event.clientX - press.x, event.clientY - press.y) > 3) press.dragged = true;
+    },
+    { passive: true }
+  );
+  window.addEventListener(
+    "pointerup",
+    async (event) => {
+      const pending = press,
+        version = pressRevision;
+      if (!pending || event.pointerId !== pending.id) return;
+      if (
+        pending.moving &&
+        !pending.handled &&
+        !pending.dragged &&
+        Math.hypot(event.clientX - pending.x, event.clientY - pending.y) <= 3 &&
+        containsPoint([event.clientX, event.clientY])
+      ) {
+        for (let frame = 0; frame < 2; frame++) {
+          element.network.resume();
+          await new Promise(requestAnimationFrame);
+          if (version !== pressRevision || !enabled) return;
+        }
+        const hits = element.network.hitTest(event.clientX, event.clientY, 4);
+        const current = hits.findIndex((item) => item.kind === selected?.kind && item.index === selected?.index);
+        select(hits.length ? hits[(current + 1) % hits.length] : null);
+      }
+      if (version === pressRevision) {
+        press = null;
+        motion?.release();
+      }
+    },
+    { passive: true }
+  );
+  function cancelPress() {
+    pressRevision++;
+    press = null;
+    motion?.release();
+  }
+  for (const type of ["pointercancel", "scroll", "resize", "blur", "pagehide"]) window.addEventListener(type, cancelPress, { passive: true });
+  document.addEventListener("visibilitychange", cancelPress);
+
   element.addEventListener("select", (event) => {
     if (enabled && !multiTouch) select(event.detail, true);
   });
   element.addEventListener("pointerleave", clearHover);
+  element.addEventListener("pointerleave", cancelPress);
 
   function syncInteraction() {
     if (!canvas) return;
