@@ -2,7 +2,7 @@ import { voltageRGB } from "./voltage.mjs";
 import { loadGrid, isDark, surfaceColor, whenAttached, whenPainted } from "./data.mjs";
 import { RESTING_VIEW, sceneView, voltageHeights, framingBounds, framingVertices, projectedBounds } from "./framing.mjs";
 import { mountInspection } from "./inspection.mjs";
-import { mountElectricity } from "./electricity.mjs";
+import { mountNetworkEffects } from "./network-effects.mjs";
 import { VERTEX_SIZE_RANGE } from "./vertex-ripple.mjs";
 import { mountEffectPreference } from "./effect-preference.mjs";
 
@@ -12,8 +12,8 @@ export function mountBackdrop(root, effects, presentation) {
   const element = root.querySelector("latkit-network");
   const name = root.dataset.case;
   const view = sceneView(name);
-  const electricity = mountElectricity(root);
-  const inspection = mountInspection(root, { onSelect: (item) => electricity.select(item) });
+  const networkEffects = mountNetworkEffects(root);
+  const inspection = mountInspection(root, { motion: networkEffects, onSelect: (item) => networkEffects.select(item) });
   let current, activation, bounds, outline;
   let shadeRevision = 0;
   let configured = false,
@@ -42,25 +42,26 @@ export function mountBackdrop(root, effects, presentation) {
     if (!configured) return;
     const version = ++shadeRevision;
     if (!presentation.live) {
-      electricity.enable(false);
+      networkEffects.enable(false);
       element.network.pause();
       root.dataset.lighting = "off";
       return;
     }
     const enabled = effects.enabled;
     try {
-      electricity.enable(false);
-      electricity.mode(effects.mode);
-      electricity.theme(isDark());
-      await element.network.setShade(enabled ? electricity.shade : null);
+      networkEffects.enable(false);
+      networkEffects.preset(effects.preset);
+      networkEffects.mode(effects.mode);
+      networkEffects.theme(isDark());
+      await element.network.setShade(enabled ? networkEffects.shade : null);
       if (version === shadeRevision) {
-        electricity.enable(enabled);
+        networkEffects.enable(enabled);
         root.dataset.lighting = enabled ? "on" : "off";
       }
     } catch {
       // Shade compilation must not take away the usable network.
       if (version === shadeRevision) {
-        electricity.enable(false);
+        networkEffects.enable(false);
         root.dataset.lighting = "unavailable";
       }
     }
@@ -79,6 +80,7 @@ export function mountBackdrop(root, effects, presentation) {
     const network = element.network;
     network.resume();
     root.dataset.fitting = "";
+    networkEffects.reset();
     try {
       network.fit(bounds.items, false);
       network.zoomBy(view.zoom);
@@ -103,7 +105,7 @@ export function mountBackdrop(root, effects, presentation) {
         await nextFrame();
       }
       if (version === revision) {
-        electricity.reframe();
+        networkEffects.reframe();
         root.dataset.ready = "";
         root.dataset.loaded = name;
         ready = true;
@@ -131,7 +133,7 @@ export function mountBackdrop(root, effects, presentation) {
     clearTimeout(resizeTimer);
     root.removeAttribute("data-ready");
     inspection.setReady(false);
-    electricity.enable(false);
+    networkEffects.enable(false);
     if (current) element.network.detach();
   }
 
@@ -159,17 +161,17 @@ export function mountBackdrop(root, effects, presentation) {
       element.data = {
         topology: current.topology,
         fields: [
-          { id: "kv", scope: "vertex", values: current.kv },
-          { id: "branch_kv", scope: "edge", values: current.branchKV },
-          { id: "visible_vertices", scope: "vertex", values: current.visibleVertices },
-          { id: "visible_edges", scope: "edge", values: current.visibleEdges },
-          { id: "voltage_height", scope: "vertex", values: voltageHeights(current) },
+          { id: "kv", scope: "vertex", components: 1, values: current.kv },
+          { id: "branch_kv", scope: "edge", components: 1, values: current.branchKV },
+          { id: "visible_vertices", scope: "vertex", components: 1, values: current.visibleVertices },
+          { id: "visible_edges", scope: "edge", components: 1, values: current.visibleEdges },
+          { id: "voltage_height", scope: "vertex", components: 1, values: voltageHeights(current) },
         ],
       };
       await element.ready;
       await whenAttached(element);
       configured = true;
-      electricity.attach(current);
+      networkEffects.attach(current);
       await lighting();
       inspection.attach(current);
       root.dataset.voltageLevels = current.levels.join(",");
@@ -190,7 +192,7 @@ export function mountBackdrop(root, effects, presentation) {
     theme();
     lighting();
   });
-  effects.subscribe(lighting);
+  effects.subscribe(lighting, true);
   presentation.subscribe(() => {
     theme();
     lighting();

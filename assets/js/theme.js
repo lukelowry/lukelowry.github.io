@@ -4,6 +4,7 @@ const appearanceChoices = {
   theme: ["system", "light", "dark"],
   animation: ["full", "reduced", "off"],
   contrast: ["standard", "high"],
+  "network-effect": ["spring", "electric"],
 };
 let appearance = readAppearance();
 let themeTimer;
@@ -28,6 +29,7 @@ function applyTheme() {
   const root = document.documentElement;
   const theme = determineComputedTheme();
   const changed = root.dataset.theme !== theme || root.dataset.contrast !== appearance.contrast;
+  const effectChanged = root.dataset.networkEffect !== appearance["network-effect"];
   const animationChanged = root.dataset.animation !== appearance.animation;
   if (changed && root.dataset.theme && appearance.animation === "full" && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
     root.classList.add("transition");
@@ -37,6 +39,7 @@ function applyTheme() {
   root.dataset.themeSetting = appearance.theme;
   root.dataset.theme = theme;
   root.dataset.animation = appearance.animation;
+  root.dataset.networkEffect = appearance["network-effect"];
   root.dataset.contrast = appearance.contrast;
   root.dataset.gridEffects = appearance.animation === "off" ? "off" : "on";
   for (const mode of ["light", "dark"]) {
@@ -58,6 +61,7 @@ function applyTheme() {
             off: "Still network. Selection remains available.",
           }[appearance.animation];
   if (changed) document.dispatchEvent(new CustomEvent("themechange", { detail: theme }));
+  if (effectChanged) document.dispatchEvent(new CustomEvent("networkeffectchange"));
   if (animationChanged) document.dispatchEvent(new CustomEvent("animationchange", { detail: appearance.animation }));
 }
 window.siteAppearance = {

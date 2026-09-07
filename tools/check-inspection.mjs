@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 // Exercise real pointer/keyboard input against submitted GPU geometry, including dense branches.
 export async function checkInspection(page, name) {
+  await setAppearance(page, "Network effect", "Electric");
   const root = page.locator(`[data-grid-backdrop][data-case="${name}"]`);
   if ((await root.getAttribute("data-ready")) === null) return;
   await page.waitForSelector(`[data-grid-backdrop][data-case="${name}"][data-inspectable]`);
@@ -301,6 +302,7 @@ async function checkPulse(page, root, point) {
         window.__pulseCheck.sizes.push(values ? values.reduce((max, value) => Math.max(max, value), 1) : 1);
         return original.call(this, name, values, ...rest);
       }
+      if (!values) return original.call(this, name, values, ...rest);
       const mask = name === "vertexShade" ? model.visibleVertices : model.visibleEdges;
       window.__pulseCheck.uploads.push({
         name,

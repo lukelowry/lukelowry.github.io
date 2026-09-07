@@ -401,3 +401,9 @@ html[data-contrast="high"][data-theme="dark"] {
     border: 2px solid Highlight;
   }
 }
+
+@media (max-width: 767px), (hover: none) and (pointer: coarse) {
+  [data-network-effect-options] {
+    display: none;
+  }
+}

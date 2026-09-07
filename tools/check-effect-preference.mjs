@@ -28,9 +28,9 @@ export async function checkEffectPreference(browser, url) {
     await root.evaluate((root) => {
       const network = root.querySelector("latkit-network").network;
       const original = network.setChannel;
-      window.__defaultSizes = [];
+      window.__defaultPositions = 0;
       network.setChannel = function (name, values, ...rest) {
-        if (name === "vertexSize" && values) window.__defaultSizes.push(values.reduce((max, value) => Math.max(max, value), 1));
+        if (name === "vertexPosition" && values) window.__defaultPositions++;
         return original.call(this, name, values, ...rest);
       };
     });
@@ -39,8 +39,8 @@ export async function checkEffectPreference(browser, url) {
     await page.mouse.move(320, 460);
     await page.waitForTimeout(100);
     assert.ok(
-      await page.evaluate(() => window.__defaultSizes?.some((size) => size > 1.4)),
-      "A fresh visit must visibly enlarge real vertices while Chrome still reports reduced motion"
+      await page.evaluate(() => window.__defaultPositions > 0),
+      "A fresh visit must move real vertices while Chrome still reports reduced motion"
     );
     assert.equal(await root.locator(".grid-electric-trace").count(), 0, "No separate cursor overlay remains");
     await page.reload();
