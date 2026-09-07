@@ -3,7 +3,7 @@ import { createRequire } from "node:module";
 import { setAppearance } from "./check-appearance.mjs";
 const require = createRequire(import.meta.url);
 const liveResource =
-  /\/assets\/generated\/latkit\.js|\/assets\/generated\/grids\/chunks\/(?:home|wave|interactions)-[^/]+\.mjs|\/assets\/generated\/grids\/(?:home|wave)\.mjs|\/assets\/grids\/[^/]+\.(?:json|bin)(?:\.gz)?|\/assets\/js\/grids\/(?:home|wave|electricity|inspection|data|signal|pulse|vertex-ripple)\.mjs/;
+  /\/assets\/generated\/latkit\.js|\/assets\/generated\/grids\/chunks\/(?:home|interactions)-[^/]+\.mjs|\/assets\/generated\/grids\/home\.mjs|\/assets\/grids\/[^/]+\.(?:json|bin)(?:\.gz)?|\/assets\/js\/grids\/(?:home|electricity|inspection|data|pulse|vertex-ripple)\.mjs/;
 
 export async function checkMobileGrids(browser, url) {
   for (const viewport of [
@@ -21,22 +21,19 @@ export async function checkMobileGrids(browser, url) {
     page.on("request", (request) => requests.push(request.url()));
     page.on("pageerror", (error) => errors.push(error.message));
     try {
-      for (const path of ["/", "/projects/#usa-network"]) {
+      for (const path of ["/", "/projects/"]) {
         requests.length = 0;
         await page.goto(url + path, { waitUntil: "networkidle" });
-        assert.equal(await page.locator("html").getAttribute("data-grid-presentation"), "static");
+        assert.equal(await page.locator("html").getAttribute("data-grid-presentation"), path === "/" ? "static" : null);
         const images = page.locator("[data-grid-still]");
-        assert.equal(await images.count(), path === "/" ? 2 : 1);
+        assert.equal(await images.count(), path === "/" ? 2 : 0);
         for (const img of await images.all()) {
           await img.scrollIntoViewIfNeeded();
           await page.waitForFunction((el) => el.complete && el.naturalWidth > 1, await img.elementHandle());
           assert.equal(await img.isVisible(), true);
           assert.match(await img.evaluate((el) => el.currentSrc), /-mobile-light-(640|960)\.webp/);
         }
-        assert.equal(
-          await page.locator(".grid-backdrop-track:visible, .grid-wave-stage:visible, .grid-wave-controls:visible, [data-inspectable]").count(),
-          0
-        );
+        assert.equal(await page.locator(".grid-backdrop-track:visible, [data-inspectable]").count(), 0);
         assert.equal(await page.evaluate(() => Boolean(customElements.get("latkit-network"))), false, "Mobile never registers the renderer");
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
         assert.deepEqual(

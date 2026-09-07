@@ -201,76 +201,6 @@ html[data-theme="dark"] .grid-poster-dark {
   display: block;
 }
 
-/* The flat wave follows the existing Projects content, with only functional controls. */
-.grid-wave {
-  position: relative;
-  margin: 5rem -2rem 1rem;
-  color: var(--global-text-color);
-}
-.grid-wave-stage {
-  position: relative;
-}
-.grid-wave latkit-network {
-  display: block;
-  height: clamp(340px, 49vw, 580px);
-}
-.grid-wave-controls {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 6px 0;
-}
-.grid-wave button {
-  font: inherit;
-  font-size: 0.85rem;
-  line-height: 1.4;
-  min-height: 44px;
-  padding: 8px 12px;
-  border: 0;
-  border-radius: 4px;
-  color: inherit;
-  background: transparent;
-  cursor: pointer;
-}
-.grid-wave button:hover:not(:disabled) {
-  background: var(--global-code-bg-color);
-}
-.grid-wave button:focus-visible {
-  outline: 2px solid var(--global-theme-color);
-  outline-offset: 2px;
-}
-.grid-wave button:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-.grid-wave [hidden],
-.grid-wave:not([data-ready]) .grid-wave-controls {
-  display: none;
-}
-.grid-inspection {
-  position: absolute;
-  bottom: 12px;
-  left: 20px;
-  background: var(--global-bg-color);
-  padding: 4px 8px;
-  font-size: 0.76rem;
-  pointer-events: none;
-}
-.grid-wave:fullscreen {
-  background: var(--global-bg-color);
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-}
-.grid-wave:fullscreen .grid-wave-stage {
-  flex: 1;
-  min-height: 0;
-}
-.grid-wave:fullscreen latkit-network {
-  height: 100%;
-}
-
 @media (max-width: 900px) {
   .home-body {
     --home-columns: 0.85fr 1fr;
@@ -342,18 +272,6 @@ html[data-theme="dark"] .grid-poster-dark {
     width: 100%;
     margin: 0 0 1.75rem;
   }
-  .grid-wave {
-    margin: 2.5rem 0 1rem;
-  }
-  .grid-wave .grid-still {
-    margin-bottom: 0;
-  }
-  .grid-wave-stage,
-  .grid-wave .grid-wave-controls,
-  .grid-wave .grid-status,
-  .grid-wave .grid-keyboard-help {
-    display: none !important;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   .grid-backdrop latkit-network,
@@ -372,60 +290,9 @@ html[data-theme="dark"] .grid-poster-dark {
     display: block;
   }
 }
-.grid-bus-picker {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-.grid-bus-picker label {
-  margin: 0;
-  font-size: 0.85rem;
-}
-.grid-bus-picker input {
-  max-width: 8rem;
-  min-height: 44px;
-  padding: 0.4rem 0.6rem;
-  border: 1px solid var(--global-text-color-light);
-  border-radius: 4px;
-  color: var(--global-text-color);
-  background: var(--global-bg-color);
-  font: inherit;
-}
-.grid-wave latkit-network::part(canvas):focus-visible {
-  outline: 3px solid var(--global-theme-color);
-  outline-offset: -4px;
-}
-.grid-keyboard-help,
-.grid-status {
-  font-size: 0.85rem;
-  text-align: center;
-  margin: 0.6rem 0;
-}
-.grid-status:empty {
-  margin: 0;
-}
-.grid-data-link {
-  display: block;
-  width: fit-content;
-  margin: 0 auto;
-  padding: 0.6rem;
-  font-size: 0.85rem;
-  text-decoration: underline;
-}
 @media (forced-colors: active) {
-  .grid-wave button {
-    border: 1px solid ButtonText;
-  }
   .grid-backdrop-track {
     display: none;
-  }
-}
-@media print {
-  .grid-wave-controls,
-  .grid-keyboard-help {
-    display: none !important;
   }
 }
 

@@ -75,6 +75,7 @@ export function mountBackdrop(root, effects, presentation, loader) {
   // It retains data, GPU buffers, selection, and the visible canvas throughout.
   async function fitScene() {
     if (!configured || fitting || !presentation.live || root.hasAttribute("data-fallback")) return;
+    if (!root.clientWidth || !root.clientHeight) return;
     fitting = true;
     clearTimeout(resizeTimer);
     const version = revision;
@@ -86,7 +87,14 @@ export function mountBackdrop(root, effects, presentation, loader) {
     networkEffects?.reset();
     try {
       network.fit(bounds.items, false);
+      // On startup attachment does not guarantee a placed camera. On later
+      // resizes it is already placed: keep fit/zoom/pose in one turn so the
+      // intermediate tilted fit can never reach the visible canvas.
+      if (!ready) await network.paint();
+      if (version !== revision || !presentation.live || root.hasAttribute("data-fallback")) return;
       network.zoomBy(view.zoom);
+      // A changed, nonanimated pose commits the zoom target. A same-pose call
+      // is a native no-op and would leave zoom easing when alignment begins.
       network.setPose({ ...bounds.center, pitch: view.pitch, bearing: view.bearing }, false);
       await network.paint();
       const rect = root.getBoundingClientRect();
@@ -100,10 +108,9 @@ export function mountBackdrop(root, effects, presentation, loader) {
           dy = anchor[1] - point[1];
         if (Math.hypot(dx, dy) < 0.5) break;
         network.panBy(dx, dy);
-        network.setPose(network.getPose(), false);
         await network.paint();
       }
-      if (version === revision) {
+      if (version === revision && presentation.live && !root.hasAttribute("data-fallback")) {
         networkEffects?.reframe();
         root.dataset.ready = "";
         root.dataset.loaded = name;
@@ -176,6 +183,10 @@ export function mountBackdrop(root, effects, presentation, loader) {
         keyboard: false,
         focusEnabled: true,
         poles: false,
+        // Preserve the tilted fit baseline; the explicit resting pose below
+        // also commits zoomBy's pending target before measuring alignment.
+        fitPitch: 55,
+        fitBearing: view.bearing,
         heightScale: RESTING_VIEW.heightScale,
         heightRange: [0, 1],
         sizeRange: VERTEX_SIZE_RANGE,
@@ -215,6 +226,7 @@ export function mountBackdrop(root, effects, presentation, loader) {
   });
   effects.subscribe(lighting, true);
   presentation.subscribe(() => {
+    revision++;
     theme();
     lighting();
     inspection?.setReady(ready && presentation.live);
@@ -240,9 +252,11 @@ export function mountBackdrop(root, effects, presentation, loader) {
       visible = state.visible && !document.hidden;
       root.dataset.active = String(visible);
       if (state.preload || state.visible) activate();
-      if (!current || fitting) return;
+      if (!current) return;
+      // A pending paint may have been suspended while hidden or on mobile.
+      if (visible && !wasVisible) element.network.resume();
+      if (fitting) return;
       if (visible && !wasVisible) {
-        element.network.resume();
         if (!ready || Math.abs(root.clientWidth - width) > 1 || Math.abs(root.clientHeight - height) > 1) scheduleFit();
       } else if (!visible && wasVisible) {
         clearTimeout(resizeTimer);

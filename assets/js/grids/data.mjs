@@ -50,8 +50,6 @@ export async function loadGrid(root, name = root.dataset.case || "USA", loader =
   return models.get(key);
 }
 
-export const loadUSA = (root) => loadGrid(root, "USA");
-
 export const isDark = () => document.documentElement.dataset.theme === "dark";
 
 export function surfaceColor() {
@@ -67,15 +65,6 @@ export function surfaceColor() {
 
 export function rgb(hex) {
   return [1, 3, 5].map((offset) => parseInt(hex.slice(offset, offset + 2), 16) / 255);
-}
-
-export function ramp(stops) {
-  const colors = stops.map(rgb);
-  return (t) => {
-    const position = Math.max(0, Math.min(1, t)) * (colors.length - 1);
-    const index = Math.min(colors.length - 2, Math.floor(position));
-    return colors[index].map((value, i) => value + (colors[index + 1][i] - value) * (position - index));
-  };
 }
 
 // Data readiness, attachment, and first submitted frame are distinct native states.

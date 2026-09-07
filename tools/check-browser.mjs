@@ -1,3 +1,4 @@
+import { checkReload } from "./check-reload.mjs";
 import { checkLoading, checkPayloadLoading } from "./check-loading.mjs";
 import { checkScroll } from "./check-scroll.mjs";
 import { checkSpring } from "./check-spring-browser.mjs";
@@ -60,6 +61,14 @@ try {
   assert.deepEqual(accessFailures, [], "Accessibility violations");
   await page.emulateMedia({ colorScheme: "light" });
   await page.goto(site.url + "/projects/", { waitUntil: "networkidle" });
+  assert.equal(await page.locator("latkit-network, [data-grid-still], #usa-network").count(), 0, "Projects has no network illustration");
+  assert.equal(
+    await page.evaluate(() =>
+      performance.getEntriesByType("resource").some(({ name }) => /\/assets\/(?:generated\/(?:grids\/|latkit)|css\/grids\.css|grids\/)/.test(name))
+    ),
+    false,
+    "Projects loads no network runtime, styles, or data"
+  );
   await page.keyboard.press("Tab");
   assert.equal(await page.locator(":focus").innerText(), "Skip to content");
   await page.keyboard.press("Enter");
@@ -131,7 +140,6 @@ try {
       .then((values) => values.map((value) => value.trim())),
     ["graph signal processing", "engineering education", "selected publications"]
   );
-  assert.equal(await page.locator("[data-grid-wave]").count(), 0);
   assert.equal(
     requests.some((url) => /EuropeA\.(?:json|home\.bin)/.test(url)),
     false,
@@ -375,64 +383,7 @@ try {
   });
   assert.ok(resizeError < 1.5, `Resize during initialization moved the network ${resizeError}px`);
   await resizing.close();
-  await page.goto(site.url + "/projects/#usa-network");
-  await page.waitForSelector("[data-grid-wave][data-ready], [data-grid-wave][data-fallback]");
-  if (await page.locator("[data-grid-wave][data-ready]").count()) {
-    await page.locator('[data-action="play"]').click();
-    assert.equal(await page.locator('[data-action="play"]').innerText(), "Play");
-    const bus = await page.evaluate(async () => {
-      const { loadUSA } = await import("/assets/js/grids/data.mjs");
-      const model = await loadUSA(document.querySelector("[data-grid-wave]"));
-      const index = model.visibleVertices.findIndex((value) => value === 1);
-      return { number: model.numbers[index], index };
-    });
-    const picker = page.getByRole("textbox", { name: "Bus number", exact: true });
-    await picker.fill(String(bus.number));
-    await picker.press("Enter");
-    assert.ok((await page.locator("#grid-status").innerText()).includes(`Bus ${bus.number}.`));
-    assert.equal(await page.locator(".grid-inspection").innerText(), `Bus ${bus.number}`);
-    await picker.fill("999999999");
-    await picker.press("Enter");
-    assert.equal(await picker.getAttribute("aria-invalid"), "true");
-    await picker.fill(String(bus.number));
-    await picker.press("Enter");
-    assert.equal(await picker.getAttribute("aria-invalid"), null);
-    const canvas = page.locator("[data-grid-wave] canvas");
-    await canvas.focus();
-    await page.keyboard.press("Escape");
-    assert.equal(await page.locator(".grid-inspection").isVisible(), false);
-    await page.keyboard.press("Tab");
-    assert.equal(await page.evaluate(() => document.activeElement.dataset.action), "play", "Canvas must not trap keyboard focus");
-    await page.getByRole("button", { name: "Zoom in", exact: true }).click();
-    await page.getByRole("button", { name: "Zoom out", exact: true }).click();
-    await page.locator('[data-action="reset"]').click();
-    const fullscreen = page.locator('[data-action="fullscreen"]');
-    if (await fullscreen.isVisible()) {
-      await fullscreen.click();
-      await page.getByRole("button", { name: "Exit fullscreen", exact: true }).waitFor();
-      assert.equal(await page.evaluate(() => document.fullscreenElement?.id), "usa-network");
-      assert.equal(await fullscreen.innerText(), "Exit fullscreen");
-      await fullscreen.click();
-      await page.getByRole("button", { name: "Fullscreen", exact: true }).waitFor();
-      assert.equal(await page.evaluate(() => document.fullscreenElement), null);
-      assert.equal(await page.evaluate(() => document.activeElement.dataset.action), "fullscreen");
-    }
-    await page.locator('[data-action="play"]').click();
-    await setAppearance(page, "Animation", "Reduced");
-    await page.getByRole("button", { name: "Play animation", exact: true }).waitFor();
-    assert.equal(await page.locator('[data-action="play"]').innerText(), "Play");
-    await page.reload({ waitUntil: "networkidle" });
-    await page.waitForSelector("[data-grid-wave][data-ready]");
-    assert.equal(await page.locator('[data-action="play"]').innerText(), "Play", "Reduced motion must start paused");
-    await page.getByRole("button", { name: "Play animation", exact: true }).click();
-    assert.equal(await page.locator('[data-action="play"]').innerText(), "Pause", "The scientific demo can still be played deliberately");
-    await setAppearance(page, "Animation", "Off");
-    assert.equal(await page.locator('[data-action="play"]').innerText(), "Play");
-    await page.reload({ waitUntil: "networkidle" });
-    await page.waitForSelector("[data-grid-wave][data-ready]");
-    assert.equal(await page.locator('[data-action="play"]').innerText(), "Play", "Off prevents autoplay");
-    console.log("Verified live WebGPU bus selection, keyboard exit, zoom, reset, and shared motion settings.");
-  }
+  await checkReload(browser, site.url);
   await checkLoading(browser, site.url);
   await checkPayloadLoading(browser, site.url);
   await checkAppearance(browser, site.url);
@@ -447,12 +398,6 @@ try {
   await unavailable.route("**/googletagmanager.com/**", (route) => route.fulfill({ body: "" }));
   const unavailablePage = await unavailable.newPage();
   await unavailablePage.route("**/livereload.js*", (route) => route.fulfill({ body: "" }));
-  await unavailablePage.goto(site.url + "/projects/#usa-network");
-  await unavailablePage.waitForSelector("[data-grid-wave][data-fallback]");
-  assert.equal(await unavailablePage.locator(".grid-poster-dark").isVisible(), true);
-  assert.ok((await unavailablePage.locator(".grid-poster-dark").getAttribute("alt")).length > 0);
-  assert.equal(await unavailablePage.locator(".grid-wave-controls").isVisible(), false);
-  assert.equal(await unavailablePage.getByRole("link", { name: "Grid data (JSON)" }).isVisible(), true);
   await unavailablePage.goto(site.url + "/");
   await unavailablePage.waitForSelector('[data-grid-backdrop][data-case="USA"][data-fallback]');
   assert.equal(await unavailablePage.locator(".grid-backdrop-caption:visible").count(), 0);
@@ -465,14 +410,14 @@ try {
   assert.equal(await staticPage.locator(".grid-backdrop-caption:visible").count(), 0);
   assert.equal(await staticPage.locator(".home-copy .home-publications").count(), 1);
   await staticPage.setViewportSize({ width: 390, height: 844 });
-  await staticPage.goto(site.url + "/projects/#usa-network");
+  await staticPage.goto(site.url + "/projects/");
   assert.equal(await staticPage.getByRole("link", { name: "publications", exact: true }).isVisible(), true);
-  assert.equal(await staticPage.locator(".grid-still noscript img").isVisible(), true);
+  assert.equal(await staticPage.locator("latkit-network, .grid-still, .grid-backdrop-fallback").count(), 0);
   await fallback.close();
   assert.deepEqual(errors, [], "Browser errors");
   assert.deepEqual(consoleErrors, [], "Console errors");
   console.log(
-    "Browser checks passed: all-page accessibility in both themes, project links, skip navigation, publication controls, search, two kV scenes, lazy Europe data, stationary poses, transition masks, retained canvases and channels, responsive network centers, mobile, reduced motion, wave controls, no-JS content, and console."
+    "Browser checks passed: all-page accessibility in both themes, project links, skip navigation, publication controls, search, two kV scenes, lazy Europe data, stationary poses, transition masks, retained canvases and channels, responsive network centers, mobile, reduced motion, Projects without an embed, reload stability, no-JS content, and console."
   );
 } finally {
   await browser?.close();

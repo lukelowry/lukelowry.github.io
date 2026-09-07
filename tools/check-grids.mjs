@@ -9,7 +9,6 @@ import { parseNetwork } from "@latkit/embed";
 import { voltageLayers, sameVoltageEdges, visibleVoltageNetwork } from "../assets/js/grids/voltage.mjs";
 import { framingVertices, framingBounds, voltageHeights, RESTING_VIEW } from "../assets/js/grids/framing.mjs";
 import { storyState } from "../assets/js/grids/home.mjs";
-import { adjacency, createWave } from "../assets/js/grids/signal.mjs";
 
 const outline = framingVertices({
   topology: { vertexCoords: new Float32Array([0, 0, 4, 0, 4, 4, 0, 4, 2, 2, 2, 2, 100, 100]) },
@@ -63,20 +62,6 @@ assert.ok(heights[0] < heights[1] && heights[1] < heights[2]);
 assert.equal(heights[1], heights[3], "Equal voltages retain equal depth.");
 assert.ok(Math.abs(heights[2] - RESTING_VIEW.layerSpan) < 1e-8);
 assert.deepEqual([...voltageHeights({ levels: [69], heights: new Float32Array([0, 0]) })], [0, 0]);
-// Cycles, parallel edges, disconnected vertices, and isolated sources must all work.
-const graph = adjacency(6, new Uint32Array([0, 1, 1, 2, 2, 0, 0, 1, 2, 3]));
-const wave = createWave(graph, 0);
-assert.deepEqual([...wave.distances], [0, 1, 1, 2, -1, -1]);
-const originalBuffer = wave.frame(3);
-for (const t of [0, 1, 4, 9, 17.999, 18, 36]) {
-  assert.equal(wave.frame(t), originalBuffer);
-  assert.ok([...wave.values].every((v) => Number.isFinite(v) && Math.abs(v) <= 1));
-  assert.equal(wave.values[4], 0);
-  assert.ok(wave.amplitudes.every((value, i) => value === Math.abs(wave.values[i])));
-}
-assert.deepEqual([...createWave(graph, 4).distances], [-1, -1, -1, -1, 0, -1]);
-assert.throws(() => createWave(graph, 8), RangeError);
-
 for (const [name, vertices, edges, visibleVertices, visibleEdges, levels] of [
   ["USA", 82000, 104121, 69835, 83457, [69, 100, 115, 138, 161, 230, 345, 500, 765]],
   ["EuropeA", 8807, 12252, 8725, 11168, [132, 220, 300, 380, 500, 750]],
@@ -131,8 +116,5 @@ for (const [name, vertices, edges, visibleVertices, visibleEdges, levels] of [
     assert.deepEqual(voltageRGB(kv[first], payload.voltageColors), voltageRGB(kv[last], payload.voltageColors));
   }
   assert.equal(new Set(view.levels.map((kv) => voltageRGB(kv, payload.voltageColors).join(","))).size, levels.length);
-  const signal = createWave(adjacency(vertices, model.topology.edges), 0);
-  const start = performance.now();
-  for (let frame = 0; frame < 600; frame++) signal.frame(frame / 60);
-  console.log(`${name}: valid npm embed data, ${gzip.length} compressed bytes; signal CPU ${(performance.now() - start).toFixed(1)} ms / 600 frames`);
+  console.log(`${name}: valid npm embed data, ${gzip.length} compressed bytes`);
 }

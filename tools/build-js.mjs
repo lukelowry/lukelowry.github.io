@@ -31,10 +31,10 @@ const result = await build({
   metafile: true,
   loader: { ".wgsl": "text" },
 });
-// Desktop scenes share chunks; the tiny bootstrap has no import prerequisites.
+// The homepage and its interactions share chunks; the tiny bootstrap has no import prerequisites.
 const scenes = await build({
   absWorkingDir: root,
-  entryPoints: ["assets/js/grids/home.mjs", "assets/js/grids/wave.mjs"],
+  entryPoints: ["assets/js/grids/home.mjs"],
   metafile: true,
   outdir: fileURLToPath(new URL("grids/", output)),
   bundle: true,
@@ -48,7 +48,7 @@ const scenes = await build({
   outExtension: { ".js": ".mjs" },
 });
 const sceneURLs = {};
-for (const name of ["home", "wave"]) {
+for (const name of ["home"]) {
   const path = Object.keys(scenes.metafile.outputs).find((path) => path.endsWith(`/grids/${name}.mjs`));
   const hash = createHash("sha256")
     .update(await readFile(resolve(root, path)))
@@ -70,7 +70,7 @@ const bootstrap = await build({
     {
       name: "deferred-desktop-scenes",
       setup(build) {
-        build.onResolve({ filter: /^\.\/(home|wave)\.mjs$/ }, ({ path }) => ({ path: sceneURLs[path], external: true }));
+        build.onResolve({ filter: /^\.\/home\.mjs$/ }, ({ path }) => ({ path: sceneURLs[path], external: true }));
       },
     },
   ],

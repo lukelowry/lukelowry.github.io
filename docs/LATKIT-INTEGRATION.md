@@ -22,7 +22,7 @@ uses revision guards, so it needs neither a cancellation adapter nor independent
 `tools/build-home-grids.mjs` derives `assets/grids/{USA,EuropeA}.home.bin` and `.bin.gz`
 from the full NetworkJSON exports. It runs during `build:js` and `assets:grids`, uses deterministic
 gzip, and writes only changed bytes. Both variants have content-busted URLs in the homepage markup.
-Projects and JSON downloads continue to use the complete electrical topology and bus IDs.
+The full JSON exports remain available as source assets for the homepage build.
 
 The homepage stores only visible vertices and same-voltage edges, in their original relative order.
 Coordinates and European polyline bends remain Float32-exact; no geographic quantization is used.
@@ -60,15 +60,15 @@ shrinking the window stops network rendering and scroll coordination without los
 
 `presentation.mjs` supplies the shared media preference and sets responsive image sources for the
 saved light/dark theme. Keep its media query in sync with `grids.css` and the picture sources in
-`grid-backdrop.liquid`, `grid-showcase.liquid`, and `grid-still.liquid`. The mobile homepage places
+`grid-backdrop.liquid` and `grid-still.liquid`. The mobile homepage places
 USA and Europe artwork directly before their reading sections; no fixed layers, masks, captions,
-or viewport-height spacers are used. The Projects demo uses a static preview and hides playback
-controls. Full animation never overrides the mobile image presentation.
+or viewport-height spacers are used. Full animation never overrides the mobile image presentation.
+Projects has no network embed, fallback illustration, or network-specific CSS, scripts, or data requests.
 
 `tools/build-grid-stills.py` derives transparent 640px and 960px WebP variants from the existing
 posters, trimming empty margins and preserving the whole network. It runs with `npm run assets:grids`
 and can also run separately without rebuilding topology. Only the active theme loads; the second
-home illustration and Projects preview use lazy image loading. Picture sources prevent the hidden
+home illustration uses lazy image loading. Picture sources prevent the hidden
 desktop posters from downloading on mobile. A no-JavaScript mobile visit gets the light stills.
 
 Desktop scene modules:
@@ -80,12 +80,18 @@ Desktop scene modules:
 - `effect-preference.mjs`: shared site-level motion choice, persisted in local storage.
 - `framing.mjs`: north-up, oversized USA/Europe compositions (2.10/2.15 zoom).
 - `data.mjs` / `voltage.mjs`: cached input, native parsing, bus IDs, visibility, and voltage colors.
-- `wave.mjs` / `signal.mjs`: the separate Projects animation and its controls.
 
 On desktop, each case is assigned once. Latkit owns the canvas, picking, overlap cycling, touch scrolling,
 backing-store resize, and the render loop. Resizing retains the canvas, data, selection, and GPU buffers.
 A 120 ms settled adjustment restores our custom subset fit and asymmetric alignment with one fit
 and at most two corrections. Whole-topology fit padding cannot express these oversized compositions.
+Attachment is not camera placement: initial framing awaits `paint()` after the subset fit before issuing
+zoom and the final pose. The tilted fit baseline is explicitly 55 degrees; setting the resting
+0-degree pose without animation commits the pending zoom target. This preserves the established
+composition. A same-pose `setPose` is a native no-op, not a way to flush a zoom animation.
+Only the final aligned frame becomes ready. Once placed, resize fit/zoom/pose run in the same
+synchronous turn so the temporary fit angle cannot appear on an already visible canvas. Revision guards discard stale resize/presentation
+work, and returning to a scene resumes any paint suspended while it was hidden.
 The western USA and eastern Europe intentionally extend offscreen; visible coastline checks protect Maine and Florida.
 
 The custom `Shade` uses Latkit's existing render loop and its 64-float uniform block. A 190 px
@@ -120,9 +126,8 @@ accessibility description. Touch retains native selection and page gestures.
 
 `theme.js` applies and persists preferences before first paint. Theme defaults to System, animation
 to Full, and contrast to Standard. An earlier explicit `grid-effects=off` choice is retained until
-an animation option is chosen. A fresh public-site visit needs no saved opt-in. The shared animation
-preference also prevents demo autoplay in Reduced/Off; the demo's own Play button remains available
-for deliberate playback. Reduced/Off disable site transitions and smooth Back to top scrolling.
+an animation option is chosen. A fresh public-site visit needs no saved opt-in.
+Reduced/Off disable site transitions and smooth Back to top scrolling.
 Settings work in memory when storage is blocked and synchronize between tabs when storage is available.
 Offscreen and hidden-tab scenes pause. Shade failure leaves the basic network usable;
 missing WebGPU or a failed scene leaves its static poster.
@@ -146,6 +151,9 @@ These are verified against network 0.9.0; remove them when upstream behavior cov
 
 Run the README checks. Browser coverage includes coastline geometry, hover/selection/cycling,
 keyboard access, desktop resize retention, themes, reduced motion, and fallback.
+Reload checks retain the HTTP cache and compare camera poses and projected vertices from the first
+ready frame across cold loads, reloads at the top, and restored-scroll reloads followed by a return
+to the USA scene. Projects checks verify that it has no network embed or network asset requests.
 Mobile checks cover both themes, 320px and 390px phones, landscape, tablets, native touch scrolling,
 zero renderer/topology/desktop-poster requests, no-JavaScript images, and GPU suspension when a
 desktop window becomes narrow.

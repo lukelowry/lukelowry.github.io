@@ -5,7 +5,7 @@ const renderSupport = new WeakMap();
 
 // Hosted CI has no adapter. Verify its real fallback, but never turn a failed
 // live scene on a GPU-capable browser into a skipped readiness test.
-function supportsRendering(browser, url) {
+export function supportsRendering(browser, url) {
   if (!renderSupport.has(browser))
     renderSupport.set(
       browser,

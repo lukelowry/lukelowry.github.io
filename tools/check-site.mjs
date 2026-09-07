@@ -21,7 +21,7 @@ const preview = /Disallow: \/\s/.test(await readFile(resolve(root, "robots.txt")
 for (const path of pages) {
   const html = await readFile(path, "utf8");
   const name = relative(root, path);
-  const gridPage = name === "index.html" || name.replaceAll("\\", "/") === "projects/index.html";
+  const gridPage = name === "index.html";
   if (html.includes("/assets/css/grids.css") !== gridPage) failures.push(`${name}: grid CSS must load only on network pages`);
   for (const figure of html.matchAll(/<figure\b[^>]*>(.*?)<\/figure>/gs)) {
     const img = figure[1].match(/<img\b[^>]*>/)?.[0];
