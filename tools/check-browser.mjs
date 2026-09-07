@@ -437,6 +437,8 @@ try {
   await checkPayloadLoading(browser, site.url);
   await checkAppearance(browser, site.url);
   await checkEffectPreference(browser, site.url);
+  // Exercise the CI fallback even when this suite runs on a GPU-capable machine.
+  await checkEffectPreference(browser, site.url, { noAdapter: true });
   await checkScroll(browser, site.url);
   await checkSpring(browser, site.url);
   await checkMobileGrids(browser, site.url);

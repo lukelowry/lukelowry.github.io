@@ -2,8 +2,12 @@ import { observeInspection } from "./check-inspection.mjs";
 import { setAppearance } from "./check-appearance.mjs";
 import assert from "node:assert/strict";
 
-export async function checkEffectPreference(browser, url) {
+export async function checkEffectPreference(browser, url, { noAdapter = false } = {}) {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, reducedMotion: "reduce" });
+  if (noAdapter)
+    await context.addInitScript(() => {
+      if (navigator.gpu) navigator.gpu.requestAdapter = async () => null;
+    });
   const page = await context.newPage();
   try {
     await context.route("**/livereload.js*", (route) => route.fulfill({ body: "" }));
@@ -18,11 +22,24 @@ export async function checkEffectPreference(browser, url) {
         false,
         "A browser with a WebGPU adapter must render the live network"
       );
-      assert.equal(await root.locator(".grid-backdrop-poster").isVisible(), true, "Without an adapter the static network stays visible");
+      const poster = root.locator(".grid-backdrop-fallback img");
+      assert.equal(await poster.count(), 1, "Fallback has one image, not a loading-image swap");
+      assert.equal(await root.locator("latkit-network").count(), 0, "Fallback removes the unusable renderer");
+      for (const theme of ["Light", "Dark"]) {
+        await setAppearance(page, "Theme", theme);
+        await poster.evaluate((image) => image.decode());
+        assert.equal(await poster.isVisible(), true, `${theme}: without an adapter the static network stays visible`);
+        assert.equal(
+          await poster.evaluate((image) => image.currentSrc),
+          new URL(await root.getAttribute(`data-fallback-${theme.toLowerCase()}`), url).href,
+          `${theme}: the fallback loads the matching theme image`
+        );
+      }
       assert.equal(await page.locator(".grid-backdrop-caption").count(), 0, "Fallback has no information overlay");
       console.log("No WebGPU adapter: verified static network fallback; live effects preference checks require a GPU-capable browser.");
       return;
     }
+    assert.equal(noAdapter, false, "The forced no-adapter case must use the fallback");
     assert.equal(await page.evaluate(() => localStorage.getItem("animation")), null, "Effects work on a fresh origin without a saved opt-in");
     assert.equal(await page.evaluate(() => matchMedia("(prefers-reduced-motion: reduce)").matches), true);
     await root.evaluate((root) => {
