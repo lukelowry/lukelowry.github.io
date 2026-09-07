@@ -2,7 +2,8 @@
 layout: page
 title: Blackout USA
 description: An educational tool for all backgrounds to understand the challenges of operating the electric grid.
-img: /assets/img/BlackoutUSA.jpg
+img: /assets/img/BlackoutUSAFull.png
+image_background: dark
 importance: 3
 category: outreach
 ---

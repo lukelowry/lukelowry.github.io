@@ -8,6 +8,7 @@ importance: -1
 readthedocs: https://latkit.readthedocs.io/en/latest/
 github: https://github.com/lukelowry/latkit
 img: /assets/img/projects/latkit.png
+image_background: dark
 og_image: /assets/img/projects/latkit.png
 og_image_alt: Latkit
 sitemap: false # Remove together with noindex when the page is written.

@@ -5,6 +5,7 @@ description: A Julia package for Online GSP Convolutions over Dynamic Graphs
 img: /assets/img/USA_Wavelet_julia.png
 importance: 1
 category: work
+github: https://github.com/lukelowry/SpectralGraphWavelet.jl
 ---
 
 A registered package on the Julia Registry and availalbe on 

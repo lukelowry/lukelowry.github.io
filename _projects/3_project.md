@@ -3,8 +3,11 @@ layout: page
 title: ESA++
 description: A fork of Easy Sim Auto to accelerate power system research
 img: assets/img/GWB.png
+image_fit: contain
 importance: 3
 category: work
+github: https://github.com/lukelowry/ESApp
+readthedocs: https://esapp.readthedocs.io/en/latest/
 giscus_comments: false
 ---
 

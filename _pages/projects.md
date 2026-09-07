@@ -1,6 +1,8 @@
 ---
 layout: page
 title: projects
+display_title: Projects
+page_class: collection-page projects-page
 permalink: /projects/
 description: Completed and ongoing academic projects 
 nav: true

@@ -201,7 +201,7 @@
           aria-controls="abstract-{{ entry.key | escape }}"
           aria-label="Abstract"
         >
-          Abs
+          {% if page.url == '/publications/' %}Abstract{% else %}Abs{% endif %}
         </button>
       {% endif %}
       {% if entry.doi %}
@@ -219,7 +219,7 @@
           aria-controls="bibtex-{{ entry.key | escape }}"
           aria-label="BibTeX"
         >
-          Bib
+          {% if page.url == '/publications/' %}BibTeX{% else %}Bib{% endif %}
         </button>
       {% endif %}
       {% if entry.html %}

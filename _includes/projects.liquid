@@ -2,34 +2,54 @@
 {% assign project_image_key = project.img | replace: '/assets/', 'assets/' %}
 {% assign project_image = site.asset_aliases[project_image_key] | default: project.img %}
 {% assign project_image_alt = project.img_alt | default: '' %}
-<div class="col mb-4">
-  <article class="card project-card h-100 hoverable{% if include.horizontal %} project-card-horizontal{% endif %}">
-    {% if project.img %}
-      <div class="project-card-image{% if project.image_fit == 'contain' %} project-card-logo{% endif %}">
-        {% include figure.liquid loading="lazy" path=project_image sizes="(min-width: 768px) 340px, 90vw" alt=project_image_alt class="card-img-top" %}
-      </div>
-    {% endif %}
-    <div class="card-body">
-      <h3 class="card-title">
-        <a
-          class="project-link"
-          href="{% if project.marketplace %}{{ project.marketplace | escape }}{% elsif project.redirect %}{{ project.redirect | escape }}{% else %}{{ project.url | relative_url }}{% endif %}"
-        >
-          {{- project.title | escape -}}
-        </a>
-      </h3>
-      {% if project.description != blank %}
-        <p class="card-text">{{ project.description }}</p>
-      {% endif %}
-      {% if project.github %}
-        <a class="project-repository" href="{{ project.github | escape }}" aria-label="{{ project.title | escape }} code repository">Code</a>
-      {% endif %}
-      {% if project.readthedocs %}
-        <a class="project-repository" href="{{ project.readthedocs | escape }}" aria-label="{{ project.title | escape }} ReadTheDocs">ReadTheDocs</a>
-      {% endif %}
-      {% if project.github_stars %}
-        <span class="stars"><span id="{{ project.github_stars }}-stars"></span> GitHub stars</span>
-      {% endif %}
+<article class="project-card{% if include.horizontal %} project-card-horizontal{% endif %}">
+  {% if project.img %}
+    <div class="project-card-image{% if project.image_fit == 'contain' %} project-card-logo{% endif %}{% if project.image_background == 'dark' %} project-card-dark{% endif %}">
+      {% include figure.liquid loading="lazy" path=project_image sizes="(min-width: 1100px) 500px, (min-width: 768px) 46vw, 94vw" alt=project_image_alt class="project-image" %}
     </div>
-  </article>
-</div>
+  {% endif %}
+  <div class="card-body">
+    <h3 class="card-title">
+      <a
+        class="project-link"
+        href="{% if project.marketplace %}{{ project.marketplace | escape }}{% elsif project.redirect %}{{ project.redirect | escape }}{% else %}{{ project.url | relative_url }}{% endif %}"
+      >
+        {{- project.title | escape -}}
+        {% include collection-icon.liquid name="arrow" %}
+      </a>
+    </h3>
+    {% if project.description != blank %}
+      <p class="card-text">{{ project.description }}</p>
+    {% endif %}
+    {% if project.github or project.readthedocs or project.marketplace %}
+      <div class="project-resources">
+        {% if project.github %}
+          <a class="project-repository" href="{{ project.github | escape }}" aria-label="{{ project.title | escape }} code repository"
+            >Code {% include collection-icon.liquid name="external" -%}
+          </a>
+        {% endif %}
+        {% if project.readthedocs %}
+          <a
+            class="project-repository"
+            href="{{ project.readthedocs | escape }}"
+            aria-label="{{ project.title | escape }} documentation on ReadTheDocs"
+            >Documentation {% include collection-icon.liquid name="external" -%}
+          </a>
+        {% endif %}
+        {% if project.marketplace %}
+          <a
+            class="project-repository"
+            href="{{ project.marketplace | escape }}"
+            aria-label="{{ project.title | escape }} on Visual Studio Marketplace"
+            >Marketplace {% include collection-icon.liquid name="external" -%}
+          </a>
+        {% endif %}
+      </div>
+    {% else %}
+      <span class="project-details" aria-hidden="true">Explore project {% include collection-icon.liquid name="arrow" %}</span>
+    {% endif %}
+    {% if project.github_stars %}
+      <span class="stars"><span id="{{ project.github_stars }}-stars"></span> GitHub stars</span>
+    {% endif %}
+  </div>
+</article>

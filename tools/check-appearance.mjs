@@ -69,7 +69,8 @@ export async function checkAppearance(browser, url) {
       const box = await panel.boundingBox();
       assert.ok(box.x >= 0 && box.x + box.width <= 320 && box.y + box.height <= 740, `${path}: panel fits a 320px viewport`);
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
-      await page.mouse.click(15, 650);
+      // Dismiss from the page gutter without activating a project link underneath.
+      await page.mouse.click(2, 650);
       assert.equal(await panel.isVisible(), false, "Clicking outside dismisses the panel");
     }
     await setAppearance(page, "Animation", "Full");

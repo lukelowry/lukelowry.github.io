@@ -1,6 +1,24 @@
 {% if site.bib_search %}
   <script src="{{ '/assets/js/bibsearch.js' | relative_url | bust_file_cache }}" type="module"></script>
-  <label class="sr-only" for="bibsearch">Filter publications</label>
-  <p id="bibsearch-status" class="sr-only" role="status" aria-live="polite"></p>
-  <input type="text" id="bibsearch" spellcheck="false" autocomplete="off" class="search bibsearch-form-input" placeholder="Type to filter">
+  <div class="collection-toolbar publication-search" hidden>
+    <div class="publication-search-field">
+      <label class="sr-only" for="bibsearch">Filter publications</label>
+      {% include collection-icon.liquid name="search" %}
+      <input
+        type="text"
+        id="bibsearch"
+        spellcheck="false"
+        autocomplete="off"
+        class="search bibsearch-form-input"
+        placeholder="Search title, author, or year"
+        aria-controls="publication-results"
+      >
+    </div>
+    <p id="bibsearch-status" class="collection-count" role="status" aria-live="polite" aria-atomic="true"></p>
+  </div>
+  <div id="bibsearch-empty" class="publication-empty" hidden>
+    <h2>No matching publications</h2>
+    <p>Try a different title, author, or year.</p>
+    <button type="button" id="bibsearch-reset">Reset search</button>
+  </div>
 {% endif %}

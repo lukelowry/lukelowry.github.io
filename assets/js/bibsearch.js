@@ -1,74 +1,74 @@
 import { highlightSearchTerm } from "./highlight-search-term.js";
 
-document.addEventListener("DOMContentLoaded", function () {
-  // actual bibsearch logic
-  const filterItems = (searchTerm) => {
-    document.querySelectorAll(".bibliography, .unloaded").forEach((element) => element.classList.remove("unloaded"));
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("bibsearch");
+  const publications = document.getElementById("publication-results");
+  if (!input || !publications) return;
 
-    // highlight-search-term
-    if (CSS.highlights) {
-      const nonMatchingElements = highlightSearchTerm({ search: searchTerm, selector: ".bibliography > li" });
-      (nonMatchingElements || []).forEach((element) => {
-        element.classList.add("unloaded");
-      });
-    } else {
-      // Simply add unloaded class to all non-matching items if Browser does not support CSS highlights
-      document.querySelectorAll(".bibliography > li").forEach((element, index) => {
-        const text = element.innerText.toLowerCase();
-        if (text.indexOf(searchTerm) == -1) {
-          element.classList.add("unloaded");
+  const items = Array.from(publications.querySelectorAll("ol.bibliography > li"));
+  const status = document.getElementById("bibsearch-status");
+  const empty = document.getElementById("bibsearch-empty");
+  let timeoutId;
+
+  const filterItems = (value) => {
+    const searchTerm = value.trim().toLowerCase();
+    // Match the same citation text in every browser, including its BibTeX key.
+    for (const item of items) {
+      const text = item.textContent.replace(/\s+/g, " ").toLowerCase();
+      item.classList.toggle("unloaded", !text.includes(searchTerm));
+    }
+    highlightSearchTerm({ search: searchTerm, selector: "#publication-results ol.bibliography > li" });
+
+    for (const heading of publications.querySelectorAll("h2.bibliography")) {
+      let sibling = heading.nextElementSibling;
+      let hasMatches = false;
+      while (sibling && sibling.tagName !== "H2") {
+        if (sibling.tagName === "OL") {
+          const visible = !!sibling.querySelector("li:not(.unloaded)");
+          sibling.classList.toggle("unloaded", !visible);
+          if (sibling.previousElementSibling?.tagName === "H3") {
+            sibling.previousElementSibling.classList.toggle("unloaded", !visible);
+          }
+          hasMatches ||= visible;
         }
-      });
+        sibling = sibling.nextElementSibling;
+      }
+      heading.classList.toggle("unloaded", !hasMatches);
     }
 
-    document.querySelectorAll("h2.bibliography").forEach(function (element) {
-      let iterator = element.nextElementSibling; // get next sibling element after h2, which can be h3 or ol
-      let hideFirstGroupingElement = true;
-      // iterate until next group element (h2), which is already selected by the querySelectorAll(-).forEach(-)
-      while (iterator && iterator.tagName !== "H2") {
-        if (iterator.tagName === "OL") {
-          const ol = iterator;
-          const unloadedSiblings = ol.querySelectorAll(":scope > li.unloaded");
-          const totalSiblings = ol.querySelectorAll(":scope > li");
-
-          if (unloadedSiblings.length === totalSiblings.length) {
-            ol.previousElementSibling.classList.add("unloaded"); // Add the '.unloaded' class to the previous grouping element (e.g. year)
-            ol.classList.add("unloaded"); // Add the '.unloaded' class to the OL itself
-          } else {
-            hideFirstGroupingElement = false; // there is at least some visible entry, don't hide the first grouping element
-          }
-        }
-        iterator = iterator.nextElementSibling;
-      }
-      // Add unloaded class to first grouping element (e.g. year) if no item left in this group
-      if (hideFirstGroupingElement) {
-        element.classList.add("unloaded");
-      }
-    });
-    const count = document.querySelectorAll(".bibliography > li:not(.unloaded)").length;
-    document.getElementById("bibsearch-status").textContent = `${count} publications`;
+    const count = items.filter((item) => !item.classList.contains("unloaded")).length;
+    status.textContent = `${count} ${count === 1 ? "publication" : "publications"}`;
+    empty.hidden = count !== 0;
+    publications.classList.toggle("has-no-results", count === 0);
   };
 
-  const updateInputField = () => {
-    let hashValue = window.location.hash.substring(1);
+  const updateFromHash = () => {
+    clearTimeout(timeoutId);
+    let value = window.location.hash.slice(1);
     try {
-      hashValue = decodeURIComponent(hashValue);
+      value = decodeURIComponent(value);
     } catch {
-      /* Treat malformed URL fragments as literal search text. */
-    } // Remove the '#' character
-    document.getElementById("bibsearch").value = hashValue;
-    filterItems(hashValue);
+      // A malformed fragment can still be searched as literal text.
+    }
+    const target = value ? document.getElementById(value) : null;
+    const isCitation = target && publications.contains(target);
+    input.value = isCitation ? "" : value;
+    filterItems(input.value);
+    // Preserve links from the CV to individual papers without treating them as searches.
+    if (isCitation) requestAnimationFrame(() => target.scrollIntoView({ block: "start" }));
   };
 
-  // Sensitive search. Only start searching if there's been no input for 300 ms
-  let timeoutId;
-  document.getElementById("bibsearch").addEventListener("input", function () {
-    clearTimeout(timeoutId); // Clear the previous timeout
-    const searchTerm = this.value.toLowerCase();
-    timeoutId = setTimeout(() => filterItems(searchTerm), 300);
+  input.addEventListener("input", () => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => filterItems(input.value), 150);
   });
-
-  window.addEventListener("hashchange", updateInputField); // Update the filter when the hash changes
-
-  updateInputField(); // Update filter when page loads
+  document.getElementById("bibsearch-reset").addEventListener("click", () => {
+    clearTimeout(timeoutId);
+    input.value = "";
+    filterItems("");
+    input.focus();
+  });
+  window.addEventListener("hashchange", updateFromHash);
+  updateFromHash();
+  document.querySelector(".publication-search").hidden = false;
 });

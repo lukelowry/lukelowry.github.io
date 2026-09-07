@@ -5,6 +5,7 @@ description: A repository of CSC Formatted Graph Laplacians
 img: assets/img/USA_Laplacians.jpg
 importance: 2
 category: work
+github: https://github.com/lukelowry/laplib
 giscus_comments: false
 ---
 

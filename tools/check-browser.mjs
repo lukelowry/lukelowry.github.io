@@ -88,7 +88,7 @@ try {
     assert.equal(await page.getByRole("link", { name: `${title} code repository`, exact: true }).count(), 1);
   }
   for (const name of ["GridKit", "Latkit"]) {
-    assert.equal(await page.getByRole("link", { name: `${name} ReadTheDocs`, exact: true }).count(), 1);
+    assert.equal(await page.getByRole("link", { name: `${name} documentation on ReadTheDocs`, exact: true }).count(), 1);
   }
   assert.equal(
     await page.getByRole("link", { name: "GridKit Studio", exact: true }).getAttribute("href"),

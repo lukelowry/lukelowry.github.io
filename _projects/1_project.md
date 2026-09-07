@@ -5,6 +5,8 @@ description: A power systems oriented Python module for the SGWT & sparse graph 
 img: /assets/img/USA_Wavelet.png
 importance: 1
 category: work
+github: https://github.com/lukelowry/sgwt
+readthedocs: https://sgwt.readthedocs.io/
 ---
 
 The Spectral Graph Wavelet Transform (SGWT) and Graph Signal Processing (GSP) is a vital part of the bleeding edge research being done on the power grid.
