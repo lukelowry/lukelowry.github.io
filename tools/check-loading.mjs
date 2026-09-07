@@ -1,7 +1,49 @@
 import assert from "node:assert/strict";
 import { assertSamePixels } from "./check-inspection.mjs";
 
+const renderSupport = new WeakMap();
+
+// Hosted CI has no adapter. Verify its real fallback, but never turn a failed
+// live scene on a GPU-capable browser into a skipped readiness test.
+function supportsRendering(browser, url) {
+  if (!renderSupport.has(browser))
+    renderSupport.set(
+      browser,
+      (async () => {
+        const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+        await context.route("**/livereload.js*", (route) => route.fulfill({ body: "" }));
+        await context.route("**/googletagmanager.com/**", (route) => route.fulfill({ body: "" }));
+        const page = await context.newPage(),
+          errors = [];
+        page.on("pageerror", (error) => errors.push(error.message));
+        try {
+          await page.goto(url, { waitUntil: "domcontentloaded" });
+          await page.waitForSelector('[data-grid-backdrop][data-case="USA"][data-ready], [data-grid-backdrop][data-case="USA"][data-fallback]');
+          const root = page.locator('[data-grid-backdrop][data-case="USA"]');
+          if ((await root.getAttribute("data-ready")) !== null) return true;
+          assert.equal(
+            await page.evaluate(async () => Boolean(navigator.gpu && (await navigator.gpu.requestAdapter()))),
+            false,
+            "A fallback with an available GPU adapter is a rendering failure"
+          );
+          assert.equal(await root.locator("latkit-network").count(), 0);
+          assert.equal(await root.locator("img").count(), 1);
+          await root.locator("img").evaluate((image) => image.decode());
+          assert.deepEqual(errors, []);
+          console.log(
+            "Loading: no WebGPU adapter; verified terminal image fallback. Live paint/shader and binary-render checks require a GPU-capable browser."
+          );
+          return false;
+        } finally {
+          await context.close();
+        }
+      })()
+    );
+  return renderSupport.get(browser);
+}
+
 export async function checkLoading(browser, url) {
+  if (!(await supportsRendering(browser, url))) return;
   for (const failShade of [false, true]) {
     const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, colorScheme: "light" });
     await context.route("**/livereload.js*", (route) => route.fulfill({ body: "" }));
@@ -89,7 +131,7 @@ export async function checkLoading(browser, url) {
         (failed) => document.querySelector('[data-grid-backdrop][data-case="USA"]').dataset.lighting === (failed ? "unavailable" : "on"),
         failShade
       );
-      await root.evaluate((r) => r.querySelector("latkit-network").network.whenRendered());
+      await root.evaluate((r) => r.querySelector("latkit-network").network.paint());
       assert.deepEqual(await root.evaluate((r) => r.querySelector("latkit-network").network.getPose()), pose, "Enabling input keeps the same camera");
       await assertSamePixels(
         page,
@@ -128,6 +170,7 @@ export async function checkLoading(browser, url) {
 // The binary contract must also work without streaming gzip and fail cleanly
 // when the downloaded asset is corrupt, rather than display partial geometry.
 export async function checkPayloadLoading(browser, url) {
+  if (!(await supportsRendering(browser, url))) return;
   for (const corrupt of [false, true]) {
     const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
     await context.route("**/livereload.js*", (route) => route.fulfill({ body: "" }));

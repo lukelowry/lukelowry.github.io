@@ -1,14 +1,21 @@
 # Latkit integration
 
-`@latkit/embed` 0.9.0 and `@latkit/network` 0.10.0 are exact npm dependencies;
+`@latkit/embed` 0.9.1 and `@latkit/network` 0.10.1 are exact npm dependencies;
 `package-lock.json` pins the full dependency graph. `npm run build:js` bundles registration,
 `parseNetwork` into ignored `assets/generated/latkit.js`,
 with license notices and version metadata. Preview and CI build it before Jekyll.
 No Latkit implementation is copied into this repository or fetched at browser runtime from a CDN.
-The current preview requires the adjacent network source for the unreleased `whenRendered()` API:
-`npm run build:js -- --latkit-network-source ../latkit/packages/network/src/index.ts`.
-The default npm build deliberately fails its API check until the dependency is updated to a release
-containing that contract. Do not deploy this preview against the currently pinned network release.
+The preview and CI both use those npm packages through the same `npm run build:js` command.
+The build checks the installed `Network.paint()` declaration; it has no adjacent-source override.
+Loading checks verify the actual fallback on adapterless CI. They skip live readiness assertions
+only after confirming no adapter exists; a fallback with an available adapter remains a failure.
+
+`await network.paint()` requests a new submitted frame containing pending shader and camera changes.
+Concurrent calls share a promise until that frame finishes. A paused network waits for resume;
+detachment and active-projection pipeline failure reject the promise. A successful later shader or
+reattachment clears a stale pipeline failure. Unlike the earlier local `whenRendered()` prototype,
+`paint()` takes no cancellation argument. Homepage framing already awaits calls sequentially and
+uses revision guards, so it needs neither a cancellation adapter nor independent waiter promises.
 
 ## Homepage render payload
 
@@ -131,7 +138,7 @@ These are verified against network 0.9.0; remove them when upstream behavior cov
 - `setPointer(null)` does not always wake a settled shade over blank space. The host clears the pointer
   and resumes the existing native loop once on leave. No additional animation loop is created.
 - `painted` is per attachment, not per data revision. Await `ready`, attachment, then
-  `whenRendered()` after configured fields and camera placement before revealing the live canvas.
+  `paint()` after configured fields and camera placement before revealing the live canvas.
 - Native shader CSS coordinates use one minimum backing/CSS ratio for both axes. Quantized asymmetric
   resize can shift the light slightly. That coordinate conversion remains owned by Latkit.
 

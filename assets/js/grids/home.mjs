@@ -88,7 +88,7 @@ export function mountBackdrop(root, effects, presentation, loader) {
       network.fit(bounds.items, false);
       network.zoomBy(view.zoom);
       network.setPose({ ...bounds.center, pitch: view.pitch, bearing: view.bearing }, false);
-      await network.whenRendered();
+      await network.paint();
       const rect = root.getBoundingClientRect();
       const anchor = [rect.left + width * (view.rightEdge ?? view.leftEdge), rect.top + height * (view.anchorY ?? 0.46)];
       // Two corrections at one pose replace the former nine-pose calibration.
@@ -101,7 +101,7 @@ export function mountBackdrop(root, effects, presentation, loader) {
         if (Math.hypot(dx, dy) < 0.5) break;
         network.panBy(dx, dy);
         network.setPose(network.getPose(), false);
-        await network.whenRendered();
+        await network.paint();
       }
       if (version === revision) {
         networkEffects?.reframe();

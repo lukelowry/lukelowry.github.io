@@ -3,20 +3,14 @@ import { createHash } from "node:crypto";
 import { buildHomeGrids } from "./build-home-grids.mjs";
 import { mkdir, readFile, writeFile, readdir, unlink } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
-import { resolve, dirname } from "node:path";
+import { resolve } from "node:path";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = new URL("../assets/generated/", import.meta.url);
-const sourceOption = process.argv.indexOf("--latkit-network-source");
-if (sourceOption >= 0 && !process.argv[sourceOption + 1]) throw new Error("--latkit-network-source requires a source entry path");
-const networkSource = sourceOption >= 0 ? resolve(process.argv[sourceOption + 1]) : null;
-const contract = await readFile(networkSource || new URL("../node_modules/@latkit/network/dist/index.d.ts", import.meta.url), "utf8");
-// The source entry re-exports its controller; check that file for a local build.
-const controller = networkSource ? await readFile(resolve(dirname(networkSource), "controller.ts"), "utf8") : contract;
-if (!controller.includes("whenRendered")) {
-  throw new Error(
-    "This site requires Latkit Network.whenRendered(). For this unreleased local preview, pass --latkit-network-source ../latkit/packages/network/src/index.ts; publish/update Latkit before deploying."
-  );
+// Validate the installed npm contract so local preview and CI build the same API.
+const contract = await readFile(new URL("../node_modules/@latkit/network/dist/index.d.ts", import.meta.url), "utf8");
+if (!/\bpaint\s*\(\s*\)\s*:\s*Promise<void>/.test(contract)) {
+  throw new Error("This site requires Latkit Network.paint(). Run npm ci to install the pinned release before building.");
 }
 await buildHomeGrids();
 await mkdir(output, { recursive: true });
@@ -36,18 +30,6 @@ const result = await build({
   outfile: fileURLToPath(new URL("latkit.js", output)),
   metafile: true,
   loader: { ".wgsl": "text" },
-  plugins: networkSource
-    ? [
-        {
-          name: "local-latkit-network",
-          setup(build) {
-            build.onResolve({ filter: /^@latkit\// }, ({ path }) => ({
-              path: path === "@latkit/network" ? networkSource : fileURLToPath(import.meta.resolve(path)),
-            }));
-          },
-        },
-      ]
-    : [],
 });
 // Desktop scenes share chunks; the tiny bootstrap has no import prerequisites.
 const scenes = await build({
@@ -114,12 +96,5 @@ for (const name of packages) {
   notices.push(`${pkg.name} ${pkg.version}\n${await readFile(new URL("LICENSE", directory), "utf8")}`);
 }
 await writeFile(new URL("latkit-LICENSE.txt", output), notices.join("\n\n"));
-await writeFile(
-  new URL("latkit-version.json", output),
-  JSON.stringify({ ...versions, ...(networkSource ? { localNetworkSource: true } : {}) }, null, 2) + "\n"
-);
-console.log(
-  `Built Latkit (${networkSource ? "local network source; unreleased" : "npm"}): ${JSON.stringify(versions)} (${
-    Object.values(result.metafile.outputs)[0].bytes
-  } bytes)`
-);
+await writeFile(new URL("latkit-version.json", output), JSON.stringify(versions, null, 2) + "\n");
+console.log(`Built Latkit (npm): ${JSON.stringify(versions)} (${Object.values(result.metafile.outputs)[0].bytes} bytes)`);
