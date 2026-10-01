@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@latkit/embed": "0.9.1",
-    "@latkit/network": "0.10.1"
+    "@latkit/network": "0.10.3"
   },
   "private": true,
   "scripts": {
