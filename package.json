@@ -8,7 +8,7 @@
     "purgecss": "8.0.0"
   },
   "dependencies": {
-    "@latkit/embed": "0.9.1",
+    "@latkit/embed": "0.10.1",
     "@latkit/network": "0.10.1"
   },
   "private": true,
