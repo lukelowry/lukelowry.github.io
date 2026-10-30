@@ -145,6 +145,14 @@
   ],
   "presentations": [
     {
+      "name": "Next Generation Grid Simulations: Project Highlights",
+      "position": "Speaker",
+      "date": "2026-09-25",
+      "location": "Smart Grid Center, Texas A&M University",
+      "summary": "DOE Office of Electricity visit; GridKit live demo.",
+      "description": ""
+    },
+    {
       "name": "Voltage Stability in Non-Uniform Geomagnetic Disturbances",
       "position": "Speaker",
       "date": "2024-03-01",
