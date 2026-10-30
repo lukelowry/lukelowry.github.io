@@ -41,7 +41,7 @@ Checks and screenshots write to ignored `output/`.
 
 - Prose: `_pages/` and `_projects/`. Homepage sections are explicit Markdown-enabled HTML containers.
 - Publications, including the CV publication section: `_bibliography/papers.bib`. Other CV sections: `assets/json/resume.json`.
-- Project cards: `img`, optional `img_alt`/`image_fit: contain`, `github`, `readthedocs`, and `marketplace` front matter.
+- Project cards: `img`, optional `img_dark`, `img_alt`, `image_fit: contain|cover`, `image_bg`/`image_bg_dark`, `github`, `readthedocs`, `pypi`, `citation`, and `marketplace` front matter.
   Remove `noindex: true` and `sitemap: false` when a project outline is ready to index.
 - Styles: `assets/css/site.css` for shared UI, `grids.css` for network pages, `_sass/` for theme foundations.
 - Optional page features include `math: true`, `code: true`, diagrams, and `toc: { sidebar: right }`.

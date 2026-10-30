@@ -4,8 +4,23 @@
 {% assign project_image_alt = project.img_alt | default: '' %}
 <article class="project-card{% if include.horizontal %} project-card-horizontal{% endif %}">
   {% if project.img %}
-    <div class="project-card-image{% if project.image_fit == 'contain' %} project-card-logo{% endif %}{% if project.image_background == 'dark' %} project-card-dark{% endif %}">
-      {% include figure.liquid loading="lazy" path=project_image sizes="(min-width: 1100px) 500px, (min-width: 768px) 46vw, 94vw" alt=project_image_alt class="project-image" %}
+    {% assign project_image_sizes = '(min-width: 1100px) 500px, (min-width: 768px) 46vw, 94vw' %}
+    <div
+      class="project-card-image{% if project.image_fit == 'contain' %} project-card-logo{% endif %}{% if project.image_fit == 'cover' %} project-card-cover{% endif %}{% if project.image_background == 'dark' %} project-card-dark{% endif %}{% if project.image_bg %} project-card-tinted{% endif %}"
+      {% if project.image_bg %}
+        style="--card-bg: {{ project.image_bg | escape }}; --card-bg-dark: {{ project.image_bg_dark | default: project.image_bg | escape }}"
+      {% endif %}
+    >
+      {% if project.img_dark %}
+        <div class="project-image-light">
+          {% include figure.liquid loading="lazy" path=project_image sizes=project_image_sizes alt=project_image_alt class="project-image" %}
+        </div>
+        <div class="project-image-dark">
+          {% include figure.liquid loading="lazy" path=project.img_dark sizes=project_image_sizes alt=project_image_alt class="project-image" %}
+        </div>
+      {% else %}
+        {% include figure.liquid loading="lazy" path=project_image sizes=project_image_sizes alt=project_image_alt class="project-image" %}
+      {% endif %}
     </div>
   {% endif %}
   <div class="card-body">
@@ -21,7 +36,7 @@
     {% if project.description != blank %}
       <p class="card-text">{{ project.description }}</p>
     {% endif %}
-    {% if project.github or project.readthedocs or project.marketplace or project.citation %}
+    {% if project.github or project.readthedocs or project.pypi or project.marketplace or project.citation %}
       <div class="project-resources">
         {% if project.github and project.github_public != false %}
           <a class="project-repository" href="{{ project.github | escape }}" aria-label="{{ project.title | escape }} code repository on GitHub"
@@ -39,6 +54,11 @@
             href="{{ project.readthedocs | escape }}"
             aria-label="{{ project.title | escape }} documentation on ReadTheDocs"
             >Documentation {% include collection-icon.liquid name="external" -%}
+          </a>
+        {% endif %}
+        {% if project.pypi %}
+          <a class="project-repository" href="{{ project.pypi | escape }}" aria-label="{{ project.title | escape }} on PyPI"
+            >PyPI {% include collection-icon.liquid name="external" -%}
           </a>
         {% endif %}
         {% if project.marketplace %}

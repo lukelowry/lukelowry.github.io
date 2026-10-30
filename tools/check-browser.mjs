@@ -88,7 +88,13 @@ try {
   for (const title of ["GridKit", "GridKit Studio", "Latkit"]) {
     assert.equal(await page.getByRole("link", { name: title, exact: true }).count(), 1);
   }
-  assert.equal(await page.locator('.project-card a[href="https://github.com/lukelowry/lattice"]').count(), 0, "Private source is not linked");
+  assert.equal(
+    await page.getByRole("link", { name: "GridKit Studio code repository on GitHub", exact: true }).getAttribute("href"),
+    "https://github.com/lukelowry/gridkit-studio"
+  );
+  for (const name of ["esa++", "OpenLine", "pyvectorfit", "sgwt"]) {
+    assert.equal(await page.getByRole("link", { name: `${name} on PyPI`, exact: true }).count(), 1);
+  }
   for (const name of ["GridKit", "Latkit"]) {
     assert.equal(await page.getByRole("link", { name: `${name} code repository on GitHub`, exact: true }).count(), 1);
     assert.equal(await page.getByRole("link", { name: `${name} documentation on ReadTheDocs`, exact: true }).count(), 1);

@@ -2,16 +2,16 @@
 layout: page
 title: GridKit Studio
 permalink: /projects/gridkit-studio/
-description: VS Code Extension for GridKit Development and Research
+description: View, edit, and simulate GridKit power-system cases in VS Code.
 category: work
 importance: -2
-github: https://github.com/lukelowry/lattice
-github_public: false # Restore the source button when the repository becomes public.
+github: https://github.com/lukelowry/gridkit-studio
 marketplace: https://marketplace.visualstudio.com/items?itemName=lukelowery.gridkit-studio
 img: /assets/img/projects/gridkit-studio.png
 og_image: /assets/img/projects/gridkit-studio.png
 og_image_alt: GridKit Studio
-image_fit: contain
+image_fit: cover
+image_background: dark
 sitemap: false # Remove together with noindex when the page is written.
 noindex: true
 giscus_comments: false
@@ -24,6 +24,4 @@ giscus_comments: false
 ## Links
 
 - [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=lukelowery.gridkit-studio)
-{% if page.github_public != false %}
 - [Code]({{ page.github }})
-{% endif %}

@@ -2,13 +2,14 @@
 layout: page
 title: Latkit
 permalink: /projects/latkit/
-description: Interactive WebGPU network and time-series visualization.
+description: GPU-accelerated visualization for large networks, in the browser and from the command line.
 category: work
 importance: -1
 readthedocs: https://latkit.readthedocs.io/en/latest/
 github: https://github.com/lukelowry/latkit
 img: /assets/img/projects/latkit.png
 image_background: dark
+image_fit: cover
 og_image: /assets/img/projects/latkit.png
 og_image_alt: Latkit
 sitemap: false # Remove together with noindex when the page is written.
