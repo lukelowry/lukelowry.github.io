@@ -45,6 +45,9 @@
           {%- if entry.pages and entry.pages != '' %}, pp. {{ entry.pages | replace: '--', '&ndash;' }}{% endif %}
         </div>
       {% endif %}
+      {% if entry.note and entry.note != '' %}
+        <div class="cv-publication-details ml-1 ml-md-4">{{ entry.note }}</div>
+      {% endif %}
       {% if entry.doi %}
         <div class="cv-publication-doi ml-1 ml-md-4">
           <a href="https://doi.org/{{ entry.doi }}">DOI: {{ entry.doi }}</a>
