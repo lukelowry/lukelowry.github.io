@@ -812,7 +812,7 @@ html[data-contrast="high"][data-theme="dark"] {
 .citation-action:hover {
   border-color: var(--global-theme-color);
   background: var(--global-code-bg-color);
-  color: var(--global-theme-color);
+  color: var(--global-text-color);
   text-decoration: none;
 }
 .profile-link .collection-icon,

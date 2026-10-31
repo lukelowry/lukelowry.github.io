@@ -16,7 +16,7 @@ export async function checkResearchLinks(page, url) {
     assert.equal(new URL(await scholar.getAttribute("href")).searchParams.get("q"), title);
   }
 
-  const disclosure = page.getByRole("button", { name: "BibTeX", exact: true }).first();
+  const disclosure = page.locator("#baek2026frequency").getByRole("button", { name: "BibTeX", exact: true });
   await disclosure.click();
   const panel = page.locator(`[id="${await disclosure.getAttribute("aria-controls")}"]`);
   const link = panel.getByRole("link", { name: "Download BibTeX", exact: true });
@@ -43,7 +43,7 @@ export async function checkResearchLinks(page, url) {
   const copy = panel.getByRole("button", { name: "Copy BibTeX", exact: true });
   await copy.focus();
   await page.keyboard.press("Enter");
-  await page.waitForFunction(() => document.querySelector(".citation-status").textContent === "BibTeX copied.");
+  await panel.getByText("BibTeX copied.", { exact: true }).waitFor();
   assert.equal(await page.evaluate(() => window.copiedCitation), citation, "Copy and download export the same citation");
   assert.equal(await copy.evaluate((button) => button === document.activeElement), true, "Copy preserves keyboard focus");
 
